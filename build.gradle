@@ -1,0 +1,67 @@
+group "org.mentha.tools"
+version "1.0.0-SNAPSHOT"
+
+apply plugin: "java"
+apply plugin: "scala"
+apply plugin: "maven"
+
+sourceCompatibility = 1.8
+
+ext {
+    scalaLibVersion = "2.11"
+    scalaVersion = "${scalaLibVersion}.8"
+    zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
+    slf4j = "1.7.13"
+    //orientDbVersion = "3.0.0m1"
+    akkaVersion = "2.5.3"
+    akkaHttpVersion = "10.0.9"
+    jsonLib = "play-json"
+    //jsonLib = "circe"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    zinc "com.typesafe.zinc:zinc:0.3.15"
+    zinc "org.scala-lang:scala-library:${zincScalaVersion}"
+    zinc "org.scala-lang:scala-reflect:${zincScalaVersion}"
+    zinc "org.scala-lang:scala-compiler:${zincScalaVersion}"
+
+    compile "org.scala-lang:scala-library:${scalaVersion}"
+    compile "org.scala-lang:scala-reflect:${scalaVersion}"
+
+    compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
+    compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.4"
+    compile "org.scala-lang.modules:scala-swing_${scalaLibVersion}:1.0.2"
+
+    compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-stream_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
+
+    compile "org.iq80.leveldb:leveldb:0.9"
+    compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
+
+    compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
+    compile "de.heikoseeberger:akka-http-${jsonLib}_${scalaLibVersion}:1.17.0"
+    compile "org.gnieh:diffson-${jsonLib}_${scalaLibVersion}:2.2.1"
+
+    compile "javax.validation:validation-api:1.1.0.Final"
+    compile "org.apache.commons:commons-lang3:3.5"
+    compile "commons-io:commons-io:2.5"
+
+    compile "org.slf4j:slf4j-api:${slf4j}"
+    compile "org.slf4j:slf4j-log4j12:${slf4j}"
+
+    //compile "com.orientechnologies:orientdb-core:${orientDbVersion}"
+    //compile "com.orientechnologies:orientdb-client:${orientDbVersion}"
+    //compile "com.orientechnologies:orientdb-object:${orientDbVersion}"
+    //compile "com.orientechnologies:orientdb-server:${orientDbVersion}"
+    //compile "com.orientechnologies:orientdb-studio:${orientDbVersion}"
+
+    testCompile "junit:junit:4.12"
+    testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.1"
+}
