@@ -145,6 +145,10 @@ object ModelState {
     def commit(state: ModelState): Try[JsonObject]
   }
 
+
+  //
+  case class Noop() extends Request {}
+
   //
   object Queries {
 
@@ -406,13 +410,19 @@ object ModelState {
 
     case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, json: ModelState.JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
-        "commmit" -> json
+        "commit" -> json
       )
     }
 
     case class ModelStateJson(modelId: String, request: ModelState.Query, json: ModelState.JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
         "object" -> json
+      )
+    }
+
+    case class ModelStateNoop(modelId: String) extends ModelState.Response {
+      override def toJson: JsonObject = Json.obj(
+        "noop" -> JsonObject.empty
       )
     }
 
@@ -435,40 +445,42 @@ object ModelState {
 
   def parseMessage(value: String): ModelState.Request = {
     import play.api.libs.json._
-    val strings = value.split("\\s+", 2)
-    require(strings.length > 1)
-    val tp = strings(0)
-    val js = if (strings.length > 1 ) { Json.parse(strings(1)).as[JsObject] } else JsonObject.empty
+    val (cmd, js) = Json.parse(value) match {
+      case o : JsonObject if o.value.size == 0 => ("noop", o)
+      case o : JsonObject if o.value.size == 1 => o.fields.head match { case (cmd, jsv) => (cmd, jsv.as[JsonObject]) }
+      case _ => throw new IllegalStateException(s"Unexpected command structure: ${value}.")
+    }
 
-    tp match {
-      case "-get-model" => Queries.GetModel(id = (js \ "id").asOpt[ID].getOrElse(Identifiable.EMPTY_ID), deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+    cmd match {
+      case "get-model" => Queries.GetModel(id = (js \ "id").asOpt[ID].getOrElse(Identifiable.EMPTY_ID), deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
 
-      case "-get-concept" => Queries.GetConcept(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "-get-folder" => Queries.GetFolder(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "-get-view" => Queries.GetView(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "-get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-concept" => Queries.GetConcept(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-folder" => Queries.GetFolder(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-view" => Queries.GetView(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
 
-      case "-add-element" => Commands.AddElement(tp = (js \ json.`tp`).as[Type], params = js)
-      case "-add-connector" => Commands.AddConnector(tp = (js \ json.`tp`).as[Type], rel = (js \ json.`rel`).as[Type], params = js)
-      case "-add-relationship" => Commands.AddRelationship(tp = (js \ json.`tp`).as[Type], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
-      case "-add-folder" => Commands.AddFolder(path = (js \ "path").as[List[String]], params = js)
-      case "-add-view" => Commands.AddView(path = (js \ "path").as[List[String]], viewpoint = (js \ json.`viewpoint`).as[Type], params = js)
-      case "-add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
-      case "-add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
-      case "-add-view-node-concept" => Commands.AddViewNodeConcept(viewId = (js \ "viewId").as[ID], conceptId = (js \ "concept").as[ID], params = js)
-      case "-add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
+      case "add-element" => Commands.AddElement(tp = (js \ json.`tp`).as[Type], params = js)
+      case "add-connector" => Commands.AddConnector(tp = (js \ json.`tp`).as[Type], rel = (js \ json.`rel`).as[Type], params = js)
+      case "add-relationship" => Commands.AddRelationship(tp = (js \ json.`tp`).as[Type], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
+      case "add-folder" => Commands.AddFolder(path = (js \ "path").as[List[String]], params = js)
+      case "add-view" => Commands.AddView(path = (js \ "path").as[List[String]], viewpoint = (js \ json.`viewpoint`).as[Type], params = js)
+      case "add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
+      case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
+      case "add-view-node-concept" => Commands.AddViewNodeConcept(viewId = (js \ "viewId").as[ID], conceptId = (js \ "concept").as[ID], params = js)
+      case "add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
 
-      case "-del-concept" => Commands.DelConcept(id = (js \ "id").as[ID])
-      case "-del-folder" => Commands.DelFolder(id = (js \ "id").as[ID])
-      case "-del-view" => Commands.DelView(id = (js \ "id").as[ID])
-      case "-del-view-object" => Commands.DelViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
+      case "del-concept" => Commands.DelConcept(id = (js \ "id").as[ID])
+      case "del-folder" => Commands.DelFolder(id = (js \ "id").as[ID])
+      case "del-view" => Commands.DelView(id = (js \ "id").as[ID])
+      case "del-view-object" => Commands.DelViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
 
-      case "-mod-concept" => Commands.ModConcept(id = (js \ "id").as[ID], params = js)
-      case "-mod-folder" => Commands.ModFolder(id = (js \ "id").as[ID], params = js)
-      case "-mod-view" => Commands.ModView(id = (js \ "id").as[ID], params = js)
-      case "-mod-view-object" => Commands.ModViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], params = js)
+      case "mod-concept" => Commands.ModConcept(id = (js \ "id").as[ID], params = js)
+      case "mod-folder" => Commands.ModFolder(id = (js \ "id").as[ID], params = js)
+      case "mod-view" => Commands.ModView(id = (js \ "id").as[ID], params = js)
+      case "mod-view-object" => Commands.ModViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], params = js)
 
-      case _ => throw new IllegalStateException(s"Unexpected command: ${tp}.")
+      case "noop" => Noop()
+      case _ => throw new IllegalStateException(s"Unexpected command: ${cmd}.")
     }
   }
 
@@ -495,7 +507,7 @@ class ModelState(private[state] var model: Model = new Model) {
   }
 
   def query(query: ModelState.Query): ModelState.JsonObject = query match {
-    case Queries.GetModel(id, deep) => json.toJsonPair(model, deep)
+    case Queries.GetModel(_, deep) => json.toJsonPair(model, deep)
     case Queries.GetConcept(id, deep) => json.toJsonPair(concept(id), deep)
     case Queries.GetFolder(id, deep) => json.toJsonPair(folder(id), deep)
     case Queries.GetView(id, deep) => json.toJsonPair(view(id), deep)

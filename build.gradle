@@ -15,8 +15,7 @@ ext {
     //orientDbVersion = "3.0.0m1"
     akkaVersion = "2.5.3"
     akkaHttpVersion = "10.0.9"
-    jsonLib = "play-json"
-    //jsonLib = "circe"
+    playVersion = "2.6.2"
 }
 
 repositories {
@@ -41,13 +40,15 @@ dependencies {
     compile "com.typesafe.akka:akka-stream_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
+
+    compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
+
+    //compile "com.typesafe.play:play_${scalaLibVersion}:${playVersion}"
+    //compile "com.typesafe.play:play-ws_${scalaLibVersion}:${playVersion}"
 
     compile "org.iq80.leveldb:leveldb:0.9"
     compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
-
-    compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
-    compile "de.heikoseeberger:akka-http-${jsonLib}_${scalaLibVersion}:1.17.0"
-    compile "org.gnieh:diffson-${jsonLib}_${scalaLibVersion}:2.2.1"
 
     compile "javax.validation:validation-api:1.1.0.Final"
     compile "org.apache.commons:commons-lang3:3.5"

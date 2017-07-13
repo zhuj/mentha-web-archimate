@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.actor._
 import akka.http.scaladsl.model.ws
 import akka.stream.OverflowStrategy
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl._
 
 import scala.util._
 
@@ -19,16 +19,19 @@ object UserActor {
     // new connection - new user actor
     val userActor = system.actorOf(Props(new UserActor(stateActor)))
 
-    // new actor (it will send incoming messages to the stateModel)
+    // new actor (it will send incoming messages to the userActor)
+    // also it will kill the userActor on complete of the input stream
     val actorRefSink = Sink.actorRef[UserActor.IncomingMessage](userActor, PoisonPill)
 
-    // incoming stream
+    // incoming stream (will convert messages and send it to actorRefSink)
+    import scala.concurrent.duration._
     val in = Flow[ws.Message]
       .collect { case ws.TextMessage.Strict(text) => UserActor.IncomingMessage(text) }
+      .keepAlive( 10 seconds, () => UserActor.IncomingMessage("{}") )
       .to { actorRefSink }
 
-    // jet another actor (it will subscribe to the stateModel answers)
-    val out = Source.actorRef[AnyRef](bufferSize = 10, OverflowStrategy.fail)
+    // jet another actor (it will subscribe to the userActor answers)
+    val out = Source.actorRef[AnyRef](bufferSize = 16, OverflowStrategy.fail)
       .mapMaterializedValue { outActor => userActor ! UserActor.Connected(outActor); NotUsed }
       .collect { case response: UserActor.OutgoingMessage => ws.TextMessage(response.text) }
 

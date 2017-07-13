@@ -23,6 +23,9 @@ object Main {
 
     val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
 
+    // TODO: https://www.playframework.com/documentation/2.6.x/ScalaWebSockets
+    // TODO: https://github.com/playframework/play-scala-websocket-example
+
     //#websocket-request-handling
     val route = path("model" / Remaining) { id =>
         handleWebSocketMessages {
@@ -39,7 +42,7 @@ object Main {
 
     val bindingFuture = Http().bindAndHandle(route, interface = "localhost", port = 8080)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(s"Server online at http://localhost:8080/model/{model}\nPress RETURN to stop...")
     scala.io.StdIn.readLine()
 
     import system.dispatcher // for the future transformations
