@@ -82,6 +82,12 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     }
   }
 
+  private[state] def execute(user: String, noop: ModelState.Noop): Unit = {
+    val response = ModelState.Responses.ModelStateNoop(modelId)
+    dispatchUser(response, user)
+    answerDirectly(response, user)
+  }
+
   private def dispatchAll(response: ModelState.Response): Unit = {
     subscribers.values.foreach(_ ! response)
   }
@@ -117,6 +123,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     case StateActor.SubscriberSend(cmd) => cmd match {
       case query: ModelState.Query => execute(_name(sender()), query)
       case command: ModelState.Command => execute(_name(sender()), command)
+      case noop @ ModelState.Noop() => execute(_name(sender()), noop)
     }
 
     case SaveSnapshotSuccess(_) =>

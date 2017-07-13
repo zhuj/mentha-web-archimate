@@ -1,8 +1,5 @@
 package org.mentha.utils.archimate.model
 
-/**
-  * Created by projector on 06.06.17.
-  */
 sealed trait AccessType {
   def read: Boolean = false
   def write: Boolean = false
