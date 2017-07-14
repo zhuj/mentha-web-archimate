@@ -1,5 +1,7 @@
 package org.mentha.utils.archimate.model
 
+import scala.reflect.ClassTag
+
 trait ArchimateObject {
 }
 
@@ -14,6 +16,18 @@ trait NamedArchimateObject extends ArchimateObject {
 
   def withName(name: String): this.type = {
     this._name = name
+    this
+  }
+
+}
+
+trait PathBasedArchimateObject extends ArchimateObject {
+
+  private[model] var _path: List[String] = Nil
+  @inline def path: List[String] = _path
+
+  def withPath(path: List[String]): this.type = {
+    this._path = path
     this
   }
 
@@ -53,6 +67,14 @@ trait PropsArchimateObject extends ArchimateObject {
 
   def withProperty(name: String, value: Double): this.type =
     withProperty(name, BigDecimal(value))
+
+
+  // TODO: def extension[E](implicit tp: ClassTag[E]): Option[E] = properties
+  // TODO: .value.get(tp.runtimeClass.getName)
+  // TODO: .map { v => v.as[E] }
+
+  // TODO: def withExtension[E](e: E)(implicit tp: ClassTag[E]): this.type =
+  // TODO: withProperty(tp.runtimeClass.getName, json.toJson(e))
 
 }
 

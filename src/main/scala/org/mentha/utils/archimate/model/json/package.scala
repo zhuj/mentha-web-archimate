@@ -10,6 +10,13 @@ import scala.util.control.NonFatal
 
 package object json {
 
+  import play.api.libs.json._
+  import play.api.libs.json.Reads
+  import play.api.libs.json.Writes
+
+  def toJson[T](o: T)(implicit tjs: OWrites[T]): JsonObject =
+    Json.toJsObject(o)
+
   type JsonValue = play.api.libs.json.JsValue
 
   type JsonObject = play.api.libs.json.JsObject
@@ -27,9 +34,9 @@ package object json {
   type JsonArray = play.api.libs.json.JsArray
   val JsonArray = play.api.libs.json.JsArray
 
-  private[json] def concept(id: Identifiable.ID)(implicit model: Model): Concept = model.concepts[Concept](id)
-  private[json] def edge(id: Identifiable.ID)(implicit model: Model): Relationship = model.concepts[Relationship](id)
-  private[json] def node(id: Identifiable.ID)(implicit model: Model): NodeConcept = model.concepts[NodeConcept](id)
+  private[json] def concept(id: Identifiable.ID)(implicit model: Model): Concept = model._concepts[Concept](id)
+  private[json] def edge(id: Identifiable.ID)(implicit model: Model): Relationship = model._concepts[Relationship](id)
+  private[json] def node(id: Identifiable.ID)(implicit model: Model): NodeConcept = model._concepts[NodeConcept](id)
 
   private[json] def viewConcept(id: Identifiable.ID)(implicit view: View): ViewObject with ViewConcept = view.objects[ViewObject with ViewConcept](id)
   private[json] def viewObject(id: Identifiable.ID)(implicit view: View): ViewObject = view.objects[ViewObject](id)
@@ -45,12 +52,8 @@ package object json {
   val `rel` = "rel"
   val `src` = "src"
   val `dst` = "dst"
+  val `path` = "path"
   val `viewpoint` = "viewpoint"
-
-
-  import play.api.libs.json._
-  import play.api.libs.json.Reads
-  import play.api.libs.json.Writes
 
   implicit val pointWrites: Writes[Point] = Json.writes[Point]
   implicit val pointReads: Reads[Point] = Json.reads[Point]
@@ -82,15 +85,20 @@ package object json {
       case _ =>
     }
     obj match {
+      case p: PathBasedArchimateObject =>
+        (json \ `path`).validate[List[String]].foreach { path => p.withPath(path) }
+      case _ =>
+    }
+    obj match {
       case p: PropsArchimateObject =>
-        (json \ `props`).validate[JsObject].foreach { props => p.withProperties(props) }
+        (json \ `props`).validate[JsonObject].foreach { props => p.withProperties(props) }
       case _ =>
     }
 
     obj
   }
 
-  private[json] def writeArchimateObject(obj: ArchimateObject, fields: (String, JsValueWrapper)*): JsObject = {
+  private[json] def writeArchimateObject(obj: ArchimateObject, fields: (String, JsValueWrapper)*): JsonObject = {
 
     val builder = Seq.newBuilder[(String, JsValueWrapper)]
 
@@ -105,6 +113,10 @@ package object json {
       case _ =>
     }
     obj match {
+      case p: PathBasedArchimateObject if p.path.nonEmpty => builder += (`path` -> p.path)
+      case _ =>
+    }
+    obj match {
       case p: PropsArchimateObject if p.properties.value.nonEmpty => builder += (`props` -> p.properties)
       case _ =>
     }
@@ -115,17 +127,17 @@ package object json {
   }
 
   private[json] implicit def storageWrites[T <: Identifiable](implicit w: Writes[T]): Writes[Iterable[T]] = {
-    Writes[Iterable[T]] { ts => JsObject( ts .filterNot { v => v.isDeleted } .map { v => (v.id -> w.writes(v)) } .toSeq ) }
+    Writes[Iterable[T]] { ts => JsonObject( ts .filterNot { v => v.isDeleted } .map { v => (v.id -> w.writes(v)) } .toSeq ) }
   }
 
   @inline
   private[json] def fields(js: JsLookupResult): Seq[(String, JsValue)] = {
-    fields(js.getOrElse(JsObject.empty))
+    fields(js.getOrElse(JsonObject.empty))
   }
 
   @inline
   private[json] def fields(js: JsValue): Seq[(String, JsValue)] = js match {
-    case o: JsObject => o.fields
+    case o: JsonObject => o.fields
     case _ => Seq.empty
   }
 
@@ -200,7 +212,7 @@ package object json {
         case a: AccessRelationship => Json.obj("access" -> a.access)
         case i: InfluenceRelationship => Json.obj("influence" -> i.influence)
         case f: FlowRelationship => Json.obj("flows" -> f.what)
-        case _ => JsObject.empty
+        case _ => JsonObject.empty
       }
     }
 
@@ -366,42 +378,13 @@ package object json {
     )
   }
 
-  private[json] def fillFolderChildren(folder: Folder, json: JsValue)(implicit model: Model): Folder = {
-    fields(json \ "children").foreach { case (id, v) => folder.children.store(v.as[Folder], id) }
-    fields(json \ "views").foreach { case (id, v) => folder.views.store(v.as[View], id) }
-    folder
-  }
-
-  def fillFolder(folder: Folder, json: JsValue): Folder =
-    fillArchimateObject(folder, json)
-
-  def readFolder(json: JsValue): Folder = {
-    fillFolder(new Folder, json)
-  }
-
-  implicit def folderReads(implicit model: Model): Reads[Folder] = new Reads[Folder] {
-    override def reads(json: JsValue): JsResult[Folder] = {
-      JsSuccess(fillFolderChildren(readFolder(json), json))
-    }
-  }
-
-  implicit object FolderWrites extends Writes[Folder] {
-
-    override def writes(o: Folder): JsValue = writeArchimateObject(
-      o,
-      "children" -> Json.toJson(o.children.values),
-      "views" -> Json.toJson(o.views.values)
-    )
-
-  }
-
   implicit object ModelRW extends Reads[Model] with Writes[Model] {
 
     override def reads(json: JsValue): JsResult[Model] = {
       implicit val model = fillArchimateObject(new Model(), json)
-      fields(json \ "nodes").foreach { case (id, v) => model.concepts.store(v.as[NodeConcept], id) }
-      fields(json \ "edges").foreach { case (id, v) => model.concepts.store(v.as[EdgeConcept], id) }
-      fillFolderChildren(model.root, (json \ "root").as[JsValue])
+      fields(json \ "nodes").foreach { case (id, v) => model._concepts.store(v.as[NodeConcept], id) }
+      fields(json \ "edges").foreach { case (id, v) => model._concepts.store(v.as[EdgeConcept], id) }
+      fields(json \ "views").foreach { case (id, v) => model._views.store(v.as[View], id) }
       JsSuccess(model)
     }
 
@@ -409,30 +392,53 @@ package object json {
       o,
       "nodes" -> Json.toJson(o.nodes),
       "edges" -> Json.toJson(o.edges),
-      "root" -> Json.toJson(o.root)
+      "views" -> Json.toJson(o.views)
     )
 
   }
 
-  def toJsonPair(vo: ViewObject, deep: Boolean): JsObject =
+  def toJsonPair(vo: ViewObject): JsonObject =
     Json.obj(vo.id -> vo)
 
-  def toJsonPair(view: View, deep: Boolean): JsObject =
+  def toJsonPair(view: View): JsonObject =
     Json.obj(view.id -> view)
 
-  def toJsonPair(folder: Folder, deep: Boolean): JsObject =
-    Json.obj(folder.id -> folder)
-
-  def toJsonPair(concept: Concept, deep: Boolean): JsObject = concept match {
+  def toJsonPair(concept: Concept): JsonObject = concept match {
     case n: NodeConcept => Json.obj(n.id -> n)
     case r: Relationship => Json.obj(r.id -> r)
   }
 
-  def toJsonPair(m: Model, deep: Boolean): JsObject =
-    Json.obj(m.id -> m)
+  def toJsonPair(model: Model): JsonObject =
+    Json.obj(model.id -> model)
 
+  def fromJsonString(json: String): Model =
+    fields(Json.parse(json)).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
 
-  def fromJsonString(json: String): Model = fields(Json.parse(json)).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
-  def toJsonString(model: Model): String = toJsonPair(model, deep = true).toString()
+  def toJsonString(model: Model): String =
+    toJsonPair(model).toString()
+
+  def toJsonDiff(concept: Concept, op: String): JsonObject = {
+    val field = concept match {
+      case _: NodeConcept => "nodes"
+      case _: EdgeConcept => "edges"
+    }
+    Json.obj(s"${field}${op}" -> toJsonPair(concept))
+  }
+
+  def toJsonDiff(view: View, op: String): JsonObject = {
+    val field = "views"
+    Json.obj(s"${field}${op}" -> toJsonPair(view))
+  }
+
+  def toJsonDiff(view: View, vo: ViewObject, op: String): JsonObject = {
+    val field = vo match {
+      case _: ViewNode => "nodes"
+      case _: ViewEdge => "edges"
+    }
+    Json.obj(s"views@" -> Json.obj(
+      view.id -> Json.obj(s"${field}${op}" -> toJsonPair(vo))
+    ))
+  }
+
 
 }

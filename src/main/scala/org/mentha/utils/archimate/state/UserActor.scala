@@ -27,7 +27,7 @@ object UserActor {
     import scala.concurrent.duration._
     val in = Flow[ws.Message]
       .collect { case ws.TextMessage.Strict(text) => UserActor.IncomingMessage(text) }
-      .keepAlive( 10 seconds, () => UserActor.IncomingMessage("{}") )
+      .keepAlive( 10 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
       .to { actorRefSink }
 
     // jet another actor (it will subscribe to the userActor answers)
