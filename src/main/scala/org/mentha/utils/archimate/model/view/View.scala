@@ -117,7 +117,7 @@ final class ViewRelationship[T <: Relationship](val source: ViewObject with View
   * http://pubs.opengroup.org/architecture/archimate3-doc/chap14.html
   * Viewpoints are a means to focus on particular aspects and layers of the architecture. These aspects and layers are determined by the concerns of a stakeholder with whom communication takes place.
   */
-final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends IdentifiedArchimateObject with NamedArchimateObject {
+final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends IdentifiedArchimateObject with PathBasedArchimateObject with NamedArchimateObject {
   require(null != viewpoint, "Viewpoint is required.")
 
   private[model] val objects: Storage[ViewObject] = Storage.buildStorage
@@ -162,54 +162,5 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
         )(concept)
       }
     }
-
-}
-
-/** */
-final class Folder extends IdentifiedArchimateObject with NamedArchimateObject {
-
-  private[model] val children: Storage[Folder] = Storage.buildStorage
-  private[model] val views: Storage[View] = Storage.buildStorage
-
-  def add(id: Identifiable.ID) = new {
-    def apply(folder: Folder): Folder = children.store(folder, id)
-    def apply(view: View): View = views.store(view, id)
-  }
-  def add(folder: Folder): Folder = children.store(folder)
-  def add(view: View): View = views.store(view)
-
-  def getFolderByName(name: String): Option[Folder] = children
-    .select[Folder]
-    .collectFirst { case f if f.name == name => f }
-
-  def \(name: String): Folder = getFolderByName(name)
-    .getOrElse { children store(new Folder withName name) }
-
-  def \(names: List[String]): Folder = names match {
-    case Nil => this
-    case head :: tail => this \ head \ tail
-  }
-
-  def getViewByName(name: String): Option[View] = views
-    .select[View]
-    .collectFirst { case v if v.name == name => v }
-
-  def \\(name: String)(viewpoint: ViewPoint = null): View = getViewByName(name)
-    .map {
-      case v if (null == viewpoint) || (v.viewpoint == viewpoint) => v
-      case v => throw new IllegalStateException(s"View @ `${name}` has wrong viewpoint: ${v.viewpoint}")
-    }
-    .getOrElse { views store(new View(viewpoint) withName name) }
-
-  private def folders: Stream[Folder] = {
-    this #:: children.values.toStream.flatMap { f => f.folders }
-  }
-
-  def getFolder(id: Identifiable.ID): Option[Folder] = folders
-      .collectFirst { case f if f.id == id => f }
-
-  def getView(id: Identifiable.ID): Option[View] = folders
-      .flatMap { f => f.views.values.toStream }
-      .collectFirst { case v if v.id == id => v }
 
 }

@@ -1,7 +1,6 @@
 package org.mentha.utils.archimate.model
 
-import org.apache.commons.lang3.builder.HashCodeBuilder
-import org.mentha.utils.archimate.model.view.{Folder, View, ViewPoint}
+import org.mentha.utils.archimate.model.view._
 
 import scala.reflect.ClassTag
 
@@ -14,23 +13,36 @@ import scala.reflect.ClassTag
   */
 class Model extends IdentifiedArchimateObject with NamedArchimateObject {
 
-  private[model] val concepts: Storage[Concept] = Storage.buildStorage
-  private[model] val root: Folder = new Folder()
+  private[model] val _concepts: Storage[Concept] = Storage.buildStorage
+  private[model] val _views: Storage[View] = Storage.buildStorage
 
-  def get[T <: Concept](id: Identifiable.ID): T = concepts(id)
-  def add[T <: Concept](id: Identifiable.ID)(concept: T): T = concepts.store(concept, id)
-  def add[T <: Concept](concept: T): T = concepts.store(concept)
+  def concept[T <: Concept](id: Identifiable.ID)(implicit tp: ClassTag[T]): T = _concepts(id)
+  def view(id: Identifiable.ID): View = _views(id)
 
-  def select[X <: Concept](implicit tp: ClassTag[X]): Iterable[X] = concepts.select[X](tp)
-  def nodes: Iterable[NodeConcept] = select[NodeConcept]
-  def edges: Iterable[EdgeConcept] = select[EdgeConcept]
+  def add(id: Identifiable.ID) = new {
+    def apply[T <: Concept](concept: T): T = _concepts.store(concept, id)
+    def apply(view: View): View = _views.store(view, id)
+  }
 
-  def \(name: String): Folder = root \ name
-  def \(names: List[String]): Folder = root \ names
+  def add[T <: Concept](concept: T): T = _concepts.store(concept)
+  def add(view: View): View = _views.store(view)
 
-  def \\(name: String)(viewpoint: ViewPoint = null): View = (root \\ name)(viewpoint)
+  def concepts[X <: Concept](implicit tp: ClassTag[X]): Iterable[X] = _concepts.select[X](tp)
+  def nodes: Iterable[NodeConcept] = concepts[NodeConcept]
+  def edges: Iterable[EdgeConcept] = concepts[EdgeConcept]
 
-  def getFolder(id: Identifiable.ID): Folder = root.getFolder(id).getOrElse(throw new IllegalStateException(s"No folder found with id=${id}"))
-  def getView(id: Identifiable.ID): View = root.getView(id).getOrElse(throw new IllegalStateException(s"No view found with id=${id}"))
+  def views: Iterable[View] = _views.select[View]
+
+  def findView(path: List[String], name: String): Option[View] =
+    views.collectFirst { case v if v.path == path && v.name == name => v }
+
+  def <<(path: List[String]) = new {
+    def <<(name: String)(viewpoint: ViewPoint = null): View = findView(path, name)
+      .map {
+        case v if (null == viewpoint) || (v.viewpoint == viewpoint) => v
+        case v => throw new IllegalStateException(s"View @ `${name}` has wrong viewpoint: ${v.viewpoint}")
+      }
+      .getOrElse { add(new View(viewpoint) withName name) }
+  }
 
 }

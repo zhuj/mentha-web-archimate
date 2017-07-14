@@ -19,7 +19,8 @@ object test {
 
   implicit val model = new Model
 
-  val view = (model \ "views" \\ "general")(LayeredViewPoint)
+
+  val view = (model << "views" :: "myView" :: Nil << "general")(LayeredViewPoint)
 
   val overallGoal = in(view) { goal withName "conquest the World" }
 

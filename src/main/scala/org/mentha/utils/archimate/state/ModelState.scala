@@ -3,7 +3,7 @@ package org.mentha.utils.archimate.state
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.view._
 
-import scala.util.Try
+import scala.util._
 
 object ModelState {
 
@@ -32,10 +32,28 @@ object ModelState {
       }
       case c @ Commands.AddRelationship(tp, srcId, dstId, _) => {
         val rMeta = edges.mapRelations.getOrElse(tp, throw new IllegalStateException(s"Unexpected relationship type: ${tp}"))
-        val src = model.get[Concept](srcId)
-        val dst = model.get[Concept](dstId)
+        val src = model.concept[Concept](srcId)
+        val dst = model.concept[Concept](dstId)
         require(rMeta.isLinkPossible(src.meta, dst.meta))
         ChangeSets.AddConcept(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddView(_, params) => {
+        // TODO: val path = (params \ json.`path`).as[List[String]]
+        // TODO: val name = (params \ json.`name`).as[String]
+        // TODO: require(model.findView(path, name).isEmpty, s"Duplicate view name: ${name}.")
+        ChangeSets.AddView(Identifiable.generateId(), c)
+      }
+      case c @ Commands.ModView(id, params) => {
+        // TODO: val path = (params \ json.`path`).as[List[String]]
+        // TODO: val name = (params \ json.`name`).as[String]
+        // TODO: model.findView(path, name).isEmpty match {
+        // TODO:   case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
+        // TODO:   case None =>
+        // TODO: }
+        ChangeSets.ModView(c)
+      }
+      case c @ Commands.DelView(_) => {
+        ChangeSets.DelView(c)
       }
     }
   }
@@ -44,42 +62,6 @@ object ModelState {
     override def prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.ModConcept(_, _) => ChangeSets.ModConcept(c)
       case c @ Commands.DelConcept(_) => ChangeSets.DelConcept(c)
-    }
-  }
-
-  private[state] implicit class ImplicitFolder(folder: Folder) extends StateOps {
-    override def prepare: PartialFunction[Command, ChangeSet] = {
-      case c @ Commands.AddFolder(_, params) => {
-        val name = (params \ json.`name`).as[String]
-        require(folder.getFolderByName(name).isEmpty, s"Duplicate folder name: ${name}.")
-        ChangeSets.AddSubFolder(folder.id, Identifiable.generateId(), c)
-      }
-      case c @ Commands.ModFolder(id, params) => {
-        for { name <- (params \ json.`name`).asOpt[String] } {
-          folder.getFolderByName(name) match {
-            case Some(f) => require(f.id == id, s"Duplicate folder name: ${name}.")
-            case None =>
-          }
-        }
-        ChangeSets.ModSubFolder(folder.id, c)
-      }
-      case c @ Commands.DelFolder(_) => ChangeSets.DelSubFolder(folder.id, c)
-
-      case c @ Commands.AddView(_, _, params) => {
-        val name = (params \ json.`name`).as[String]
-        require(folder.getViewByName(name).isEmpty, s"Duplicate view name: ${name}.")
-        ChangeSets.AddFolderView(folder.id, Identifiable.generateId(), c)
-      }
-      case c @ Commands.ModView(id, params) => {
-        for { name <- (params \ json.`name`).asOpt[String] } {
-          folder.getViewByName(name) match {
-            case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
-            case None =>
-          }
-        }
-        ChangeSets.ModFolderView(folder.id, c)
-      }
-      case c @ Commands.DelView(_) => ChangeSets.DelFolderView(folder.id, c)
     }
   }
 
@@ -152,15 +134,12 @@ object ModelState {
   //
   object Queries {
 
-    sealed trait Get[T] extends Query with ById[T] {
-      def deep: Boolean
-    }
+    sealed trait Get[T] extends Query with ById[T] {}
 
-    case class GetModel(id: ID = Identifiable.EMPTY_ID, deep: Boolean = true) extends Get[Model] {}
-    case class GetConcept(id: ID, deep: Boolean = false) extends Get[Concept] {}
-    case class GetFolder(id: ID, deep: Boolean) extends Get[Folder] {}
-    case class GetView(id: ID, deep: Boolean) extends Get[View] {}
-    case class GetViewObject(viewId: ID, id: ID, deep: Boolean = false) extends Get[ViewObject] {}
+    case class GetModel(id: ID = Identifiable.EMPTY_ID) extends Get[Model] {}
+    case class GetConcept(id: ID) extends Get[Concept] {}
+    case class GetView(id: ID) extends Get[View] {}
+    case class GetViewObject(viewId: ID, id: ID) extends Get[ViewObject] {}
   }
 
 
@@ -184,19 +163,10 @@ object ModelState {
 
     case class ModConcept(id: ID, params: JsonObject) extends ConceptCommand with Mod[Concept] {}
 
-    sealed trait FolderCommand extends Command {
-    }
-
-    case class AddFolder(path: List[String], params: JsonObject) extends FolderCommand with Add[Folder] {}
-
-    case class DelFolder(id: ID) extends FolderCommand with Del[Folder] {}
-
-    case class ModFolder(id: ID, params: JsonObject) extends FolderCommand with Mod[Folder] {}
-
     sealed trait ViewCommand extends Command {
     }
 
-    case class AddView(path: List[String], viewpoint: Type, params: JsonObject) extends ViewCommand with Add[View] {}
+    case class AddView(viewpoint: Type, params: JsonObject) extends ViewCommand with Add[View] {}
 
     case class DelView(id: ID) extends ViewCommand with Del[View] {}
 
@@ -241,14 +211,14 @@ object ModelState {
     case class AddConcept(newId: ID, command: Commands.AddConceptCommand[_]) extends ModelChangeSet with Add[Concept] {
       override def params: JsonObject = command.params
       override def commit(model: Model): Try[JsonObject] = Try {
-        val concept = model.add[Concept](newId) {
+        val concept = model.add(newId) {
           command match {
             case Commands.AddElement(tp, params) => json.readElement(tp, params)
             case Commands.AddConnector(tp, rel, params) => json.readRelationshipConnector(tp, rel, params)
-            case Commands.AddRelationship(tp, src, dst, params) => json.readRelationship(tp, model.get(src), model.get(dst), params)
+            case Commands.AddRelationship(tp, src, dst, params) => json.readRelationship(tp, model.concept[Concept](src), model.concept[Concept](dst), params)
           }
         }
-        json.toJsonPair(concept, deep = false)
+        json.toJsonDiff(concept, "+")
       }
     }
 
@@ -256,86 +226,45 @@ object ModelState {
       override def id: ID = command.id
       override def params: JsonObject = command.params
       override def commit(model: Model): Try[JsonObject] = Try {
-        val concept = model.get[Concept](id) match {
+        val concept = model.concept[Concept](id) match {
           case el: Element => json.fillElement(el, params)
           case rc: RelationshipConnector => json.fillRelationshipConnector(rc, params)
           case rel: Relationship => json.fillRelationship(rel, params)
         }
-        json.toJsonPair(concept, deep = false)
+        json.toJsonDiff(concept, "@")
       }
     }
 
     case class DelConcept(command: Commands.DelConcept) extends ModelChangeSet with Del[Concept] {
       override def id: ID = command.id
       override def commit(model: Model): Try[JsonObject] = Try {
-        val concept = model.get[Concept](id).markAsDeleted()
-        json.toJsonPair(concept, deep = false)
+        val concept = model.concept[Concept](id).markAsDeleted()
+        json.toJsonDiff(concept, "-")
       }
     }
 
-    sealed trait FolderChangeSet extends ChangeSet {
-      def command: Command
-      def folderId: ID
-      def commit(model: Model, folder: Folder): Try[JsonObject]
-      override def commit(state: ModelState): Try[JsonObject] = commit(
-        state.model,
-        state.model.getFolder(folderId)
-      )
-    }
-
-    case class AddSubFolder(folderId: ID, newId: ID, command: Commands.AddFolder) extends FolderChangeSet with Add[Folder] {
+    case class AddView(newId: ID, command: Commands.AddView) extends ModelChangeSet with Add[View] {
       override def params: JsonObject = command.params
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val f = folder.add(newId) { json.readFolder(params) }
-        json.toJsonPair(f, deep = false)
+      override def commit(model: Model): Try[JsonObject] = Try {
+        val v = model.add(newId) { json.readView(command.viewpoint, params) }
+        json.toJsonDiff(v, "+")
       }
     }
 
-    case class ModSubFolder(folderId: ID, command: Commands.ModFolder) extends FolderChangeSet with Mod[Folder] {
+    case class ModView(command: Commands.ModView) extends ModelChangeSet with Mod[View] {
       override def id: ID = command.id
       override def params: JsonObject = command.params
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val f = json.fillFolder(
-          folder.getFolder(id).getOrElse(throw new NoSuchElementException(s"No folder with id=${id}.")),
-          params
-        )
-        json.toJsonPair(f, deep = false)
+      override def commit(model: Model): Try[JsonObject] = Try {
+        val v = json.fillView(model.view(id), params)
+        json.toJsonDiff(v, "@")
       }
     }
 
-    case class DelSubFolder(folderId: ID, command: Commands.DelFolder) extends FolderChangeSet with Del[Folder] {
+    case class DelView(command: Commands.DelView) extends ModelChangeSet with Del[View] {
       override def id: ID = command.id
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val f = folder.getFolder(id).getOrElse(throw new NoSuchElementException(s"No folder with id=${id}.")).markAsDeleted()
-        json.toJsonPair(f, deep = false)
-      }
-    }
-
-    case class AddFolderView(folderId: ID, newId: ID, command: Commands.AddView) extends FolderChangeSet with Add[View] {
-      override def params: JsonObject = command.params
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val v = folder.add(newId) { json.readView(command.viewpoint, params) }
-        json.toJsonPair(v, deep = false)
-      }
-    }
-
-    case class ModFolderView(folderId: ID, command: Commands.ModView) extends FolderChangeSet with Mod[View] {
-      override def id: ID = command.id
-      override def params: JsonObject = command.params
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val v = json.fillView(
-          folder.getView(id).getOrElse(throw new NoSuchElementException(s"No view with id=${id}.")),
-          params
-        )
-        json.toJsonPair(v, deep = false)
-      }
-    }
-
-    case class DelFolderView(folderId: ID, command: Commands.DelView) extends FolderChangeSet with Del[View] {
-      override def id: ID = command.id
-      def commit(model: Model, folder: Folder): Try[JsonObject] = Try {
-        val v = folder.getFolder(id).getOrElse(throw new NoSuchElementException(s"No folder with id=${id}.")).markAsDeleted()
-        json.toJsonPair(v, deep = false)
+      override def commit(model: Model): Try[JsonObject] = Try {
+        val v = model.view(id).markAsDeleted()
+        json.toJsonDiff(v, "-")
       }
     }
 
@@ -347,7 +276,7 @@ object ModelState {
 
       override def commit(state: ModelState): Try[JsonObject] = commit(
         state.model,
-        state.model.getView(viewId)
+        state.model.view(viewId)
       )
     }
 
@@ -359,11 +288,11 @@ object ModelState {
           command match {
             case Commands.AddViewNotes(_, p) => json.readViewNotes(p)
             case Commands.AddViewConnection(_, src, dst, params) => json.readViewConnection(view.get(src), view.get(dst), params)
-            case Commands.AddViewNodeConcept(_, conceptId, params) => json.readViewNodeConcept(model.get(conceptId), params)
-            case Commands.AddViewRelationship(_, src, dst, conceptId, params) => json.readViewRelationship(view.get(src), view.get(dst), model.get(conceptId), params)
+            case Commands.AddViewNodeConcept(_, conceptId, params) => json.readViewNodeConcept(model.concept(conceptId), params)
+            case Commands.AddViewRelationship(_, src, dst, conceptId, params) => json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params)
           }
         }
-        json.toJsonPair(vo, deep = false)
+        json.toJsonDiff(view, vo, "+")
       }
     }
 
@@ -378,7 +307,7 @@ object ModelState {
           case vnc: ViewNodeConcept[_] => json.fillViewNodeConcept(vnc, params)
           case vrs: ViewRelationship[_] => json.fillViewRelationship(vrs, params)
         }
-        json.toJsonPair(vo, deep = false)
+        json.toJsonDiff(view, vo, "@")
       }
     }
 
@@ -387,7 +316,7 @@ object ModelState {
       override def id: ID = command.id
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
         val vo = view.get[ViewObject](id).markAsDeleted()
-        json.toJsonPair(vo, deep = false)
+        json.toJsonDiff(view, vo, "-")
       }
     }
 
@@ -400,7 +329,7 @@ object ModelState {
           case Commands.PlaceViewNode(_, id, position, size, _) => view.get[ViewNode](id).withPosition(position).withSize(size)
           case Commands.PlaceViewEdge(_, id, points, _) => view.get[ViewEdge](id).withPoints(points)
         }
-        json.toJsonPair(vo, deep = false)
+        json.toJsonDiff(view, vo, "@")
       }
     }
 
@@ -432,7 +361,6 @@ object ModelState {
       )
     }
 
-
   }
 
   def fromJson(json: String): ModelState = new ModelState(
@@ -452,30 +380,26 @@ object ModelState {
     }
 
     cmd match {
-      case "get-model" => Queries.GetModel(id = (js \ "id").asOpt[ID].getOrElse(Identifiable.EMPTY_ID), deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-model" => Queries.GetModel(id = (js \ "id").asOpt[ID].getOrElse(Identifiable.EMPTY_ID))
 
-      case "get-concept" => Queries.GetConcept(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "get-folder" => Queries.GetFolder(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "get-view" => Queries.GetView(id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
-      case "get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], deep = (js \ "deep").asOpt[Boolean].getOrElse(true))
+      case "get-concept" => Queries.GetConcept(id = (js \ "id").as[ID])
+      case "get-view" => Queries.GetView(id = (js \ "id").as[ID])
+      case "get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
 
       case "add-element" => Commands.AddElement(tp = (js \ json.`tp`).as[Type], params = js)
       case "add-connector" => Commands.AddConnector(tp = (js \ json.`tp`).as[Type], rel = (js \ json.`rel`).as[Type], params = js)
       case "add-relationship" => Commands.AddRelationship(tp = (js \ json.`tp`).as[Type], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
-      case "add-folder" => Commands.AddFolder(path = (js \ "path").as[List[String]], params = js)
-      case "add-view" => Commands.AddView(path = (js \ "path").as[List[String]], viewpoint = (js \ json.`viewpoint`).as[Type], params = js)
+      case "add-view" => Commands.AddView(viewpoint = (js \ json.`viewpoint`).as[Type], params = js)
       case "add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
       case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
       case "add-view-node-concept" => Commands.AddViewNodeConcept(viewId = (js \ "viewId").as[ID], conceptId = (js \ "concept").as[ID], params = js)
       case "add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
 
       case "del-concept" => Commands.DelConcept(id = (js \ "id").as[ID])
-      case "del-folder" => Commands.DelFolder(id = (js \ "id").as[ID])
       case "del-view" => Commands.DelView(id = (js \ "id").as[ID])
       case "del-view-object" => Commands.DelViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
 
       case "mod-concept" => Commands.ModConcept(id = (js \ "id").as[ID], params = js)
-      case "mod-folder" => Commands.ModFolder(id = (js \ "id").as[ID], params = js)
       case "mod-view" => Commands.ModView(id = (js \ "id").as[ID], params = js)
       case "mod-view-object" => Commands.ModViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], params = js)
 
@@ -494,30 +418,25 @@ class ModelState(private[state] var model: Model = new Model) {
     case Commands.AddElement(_, _) => model.prepare(command)
     case Commands.AddConnector(_, _, _) => model.prepare(command)
     case Commands.AddRelationship(_, _, _, _) => model.prepare(command)
-    case Commands.AddFolder(path, _) => folder(path).prepare(command)
-    case Commands.AddView(path, _, _) => folder(path).prepare(command)
+    case Commands.AddView(_, _) => model.prepare(command)
     case Commands.AddViewNotes(viewId, _) => view(viewId).prepare(command)
     case Commands.AddViewConnection(viewId, _,_, _) => view(viewId).prepare(command)
     case Commands.AddViewNodeConcept(viewId, _,_) => view(viewId).prepare(command)
     case Commands.AddViewRelationship(viewId, _,_, _, _) => view(viewId).prepare(command)
     case c: Commands.ConceptCommand with ById[_] => concept(c.id).prepare(command)
-    case c: Commands.FolderCommand with ById[_] => folder(c.id).prepare(command)
     case c: Commands.ViewCommand with ById[_] => view(c.id).prepare(command)
     case c: Commands.ViewObjectCommand with ById[_] => viewObject(c.viewId, c.id).prepare(command)
   }
 
   def query(query: ModelState.Query): ModelState.JsonObject = query match {
-    case Queries.GetModel(_, deep) => json.toJsonPair(model, deep)
-    case Queries.GetConcept(id, deep) => json.toJsonPair(concept(id), deep)
-    case Queries.GetFolder(id, deep) => json.toJsonPair(folder(id), deep)
-    case Queries.GetView(id, deep) => json.toJsonPair(view(id), deep)
-    case Queries.GetViewObject(viewId, id, deep) => json.toJsonPair(viewObject(viewId, id), deep)
+    case Queries.GetModel(_) => json.toJsonPair(model)
+    case Queries.GetConcept(id) => json.toJsonPair(concept(id))
+    case Queries.GetView(id) => json.toJsonPair(view(id))
+    case Queries.GetViewObject(viewId, id) => json.toJsonPair(viewObject(viewId, id))
   }
 
-  private def concept(id: ID): Concept = model.get[Concept](id)
-  private def folder(path: List[String]): Folder = model \ path
-  private def folder(folderId: ID): Folder = model.getFolder(folderId)
-  private def view(viewId: ID): View = model.getView(viewId)
+  private def concept(id: ID): Concept = model.concept[Concept](id)
+  private def view(viewId: ID): View = model.view(viewId)
   private def viewObject(viewId: ID, id: ID): ViewObject = view(viewId).get[ViewObject](id)
 
   def commit(changeSet: ChangeSet): JsonObject = {
