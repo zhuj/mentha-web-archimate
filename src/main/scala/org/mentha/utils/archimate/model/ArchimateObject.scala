@@ -1,14 +1,23 @@
 package org.mentha.utils.archimate.model
 
-import scala.reflect.ClassTag
 
+/**
+  *
+  */
 trait ArchimateObject {
+
 }
 
+/**
+  *
+  */
 trait IdentifiedArchimateObject extends ArchimateObject with Identifiable {
 
 }
 
+/**
+  *
+  */
 trait NamedArchimateObject extends ArchimateObject {
 
   private[model] var _name: String = ""
@@ -21,6 +30,24 @@ trait NamedArchimateObject extends ArchimateObject {
 
 }
 
+/**
+  *
+  */
+trait VersionedArchimateObject extends ArchimateObject {
+
+  private[model] var _version: Long = -1L
+  @inline def version: Long = _version
+
+  def withVersion(version: Long): this.type = {
+    this._version = version
+    this
+  }
+
+}
+
+/**
+  *
+  */
 trait PathBasedArchimateObject extends ArchimateObject {
 
   private[model] var _path: List[String] = Nil
@@ -33,6 +60,9 @@ trait PathBasedArchimateObject extends ArchimateObject {
 
 }
 
+/**
+  *
+  */
 trait PropsArchimateObject extends ArchimateObject {
 
   private[model] var _properties: json.JsonObject = json.JsonObject.empty
@@ -78,12 +108,16 @@ trait PropsArchimateObject extends ArchimateObject {
 
 }
 
-/** Something which could be linked withing the edges */
+/**
+  * Something which could be linked withing the edges
+  */
 trait Vertex {
 
 }
 
-/** Links two vertexes */
+/**
+  * Links two vertexes
+  */
 trait Edge[V <: Vertex] {
   def source: V
   def target: V

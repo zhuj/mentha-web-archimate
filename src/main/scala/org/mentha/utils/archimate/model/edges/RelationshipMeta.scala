@@ -7,7 +7,7 @@ import scala.reflect.ClassTag
 /** */
 class RelationshipMeta[T <: Relationship](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
 
-  def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = true // TODO: use matrixes
+  def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = true // TODO: implement me: use generator & matrices
 
   private[model] val reflectConstructor = {
     import scala.reflect.runtime.{universe => ru}

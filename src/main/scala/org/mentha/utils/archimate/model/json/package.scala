@@ -38,23 +38,41 @@ package object json {
   private[json] def edge(id: Identifiable.ID)(implicit model: Model): Relationship = model._concepts[Relationship](id)
   private[json] def node(id: Identifiable.ID)(implicit model: Model): NodeConcept = model._concepts[NodeConcept](id)
 
-  private[json] def viewConcept(id: Identifiable.ID)(implicit view: View): ViewObject with ViewConcept = view.objects[ViewObject with ViewConcept](id)
-  private[json] def viewObject(id: Identifiable.ID)(implicit view: View): ViewObject = view.objects[ViewObject](id)
+  private[json] def viewConcept(id: Identifiable.ID)(implicit view: View): ViewObject with ViewConcept = view._objects[ViewObject with ViewConcept](id)
+  private[json] def viewObject(id: Identifiable.ID)(implicit view: View): ViewObject = view._objects[ViewObject](id)
 
   private[json] def tp(o: Any): String = o match {
     case c: Concept => c.meta.name
     case _ => StringUtils.uncapitalize(o.getClass.getSimpleName)
   }
 
-  val `tp` = "_tp"
-  val `name` = "name"
-  val `props` = "props"
-  val `rel` = "rel"
-  val `src` = "src"
-  val `dst` = "dst"
-  val `path` = "path"
-  val `viewpoint` = "viewpoint"
+  object names {
 
+    val `tp` = "_tp"
+    val `name` = "name"
+    val `props` = "props"
+
+    val `rel` = "rel"
+    val `src` = "src"
+    val `dst` = "dst"
+    val `path` = "path"
+    val `version` = "version"
+    val `viewpoint` = "viewpoint"
+
+    val `nodes` = "nodes"
+    val `edges` = "edges"
+    val `views` = "views"
+    
+    val `concept` = "concept"
+    val `pos` = "pos"
+    val `size` = "size"
+    val `points` = "points"
+    
+    val `deleted` = "deleted"
+  }
+
+  
+  
   implicit val pointWrites: Writes[Point] = Json.writes[Point]
   implicit val pointReads: Reads[Point] = Json.reads[Point]
 
@@ -77,21 +95,26 @@ package object json {
 
   private[json] def fillArchimateObject[T<:ArchimateObject](obj: T, json: JsValue): T = {
 
-    (json \ `tp`).validate[String].foreach { t => require(tp(obj) == t) }
+    (json \ names.`tp`).validate[String].foreach { t => require(tp(obj) == t) }
 
     obj match {
       case n: NamedArchimateObject =>
-        (json \ `name`).validate[String].foreach { name => n.withName(name) }
+        (json \ names.`name`).validate[String].foreach { name => n.withName(name) }
+      case _ =>
+    }
+    obj match {
+      case v: VersionedArchimateObject =>
+        (json \ names.`version`).validate[Long].foreach { version => v.withVersion(version) }
       case _ =>
     }
     obj match {
       case p: PathBasedArchimateObject =>
-        (json \ `path`).validate[List[String]].foreach { path => p.withPath(path) }
+        (json \ names.`path`).validate[List[String]].foreach { path => p.withPath(path) }
       case _ =>
     }
     obj match {
       case p: PropsArchimateObject =>
-        (json \ `props`).validate[JsonObject].foreach { props => p.withProperties(props) }
+        (json \ names.`props`).validate[JsonObject].foreach { props => p.withProperties(props) }
       case _ =>
     }
 
@@ -102,22 +125,26 @@ package object json {
 
     val builder = Seq.newBuilder[(String, JsValueWrapper)]
 
-    builder += (`tp` -> tp(obj))
+    builder += (names.`tp` -> tp(obj))
 
     obj match {
-      case i: IdentifiedArchimateObject if i.isDeleted => builder += ("deleted" -> true)
+      case i: IdentifiedArchimateObject if i.isDeleted => builder += (names.`deleted` -> true)
       case _ =>
     }
     obj match {
-      case n: NamedArchimateObject if n.name.nonEmpty => builder += (`name` -> n.name)
+      case n: NamedArchimateObject if n.name.nonEmpty => builder += (names.`name` -> n.name)
       case _ =>
     }
     obj match {
-      case p: PathBasedArchimateObject if p.path.nonEmpty => builder += (`path` -> p.path)
+      case v: VersionedArchimateObject if v.version > 0 => builder += (names.`version` -> v.version)
       case _ =>
     }
     obj match {
-      case p: PropsArchimateObject if p.properties.value.nonEmpty => builder += (`props` -> p.properties)
+      case p: PathBasedArchimateObject if p.path.nonEmpty => builder += (names.`path` -> p.path)
+      case _ =>
+    }
+    obj match {
+      case p: PropsArchimateObject if p.properties.value.nonEmpty => builder += (names.`props` -> p.properties)
       case _ =>
     }
 
@@ -152,7 +179,7 @@ package object json {
   implicit val elementRW = new Reads[Element] with Writes[Element] {
 
     override def reads(json: JsValue): JsResult[Element] = try {
-      JsSuccess(readElement( (json \ `tp`).as[String], json))
+      JsSuccess(readElement( (json \ names.`tp`).as[String], json))
     } catch {
       case NonFatal(e) => JsError(e.getMessage)
     }
@@ -172,14 +199,14 @@ package object json {
   implicit val relationshipConnectorRW = new Reads[RelationshipConnector] with Writes[RelationshipConnector] {
 
     override def reads(json: JsValue): JsResult[RelationshipConnector] = try {
-      JsSuccess(readRelationshipConnector( (json \ `tp`).as[String], (json \ `rel`).as[String], json))
+      JsSuccess(readRelationshipConnector( (json \ names.`tp`).as[String], (json \ names.`rel`).as[String], json))
     } catch {
       case NonFatal(e) => JsError(e.getMessage)
     }
 
     override def writes(o: RelationshipConnector): JsValue = writeArchimateObject(
       o,
-      `rel` -> o.relationship.name
+      names.`rel` -> o.relationship.name
     )
 
   }
@@ -187,12 +214,12 @@ package object json {
   implicit val nodeConceptRW = new Reads[NodeConcept] with Writes[NodeConcept] {
 
     override def reads(json: JsValue): JsResult[NodeConcept] =
-      ConceptMeta.byName((json \ `tp`).as[String])
+      ConceptMeta.byName((json \ names.`tp`).as[String])
         .map {
           case e: ElementMeta[_] => elementRW.reads(json)
           case c: RelationshipConnectorMeta[_] => relationshipConnectorRW.reads(json)
         }
-        .getOrElse( JsError(s"Unexpected node type: ${(json \ `tp`)}") )
+        .getOrElse( JsError(s"Unexpected node type: ${(json \ names.`tp`)}") )
 
     override def writes(o: NodeConcept): JsValue = o match {
       case e: Element => elementRW.writes(e)
@@ -205,8 +232,8 @@ package object json {
 
     override def writes(o: EdgeConcept): JsValue = writeArchimateObject(
       o,
-      `src` -> o.source.id,
-      `dst` -> o.target.id
+      names.`src` -> o.source.id,
+      names.`dst` -> o.target.id
     ) ++ {
       o match {
         case a: AccessRelationship => Json.obj("access" -> a.access)
@@ -234,10 +261,10 @@ package object json {
 
     override def reads(json: JsValue): JsResult[EdgeConcept] = try {
       JsSuccess {
-        // TODO: do something with relations as src and dst
-        val source = concept((json \ `src`).as[String])
-        val target = concept((json \ `dst`).as[String])
-        readRelationship((json \ `tp`).as[String], source, target, json)
+        // TODO: do something with relations in src and dst
+        val source = concept((json \ names.`src`).as[String])
+        val target = concept((json \ names.`dst`).as[String])
+        readRelationship((json \ names.`tp`).as[String], source, target, json)
       }
     } catch {
       case NonFatal(e) => JsError(e.getMessage)
@@ -250,41 +277,41 @@ package object json {
       o match {
         case e: ViewNodeConcept[_] => writeArchimateObject(
           o,
-          "concept" -> e.concept.id,
-          "pos" -> o.position,
-          "size" -> e.size
+          names.`concept` -> e.concept.id,
+          names.`pos` -> o.position,
+          names.`size` -> e.size
         )
         case r: ViewRelationship[_] => writeArchimateObject(
           o,
-          "concept" -> r.concept.id,
-          `src` -> r.source.id,
-          `dst` -> r.target.id,
-          "points" -> r.points
+          names.`concept` -> r.concept.id,
+          names.`src` -> r.source.id,
+          names.`dst` -> r.target.id,
+          names.`points` -> r.points
         )
         case e: ViewNotes => writeArchimateObject(
           o,
           "text" -> e.text,
-          "pos" -> o.position,
-          "size" -> e.size
+          names.`pos` -> o.position,
+          names.`size` -> e.size
         )
         case c: ViewConnection => writeArchimateObject(
           o,
-          `src` -> c.source.id,
-          `dst` -> c.target.id,
-          "points" -> c.points
+          names.`src` -> c.source.id,
+          names.`dst` -> c.target.id,
+          names.`points` -> c.points
         )
       }
     }
   }
 
   private[json] def fillPosAndSize[T <: ViewNode](res: T, json: JsonValue): T = {
-    (json \ "pos").validate[Point].foreach { pt => res.withPosition(pt) }
-    (json \ "size").validate[Size].foreach { sz => res.withSize(sz) }
+    (json \ names.`pos`).validate[Point].foreach { pt => res.withPosition(pt) }
+    (json \ names.`size`).validate[Size].foreach { sz => res.withSize(sz) }
     res
   }
 
   private[json] def fillPoints[T <: ViewEdge](res: T, json: JsonValue): T = {
-    (json \ "points").validate[Seq[Point]].foreach { pts => res.withPoints(pts) }
+    (json \ names.`points`).validate[Seq[Point]].foreach { pts => res.withPoints(pts) }
     res
   }
 
@@ -326,23 +353,23 @@ package object json {
   }
 
   implicit def viewObjectReads(implicit model: Model, view: View) = new Reads[ViewObject] {
-    override def reads(json: JsValue): JsResult[ViewObject] = (json \ `tp`).as[String] match {
+    override def reads(json: JsValue): JsResult[ViewObject] = (json \ names.`tp`).as[String] match {
       case "viewNodeConcept" => {
-        val concept = node((json \ "concept").as[String])
+        val concept = node((json \ names.`concept`).as[String])
         JsSuccess(readViewNodeConcept(concept, json))
       }
       case "viewRelationship" => {
-        val concept = edge((json \ "concept").as[String])
-        val source = viewConcept((json \ `src`).as[String])
-        val target = viewConcept((json \ `dst`).as[String])
+        val concept = edge((json \ names.`concept`).as[String])
+        val source = viewConcept((json \ names.`src`).as[String])
+        val target = viewConcept((json \ names.`dst`).as[String])
         JsSuccess(readViewRelationship(source, target, concept, json))
       }
       case "viewNotes" => {
         JsSuccess(readViewNotes(json))
       }
       case "viewConnection" => {
-        val source = viewObject((json \ `src`).as[String])
-        val target = viewObject((json \ `dst`).as[String])
+        val source = viewObject((json \ names.`src`).as[String])
+        val target = viewObject((json \ names.`dst`).as[String])
         JsSuccess(readViewConnection(source, target, json))
       }
     }
@@ -350,8 +377,8 @@ package object json {
 
   private[json] def fillViewChildren(vv: View, json: JsValue)(implicit model: Model): View = {
     implicit val view: View = vv
-    fields(json \ "nodes").foreach { case (id, v) => view.objects store(v.as[ViewObject], id) }
-    fields(json \ "edges").foreach { case (id, v) => view.objects.store(v.as[ViewObject], id) }
+    fields(json \ names.`nodes`).foreach { case (id, v) => view._objects store(v.as[ViewObject], id) }
+    fields(json \ names.`edges`).foreach { case (id, v) => view._objects.store(v.as[ViewObject], id) }
     view
   }
 
@@ -365,80 +392,51 @@ package object json {
 
   implicit def viewReads(implicit model: Model): Reads[View] = new Reads[View] {
     override def reads(json: JsValue): JsResult[View] = {
-      JsSuccess(fillViewChildren(readView((json \ `viewpoint`).as[String], json), json))
+      JsSuccess(fillViewChildren(readView((json \ names.`viewpoint`).as[String], json), json))
     }
   }
 
   implicit object ViewWrites extends Writes[View] {
     override def writes(o: View): JsValue = writeArchimateObject(
       o,
-      `viewpoint` -> o.viewpoint.name,
-      "nodes" -> Json.toJson(o.nodes),
-      "edges" -> Json.toJson(o.edges)
+      names.`viewpoint` -> o.viewpoint.name,
+      names.`nodes` -> Json.toJson(o.nodes),
+      names.`edges` -> Json.toJson(o.edges)
     )
   }
 
   implicit object ModelRW extends Reads[Model] with Writes[Model] {
-
+    
     override def reads(json: JsValue): JsResult[Model] = {
       implicit val model = fillArchimateObject(new Model(), json)
-      fields(json \ "nodes").foreach { case (id, v) => model._concepts.store(v.as[NodeConcept], id) }
-      fields(json \ "edges").foreach { case (id, v) => model._concepts.store(v.as[EdgeConcept], id) }
-      fields(json \ "views").foreach { case (id, v) => model._views.store(v.as[View], id) }
+      fields(json \ names.`nodes`).foreach { case (id, v) => model._concepts.store(v.as[NodeConcept], id) }
+      fields(json \ names.`edges`).foreach { case (id, v) => model._concepts.store(v.as[EdgeConcept], id) }
+      fields(json \ names.`views`).foreach { case (id, v) => model._views.store(v.as[View], id) }
       JsSuccess(model)
     }
 
     override def writes(o: Model): JsValue = writeArchimateObject(
       o,
-      "nodes" -> Json.toJson(o.nodes),
-      "edges" -> Json.toJson(o.edges),
-      "views" -> Json.toJson(o.views)
+      names.`nodes` -> Json.toJson(o.nodes),
+      names.`edges` -> Json.toJson(o.edges),
+      names.`views` -> Json.toJson(o.views)
     )
 
   }
 
-  def toJsonPair(vo: ViewObject): JsonObject =
-    Json.obj(vo.id -> vo)
-
-  def toJsonPair(view: View): JsonObject =
-    Json.obj(view.id -> view)
-
-  def toJsonPair(concept: Concept): JsonObject = concept match {
-    case n: NodeConcept => Json.obj(n.id -> n)
-    case r: Relationship => Json.obj(r.id -> r)
+  def toJsonPair(obj: ArchimateObject, id: Identifiable.ID => String = id => id): JsonObject = obj match {
+    case m: Model => Json.obj(id(m.id) -> m)
+    case n: NodeConcept => Json.obj(id(n.id) -> n)
+    case r: Relationship => Json.obj(id(r.id) -> r)
+    case v: View => Json.obj(id(v.id) -> v)
+    case o: ViewObject => Json.obj(id(o.id) -> o)
   }
-
-  def toJsonPair(model: Model): JsonObject =
-    Json.obj(model.id -> model)
 
   def fromJsonString(json: String): Model =
     fields(Json.parse(json)).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
 
   def toJsonString(model: Model): String =
     toJsonPair(model).toString()
-
-  def toJsonDiff(concept: Concept, op: String): JsonObject = {
-    val field = concept match {
-      case _: NodeConcept => "nodes"
-      case _: EdgeConcept => "edges"
-    }
-    Json.obj(s"${field}${op}" -> toJsonPair(concept))
-  }
-
-  def toJsonDiff(view: View, op: String): JsonObject = {
-    val field = "views"
-    Json.obj(s"${field}${op}" -> toJsonPair(view))
-  }
-
-  def toJsonDiff(view: View, vo: ViewObject, op: String): JsonObject = {
-    val field = vo match {
-      case _: ViewNode => "nodes"
-      case _: ViewEdge => "edges"
-    }
-    Json.obj(s"views@" -> Json.obj(
-      view.id -> Json.obj(s"${field}${op}" -> toJsonPair(vo))
-    ))
-  }
-
+  
 
 }

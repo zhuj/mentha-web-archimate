@@ -16,7 +16,7 @@ object Concepts {
   * All concepts are are vertex (could be source and target for an edge)
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap03.html#_Toc451757929 Language Structure ArchiMate® 3.0 Specification ]]
   */
-sealed abstract class Concept extends IdentifiedArchimateObject with PropsArchimateObject with Vertex {
+sealed abstract class Concept extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
   def meta: ConceptMeta[_]
   private[model] def checkIncomingRelationship(incoming: Relationship): Boolean = incoming.meta.isLinkPossible(incoming.source.meta, this.meta)
   private[model] def checkOutgoingRelationship(outgoing: Relationship): Boolean = outgoing.meta.isLinkPossible(this.meta, outgoing.target.meta)

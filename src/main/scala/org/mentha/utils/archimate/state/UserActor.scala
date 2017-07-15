@@ -27,7 +27,7 @@ object UserActor {
     import scala.concurrent.duration._
     val in = Flow[ws.Message]
       .collect { case ws.TextMessage.Strict(text) => UserActor.IncomingMessage(text) }
-      .keepAlive( 10 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
+      .keepAlive( 30 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
       .to { actorRefSink }
 
     // jet another actor (it will subscribe to the userActor answers)
@@ -57,7 +57,7 @@ class UserActor(stateActor: ActorRef) extends Actor {
       case UserActor.IncomingMessage(text) => {
         val msg = Try { ModelState.parseMessage(text) } match {
           case Success(request) => StateActor.SubscriberSend(request)
-          case Failure(error) => StateActor.SubscriberFail(error)
+          case Failure(error) => StateActor.SubscriberFail(text, error)
         }
         stateActor ! msg
       }

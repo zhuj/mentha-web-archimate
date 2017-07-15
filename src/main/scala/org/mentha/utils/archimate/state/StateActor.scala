@@ -11,7 +11,7 @@ object StateActor {
   sealed trait Event {}
   case class SubscriberJoin() extends Event {}
   case class SubscriberSend(request: ModelState.Request) extends Event {}
-  case class SubscriberFail(error: Throwable) extends Event {}
+  case class SubscriberFail(request: String, error: Throwable) extends Event {}
 
 }
 
@@ -41,7 +41,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       changeSet => {
         Try { commit(changeSet) } match {
           case Failure(error) => {
-            execute(user, error)
+            execute(user, Left(changeSet.command), error)
             saveSnapshot(ModelState.toJson(state))
           }
           case Success(json) => {
@@ -58,8 +58,8 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     }
   }
 
-  private[state] def execute(user: String, error: Throwable): Unit = {
-    val fail = ModelState.Responses.ModelStateFail(state.model.id, error)
+  private[state] def execute(user: String, request: Either[ModelState.Request, String], error: Throwable): Unit = {
+    val fail = ModelState.Responses.ModelStateError(state.model.id, request, error)
     dispatchUser(fail, user)
     answerDirectly(fail, user)
   }
@@ -67,15 +67,15 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private[state] def execute(user: String, command: ModelState.Command): Unit = {
     Try { prepare(command) } match {
       case Success(changeSet) => execute(user, changeSet)
-      case Failure(error) => execute(user, error)
+      case Failure(error) => execute(user, Left(command), error)
     }
   }
 
   private[state] def execute(user: String, request: ModelState.Query): Unit = {
     Try { query(request) } match {
-      case Failure(error) => execute(user, error)
+      case Failure(error) => execute(user, Left(request), error)
       case Success(json) => {
-        val response = ModelState.Responses.ModelStateJson(modelId, request, json)
+        val response = ModelState.Responses.ModelObjectJson(modelId, request, json)
         dispatchUser(response, user)
         answerDirectly(response, user)
       }
@@ -117,8 +117,9 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       context.watch(user)
       execute(name, ModelState.Queries.GetModel(id = state.model.id))
     }
-    case StateActor.SubscriberFail(error) => {
-      execute(_name(sender()), error)
+    case StateActor.SubscriberFail(request, error) => {
+      // TODO: move this case out ot the StateActor
+      execute(_name(sender()), Right(request), error)
     }
     case StateActor.SubscriberSend(cmd) => cmd match {
       case query: ModelState.Query => execute(_name(sender()), query)
