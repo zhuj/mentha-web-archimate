@@ -15,12 +15,18 @@ object ModelState {
   type Type = String
   type ID = Identifiable.ID
 
-  private[state] trait StateOps {
-    def prepare: PartialFunction[Command, ChangeSet]
-  }
+  private[state] implicit class ImplicitModel(model: Model) {
 
-  private[state] implicit class ImplicitModel(model: Model) extends StateOps {
-    override def prepare: PartialFunction[Command, ChangeSet] = {
+    private def withPathAndName(params: JsonObject)(callback: (List[String], String) => Unit) = {
+      val pathOpt = (params \ json.names.`path`).asOpt[List[String]]
+      val nameOpt = (params \ json.names.`name`).asOpt[String]
+      (pathOpt, nameOpt) match {
+        case (Some(path), Some(name)) => callback(path, name)
+        case _ =>
+      }
+    }
+
+    val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.AddElement(tp, _) => {
         val eMeta = nodes.mapElements.getOrElse(tp, throw new IllegalStateException(s"Unexpected element type: ${tp}"))
         ChangeSets.AddConcept(Identifiable.generateId(), c)
@@ -31,25 +37,28 @@ object ModelState {
         ChangeSets.AddConcept(Identifiable.generateId(), c)
       }
       case c @ Commands.AddRelationship(tp, srcId, dstId, _) => {
+        // TODO: move this to ModelValidator
         val rMeta = edges.mapRelations.getOrElse(tp, throw new IllegalStateException(s"Unexpected relationship type: ${tp}"))
         val src = model.concept[Concept](srcId)
         val dst = model.concept[Concept](dstId)
-        require(rMeta.isLinkPossible(src.meta, dst.meta))
+        require(rMeta.isLinkPossible(src.meta, dst.meta)) // TODO: implement me
         ChangeSets.AddConcept(Identifiable.generateId(), c)
       }
       case c @ Commands.AddView(_, params) => {
-        // TODO: val path = (params \ json.`path`).as[List[String]]
-        // TODO: val name = (params \ json.`name`).as[String]
-        // TODO: require(model.findView(path, name).isEmpty, s"Duplicate view name: ${name}.")
-        ChangeSets.AddView(Identifiable.generateId(), c)
+        // TODO: move this to ModelValidator
+        withPathAndName(params) {
+          case (path, name) => require(model.findView(path, name).isEmpty, s"Duplicate view name: ${name}.")
+        }
+         ChangeSets.AddView(Identifiable.generateId(), c)
       }
       case c @ Commands.ModView(id, params) => {
-        // TODO: val path = (params \ json.`path`).as[List[String]]
-        // TODO: val name = (params \ json.`name`).as[String]
-        // TODO: model.findView(path, name).isEmpty match {
-        // TODO:   case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
-        // TODO:   case None =>
-        // TODO: }
+        // TODO: move this to ModelValidator
+        withPathAndName(params) {
+          case (path, name) => model.findView(path, name) match {
+            case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
+            case None =>
+          }
+         }
         ChangeSets.ModView(c)
       }
       case c @ Commands.DelView(_) => {
@@ -58,77 +67,119 @@ object ModelState {
     }
   }
 
-  private[state] implicit class ImplicitConcept(concept: Concept) extends StateOps {
-    override def prepare: PartialFunction[Command, ChangeSet] = {
+  private[state] implicit class ImplicitConcept(concept: Concept) {
+    val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.ModConcept(_, _) => ChangeSets.ModConcept(c)
       case c @ Commands.DelConcept(_) => ChangeSets.DelConcept(c)
     }
   }
 
-  private[state] implicit class ImplicitView(view: View) extends StateOps {
-    override def prepare: PartialFunction[Command, ChangeSet] = {
-      case c @ Commands.AddViewNotes(_, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewConnection(_, _, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewNodeConcept(_, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewRelationship(_, _, _, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
+  private[state] implicit class ImplicitView(view: View) {
+    val prepare: PartialFunction[Command, ChangeSet] = {
+      case c @ Commands.AddViewNotes(_, _) => {
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewConnection(_, src, dst, _) => {
+        require(
+          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          s"Duplicate edge: ${src} -> ${dst}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
+        require(
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          s"Duplicate concept: ${conceptId}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
+        require(
+          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          s"Duplicate edge: ${src} -> ${dst}"
+        )
+        require(
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          s"Duplicate concept: ${conceptId}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
     }
   }
 
-  private[state] implicit class ImplicitViewObject(viewObject: ViewObject) extends StateOps {
-    override def prepare: PartialFunction[Command, ChangeSet] = {
+  private[state] implicit class ImplicitViewObject(viewObject: ViewObject) {
+    val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.ModViewObject(_, _, _) => ChangeSets.ModViewObject(c)
       case c @ Commands.DelViewObject(_, _) => ChangeSets.DelViewObject(c)
     }
   }
 
-  sealed trait WithParams {
-    def params: JsonObject
-  }
-
-  sealed trait ById[T] {
-    def id: ID
-  }
-
-  sealed trait Add[T] extends WithParams {
-
-  }
-
-  sealed trait Mod[T] extends ById[T] with WithParams {
-
-  }
-
-  sealed trait Del[T] extends ById[T] {
-
-  }
-
-  sealed trait ConnectionParams {
+  /** */
+  private[state] sealed trait ConnectionParams {
     def src: ID
     def dst: ID
   }
 
-  sealed trait JsonSerializable {
+  /** indicates that the request has a set of parameters to be used */
+  sealed trait WithParams {
+    def params: JsonObject
+  }
+
+  /** indicates that the request has the current object id */
+  sealed trait ById[T] {
+    def id: ID
+  }
+
+  /** indicates that the request is about object creation */
+  sealed trait Add[T] extends WithParams {
+
+  }
+
+  /** indicates that the request is about object modification */
+  sealed trait Mod[T] extends ById[T] with WithParams {
+
+  }
+
+  /** indicates that the request is about object deletion */
+  sealed trait Del[T] extends ById[T] {
+
+  }
+
+  /**
+    * OUTGOING MESSAGE
+    * Result of the request.
+    */
+  sealed trait Response {
     def toJson: JsonObject
   }
 
-  //
-  sealed trait Response extends JsonSerializable {}
-
-  //
+  /**
+    * INCOMING MESSAGE
+    * An incoming request - parsed incoming message text
+    */
   sealed trait Request {}
 
-  //
+  /**
+    * Request to do something (it always changes the state)
+    */
   sealed trait Command extends Request {}
 
-  //
+  /**
+    * Request to look up the state (does not change the state)
+    */
   sealed trait Query extends Request {}
 
-  //
+  /**
+    * 2nd phase of state changing process:
+    * the command is parsed, verified and connected to the model (all the related data is stored in this wrapper)
+    */
   sealed trait ChangeSet {
+    def command: Command
     def commit(state: ModelState): Try[JsonObject]
   }
 
 
-  //
+  /** nothing to do request (neither a command nor a query) */
   case class Noop() extends Request {}
 
   //
@@ -137,8 +188,11 @@ object ModelState {
     sealed trait Get[T] extends Query with ById[T] {}
 
     case class GetModel(id: ID = Identifiable.EMPTY_ID) extends Get[Model] {}
+
     case class GetConcept(id: ID) extends Get[Concept] {}
+
     case class GetView(id: ID) extends Get[View] {}
+
     case class GetViewObject(viewId: ID, id: ID) extends Get[ViewObject] {}
   }
 
@@ -202,6 +256,45 @@ object ModelState {
 
   object ChangeSets {
 
+    private val OP_ADD = "+"
+    private val OP_DEL = "-"
+    private val OP_MOD = "@"
+    private val OP_SET = "="
+
+    private def toJsonDiff(model: Model, concept: Concept, op: String): JsonObject = {
+      val field = concept match {
+        case _: NodeConcept => json.names.`nodes`
+        case _: EdgeConcept => json.names.`edges`
+      }
+      Json.obj(s"${OP_MOD}${field}" -> json.toJsonPair(
+        concept,
+        id => s"${op}${id}"
+      ))
+    }
+
+    private def toJsonDiff(model: Model, view: View, op: String): JsonObject = {
+      val field = "views"
+      Json.obj(s"${OP_MOD}${field}" -> json.toJsonPair(
+        view,
+        id => s"${op}${id}"
+      ))
+    }
+
+    private def toJsonDiff(model: Model, view: View, vo: ViewObject, op: String): JsonObject = {
+      val field = vo match {
+        case _: ViewNode => json.names.`nodes`
+        case _: ViewEdge => json.names.`edges`
+      }
+      Json.obj(s"${OP_MOD}views" -> Json.obj(
+        s"${OP_MOD}${view.id}" -> Json.obj(
+          s"${OP_MOD}${field}" -> json.toJsonPair(
+            vo,
+            id => s"${op}${id}"
+          )
+        )
+      ))
+    }
+
     sealed trait ModelChangeSet extends ChangeSet {
       def command: Command
       def commit(model: Model): Try[JsonObject]
@@ -218,7 +311,7 @@ object ModelState {
             case Commands.AddRelationship(tp, src, dst, params) => json.readRelationship(tp, model.concept[Concept](src), model.concept[Concept](dst), params)
           }
         }
-        json.toJsonDiff(concept, "+")
+        toJsonDiff(model, concept, OP_ADD)
       }
     }
 
@@ -231,7 +324,7 @@ object ModelState {
           case rc: RelationshipConnector => json.fillRelationshipConnector(rc, params)
           case rel: Relationship => json.fillRelationship(rel, params)
         }
-        json.toJsonDiff(concept, "@")
+        toJsonDiff(model, concept, OP_SET)
       }
     }
 
@@ -239,7 +332,7 @@ object ModelState {
       override def id: ID = command.id
       override def commit(model: Model): Try[JsonObject] = Try {
         val concept = model.concept[Concept](id).markAsDeleted()
-        json.toJsonDiff(concept, "-")
+        toJsonDiff(model, concept, OP_DEL)
       }
     }
 
@@ -247,7 +340,7 @@ object ModelState {
       override def params: JsonObject = command.params
       override def commit(model: Model): Try[JsonObject] = Try {
         val v = model.add(newId) { json.readView(command.viewpoint, params) }
-        json.toJsonDiff(v, "+")
+        toJsonDiff(model, v, OP_ADD)
       }
     }
 
@@ -256,7 +349,7 @@ object ModelState {
       override def params: JsonObject = command.params
       override def commit(model: Model): Try[JsonObject] = Try {
         val v = json.fillView(model.view(id), params)
-        json.toJsonDiff(v, "@")
+        toJsonDiff(model, v, OP_SET)
       }
     }
 
@@ -264,7 +357,7 @@ object ModelState {
       override def id: ID = command.id
       override def commit(model: Model): Try[JsonObject] = Try {
         val v = model.view(id).markAsDeleted()
-        json.toJsonDiff(v, "-")
+        toJsonDiff(model, v, OP_DEL)
       }
     }
 
@@ -292,7 +385,7 @@ object ModelState {
             case Commands.AddViewRelationship(_, src, dst, conceptId, params) => json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params)
           }
         }
-        json.toJsonDiff(view, vo, "+")
+        toJsonDiff(model, view, vo, OP_ADD)
       }
     }
 
@@ -307,7 +400,7 @@ object ModelState {
           case vnc: ViewNodeConcept[_] => json.fillViewNodeConcept(vnc, params)
           case vrs: ViewRelationship[_] => json.fillViewRelationship(vrs, params)
         }
-        json.toJsonDiff(view, vo, "@")
+        toJsonDiff(model, view, vo, OP_SET)
       }
     }
 
@@ -316,7 +409,7 @@ object ModelState {
       override def id: ID = command.id
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
         val vo = view.get[ViewObject](id).markAsDeleted()
-        json.toJsonDiff(view, vo, "-")
+        toJsonDiff(model, view, vo, OP_DEL)
       }
     }
 
@@ -329,7 +422,7 @@ object ModelState {
           case Commands.PlaceViewNode(_, id, position, size, _) => view.get[ViewNode](id).withPosition(position).withSize(size)
           case Commands.PlaceViewEdge(_, id, points, _) => view.get[ViewEdge](id).withPoints(points)
         }
-        json.toJsonDiff(view, vo, "@")
+        toJsonDiff(model, view, vo, OP_SET)
       }
     }
 
@@ -337,40 +430,60 @@ object ModelState {
 
   object Responses {
 
-    case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, json: ModelState.JsonObject) extends ModelState.Response {
+    /**
+      * RESPONSE: ChangeSet is commit, the difference is provided.
+      * @param modelId the model
+      * @param changeSet the changeSet built from the incoming command
+      * @param diffJson the model diff JSON
+      */
+    case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, diffJson: ModelState.JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
-        "commit" -> json
+        "_tp" -> "commit",
+        "commit" -> diffJson
       )
     }
 
-    case class ModelStateJson(modelId: String, request: ModelState.Query, json: ModelState.JsonObject) extends ModelState.Response {
+    /**
+      * RESPONSE: Requested object json
+      * @param modelId the model
+      * @param request the original request
+      * @param objectJson requested object json
+      */
+    case class ModelObjectJson(modelId: String, request: ModelState.Query, objectJson: ModelState.JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
-        "object" -> json
+        "_tp" -> "object",
+        "object" -> objectJson
       )
     }
 
-    case class ModelStateNoop(modelId: String) extends ModelState.Response {
+    /**
+      * RESPONSE: There was an error
+      * @param modelId the model
+      * @param request original request, either parsed request or the original incoming message
+      * @param error the error has been thrown
+      */
+    case class ModelStateError(modelId: String, request: Either[ModelState.Request, String], error: Throwable) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
-        "noop" -> JsonObject.empty
-      )
-    }
-
-    case class ModelStateFail(modelId: String, error: Throwable) extends ModelState.Response {
-      override def toJson: JsonObject = Json.obj(
+        "_tp" -> "error",
         "error" -> error.getMessage
       )
     }
 
+    /**
+      * RESPONSE: The client does nothing for a long time, we are still here...
+      * @param modelId the model
+      */
+    case class ModelStateNoop(modelId: String) extends ModelState.Response {
+      override def toJson: JsonObject = Json.obj(
+        "_tp" -> "noop",
+        "noop" -> JsonObject.empty
+      )
+    }
+
+
   }
 
-  def fromJson(json: String): ModelState = new ModelState(
-    org.mentha.utils.archimate.model.json.fromJsonString(json)
-  )
-
-  def toJson(state: ModelState): String = {
-    org.mentha.utils.archimate.model.json.toJsonString(state.model)
-  }
-
+  /** it translates given incomming message text to a request */
   def parseMessage(value: String): ModelState.Request = {
     import play.api.libs.json._
     val (cmd, js) = Json.parse(value) match {
@@ -386,14 +499,14 @@ object ModelState {
       case "get-view" => Queries.GetView(id = (js \ "id").as[ID])
       case "get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
 
-      case "add-element" => Commands.AddElement(tp = (js \ json.`tp`).as[Type], params = js)
-      case "add-connector" => Commands.AddConnector(tp = (js \ json.`tp`).as[Type], rel = (js \ json.`rel`).as[Type], params = js)
-      case "add-relationship" => Commands.AddRelationship(tp = (js \ json.`tp`).as[Type], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
-      case "add-view" => Commands.AddView(viewpoint = (js \ json.`viewpoint`).as[Type], params = js)
+      case "add-element" => Commands.AddElement(tp = (js \ json.names.`tp`).as[Type], params = js)
+      case "add-connector" => Commands.AddConnector(tp = (js \ json.names.`tp`).as[Type], rel = (js \ json.names.`rel`).as[Type], params = js)
+      case "add-relationship" => Commands.AddRelationship(tp = (js \ json.names.`tp`).as[Type], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], params = js)
+      case "add-view" => Commands.AddView(viewpoint = (js \ json.names.`viewpoint`).as[Type], params = js)
       case "add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
-      case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], params = js)
+      case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], params = js)
       case "add-view-node-concept" => Commands.AddViewNodeConcept(viewId = (js \ "viewId").as[ID], conceptId = (js \ "concept").as[ID], params = js)
-      case "add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.`src`).as[ID], dst = (js \ json.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
+      case "add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
 
       case "del-concept" => Commands.DelConcept(id = (js \ "id").as[ID])
       case "del-view" => Commands.DelView(id = (js \ "id").as[ID])
@@ -408,9 +521,19 @@ object ModelState {
     }
   }
 
+  /** deserialize from string */
+  private[state] def fromJson(json: String): ModelState = new ModelState(
+    org.mentha.utils.archimate.model.json.fromJsonString(json)
+  )
+
+  /** serialize to string */
+  private[state] def toJson(state: ModelState): String = {
+    org.mentha.utils.archimate.model.json.toJsonString(state.model)
+  }
+
 }
 
-class ModelState(private[state] var model: Model = new Model) {
+class ModelState(private[state] val model: Model = new Model) {
 
   import ModelState._
 

@@ -1,10 +1,8 @@
 package org.mentha.utils.uuid;
 
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Random;
-import java.util.UUID;
 
 public class FastTimeBasedIdGenerator {
 
@@ -17,6 +15,36 @@ public class FastTimeBasedIdGenerator {
   private static final FastTimeBasedIdGenerator INSTANCE = new FastTimeBasedIdGenerator();
   public static String generateId(long typeIdentifier) {
     return INSTANCE.generateIdFromTimestamp(typeIdentifier, System.currentTimeMillis());
+  }
+
+  final static char[] digits = {
+          '0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' ,
+          '8' , '9' , 'a' , 'b' , 'c' , 'd' , 'e' , 'f' ,
+          'g' , 'h' , 'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
+          'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' ,
+          'w' , 'x' , 'y' , 'z' , 'A' , 'B' , 'C' , 'D' ,
+          'E' , 'F' , 'G' , 'H' , 'I' , 'J' , 'K' , 'L' ,
+          'M' , 'N' , 'O' , 'P' , 'Q' , 'R' , 'S' , 'T' ,
+          'U' , 'V' , 'W' , 'X' , 'Y' , 'Z' , '$' , '#'
+  };
+
+  private static int formatUnsignedLong(long val, int shift, char[] buf, int offset, int len) {
+    int charPos = len;
+    int radix = 1 << shift;
+    int mask = radix - 1;
+    do {
+      buf[offset + --charPos] = digits[((int) val) & mask];
+      val >>>= shift;
+    } while (charPos > 0);
+
+    return charPos;
+  }
+
+  private String toString(long msb, long lsb) {
+    char[] buff = new char[22];
+    formatUnsignedLong(msb, 6, buff, 0, 11);
+    formatUnsignedLong(lsb, 6, buff, 11, 11);
+    return new String(buff);
   }
 
   private String generateIdFromTimestamp(long typeIdentifier, long currentTimeMillis) {
@@ -32,7 +60,7 @@ public class FastTimeBasedIdGenerator {
 
     long msb = (currentTimeMillis << 16) | (typeIdentifier & 0xffff);
     long lsb = (hostIdentifier << 16) | (sequenceNumber);
-    return Long.toUnsignedString(msb,32) + ":" + Long.toUnsignedString(lsb, 32);
+    return toString(msb, lsb);
   }
 
   private static long getHostId() {
@@ -48,10 +76,9 @@ public class FastTimeBasedIdGenerator {
       e.printStackTrace();
     }
 
-    Random random = new Random(0);
     if (mac == null) {
       mac = new byte[6];
-      random.nextBytes(mac);
+      new Random(0).nextBytes(mac);
     }
 
     // Converts array of unsigned bytes to an long

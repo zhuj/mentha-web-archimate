@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
   * For a general definition of model, see the TOGAF framework - http://pubs.opengroup.org/architecture/archimate3-doc/front.html#ref4.
   * @see
   */
-class Model extends IdentifiedArchimateObject with NamedArchimateObject {
+class Model extends IdentifiedArchimateObject with VersionedArchimateObject with NamedArchimateObject {
 
   private[model] val _concepts: Storage[Concept] = Storage.buildStorage
   private[model] val _views: Storage[View] = Storage.buildStorage

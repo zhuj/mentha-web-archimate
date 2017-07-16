@@ -34,8 +34,7 @@ object View {
 
 }
 
-
-sealed abstract class ViewObject extends IdentifiedArchimateObject with Vertex {
+sealed abstract class ViewObject extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
   def position: Point
 }
 
@@ -117,24 +116,23 @@ final class ViewRelationship[T <: Relationship](val source: ViewObject with View
   * http://pubs.opengroup.org/architecture/archimate3-doc/chap14.html
   * Viewpoints are a means to focus on particular aspects and layers of the architecture. These aspects and layers are determined by the concerns of a stakeholder with whom communication takes place.
   */
-final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends IdentifiedArchimateObject with PathBasedArchimateObject with NamedArchimateObject {
+final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends IdentifiedArchimateObject  with VersionedArchimateObject with PathBasedArchimateObject with NamedArchimateObject {
   require(null != viewpoint, "Viewpoint is required.")
 
-  private[model] val objects: Storage[ViewObject] = Storage.buildStorage
+  private[model] val _objects: Storage[ViewObject] = Storage.buildStorage
 
-  def get[X <: ViewObject](id: Identifiable.ID): X = objects(id)
-  def add[X <: ViewObject](id: Identifiable.ID)(vo: X): X = objects.store(vo, id)
-  def add[X <: ViewObject](vo: X): X = objects.store(vo)
+  def get[X <: ViewObject](id: Identifiable.ID): X = _objects(id)
+  def add[X <: ViewObject](id: Identifiable.ID)(vo: X): X = _objects.store(vo, id)
+  def add[X <: ViewObject](vo: X): X = _objects.store(vo)
 
-  def select[X <: ViewObject](implicit tp: ClassTag[X]): Iterable[X] = objects.select[X](tp)
-  def nodes: Iterable[ViewNode] = select[ViewNode]
-  def edges: Iterable[ViewEdge] = select[ViewEdge]
+  def objects[X <: ViewObject](implicit tp: ClassTag[X]): Iterable[X] = _objects.select[X](tp)
+  def nodes: Iterable[ViewNode] = objects[ViewNode]
+  def edges: Iterable[ViewEdge] = objects[ViewEdge]
 
   @transient private[model] val _locate_cache = new Cache()
   @inline private[model] def locate[T <: ViewConcept with ViewObject](concept: Concept): Option[T] =
     _locate_cache.cached(concept.id) {
-      this
-        .objects.values
+      this._objects.values
         .collectFirst { case v: ViewConcept if (v.concept == concept) => v.asInstanceOf[T] }
     }
 
