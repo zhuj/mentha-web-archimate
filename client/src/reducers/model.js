@@ -60,7 +60,7 @@ const applyError = (model, payload) => {
 };
 
 
-const model = (state = {}, action) => {
+const reducer = (state = {}, action) => {
   switch (action.type) {
     case MODEL_NOOP_RECEIVED: return applyNoop(state, action.payload);
     case MODEL_OBJECT_RECEIVED: return applyObject(state, action.payload);
@@ -70,4 +70,4 @@ const model = (state = {}, action) => {
   return state;
 };
 
-export default model
+export default reducer

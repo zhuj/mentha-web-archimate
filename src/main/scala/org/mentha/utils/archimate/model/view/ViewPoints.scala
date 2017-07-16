@@ -11,7 +11,12 @@ import org.mentha.utils.archimate.model.nodes.ElementMeta
   */
 sealed trait ViewPoint {
   val name: String = StringUtils.stripEnd(
-    StringUtils.uncapitalize(this.getClass.getSimpleName),
+    StringUtils.uncapitalize(
+      StringUtils.substringBeforeLast(
+        this.getClass.getSimpleName,
+        "ViewPoint"
+      )
+    ),
     "$"
   )
   def possibleElements: Seq[ElementMeta[_]]

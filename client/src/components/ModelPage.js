@@ -1,12 +1,18 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { connectModel } from '../actions'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend';
+
+import ViewList from './ViewList'
+
+import * as actions from '../actions'
 
 const loadData = ({ id, connectModel }) => {
   connectModel(id)
 }
 
+@DragDropContext(HTML5Backend)
 class ModelPage extends React.Component {
 
   componentWillMount() {
@@ -21,22 +27,22 @@ class ModelPage extends React.Component {
 
   render() {
     const { model, id } = this.props
-    if (!model) {
-      return <h1><i>Loading model with id={id}</i></h1>
-    }
     return (
       <div>
+        <ViewList/>
       </div>
     )
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const id = ownProps.params.id.toLowerCase()
-  const model = state.model
+  const id = ownProps.params.id; // 'params' goes from router
+  const model = state.model;
   return { id, model }
-}
+};
 
-export default connect(mapStateToProps, {
-  connectModel
-})(ModelPage)
+const mapDispatchToProps = (dispatch) => ({
+  connectModel: (id) => dispatch(actions.connectModel(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModelPage)

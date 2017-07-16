@@ -76,10 +76,34 @@ object ModelState {
 
   private[state] implicit class ImplicitView(view: View) {
     val prepare: PartialFunction[Command, ChangeSet] = {
-      case c @ Commands.AddViewNotes(_, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewConnection(_, _, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewNodeConcept(_, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
-      case c @ Commands.AddViewRelationship(_, _, _, _, _) => ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      case c @ Commands.AddViewNotes(_, _) => {
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewConnection(_, src, dst, _) => {
+        require(
+          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          s"Duplicate edge: ${src} -> ${dst}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
+        require(
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          s"Duplicate concept: ${conceptId}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
+        require(
+          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          s"Duplicate edge: ${src} -> ${dst}"
+        )
+        require(
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          s"Duplicate concept: ${conceptId}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
     }
   }
 
