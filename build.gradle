@@ -8,8 +8,8 @@ apply plugin: "maven"
 sourceCompatibility = 1.8
 
 ext {
-    scalaLibVersion = "2.11"
-    scalaVersion = "${scalaLibVersion}.8"
+    scalaLibVersion = "2.12"
+    scalaVersion = "${scalaLibVersion}.2"
     zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
     slf4j = "1.7.13"
     //orientDbVersion = "3.0.0m1"
@@ -32,8 +32,7 @@ dependencies {
     compile "org.scala-lang:scala-reflect:${scalaVersion}"
 
     compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
-    compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.4"
-    compile "org.scala-lang.modules:scala-swing_${scalaLibVersion}:1.0.2"
+    compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.6"
 
     compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
