@@ -74,32 +74,39 @@ object ModelState {
     }
   }
 
-  private[state] implicit class ImplicitView(view: View) {
+  private[state] implicit class ImplicitView(data: (Model, View)) {
+    val (model, view) = data
     val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.AddViewNotes(_, _) => {
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
       }
       case c @ Commands.AddViewConnection(_, src, dst, _) => {
+        val source = view.get[ViewObject](src)
+        val target = view.get[ViewObject](dst)
         require(
-          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
           s"Duplicate edge: ${src} -> ${dst}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
       }
       case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
+        val concept = model.concept[NodeConcept](conceptId)
         require(
-          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == concept) },
           s"Duplicate concept: ${conceptId}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
       }
       case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
+        val concept = model.concept[Relationship](conceptId)
+        val source = view.get[ViewObject with ViewConcept](src)
+        val target = view.get[ViewObject with ViewConcept](dst)
         require(
-          !view.objects[ViewEdge].exists { edge => (edge.source.id == src && edge.target.id == dst) },
+          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
           s"Duplicate edge: ${src} -> ${dst}"
         )
         require(
-          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == conceptId) },
+          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == concept) },
           s"Duplicate concept: ${conceptId}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
@@ -380,7 +387,7 @@ object ModelState {
         val vo = view.add[ViewObject](newId) {
           command match {
             case Commands.AddViewNotes(_, p) => json.readViewNotes(p)
-            case Commands.AddViewConnection(_, src, dst, params) => json.readViewConnection(view.get(src), view.get(dst), params)
+            case Commands.AddViewConnection(_, src, dst, params) => json.readViewConnection(view.get[ViewObject](src), view.get(dst), params)
             case Commands.AddViewNodeConcept(_, conceptId, params) => json.readViewNodeConcept(model.concept(conceptId), params)
             case Commands.AddViewRelationship(_, src, dst, conceptId, params) => json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params)
           }
@@ -542,12 +549,12 @@ class ModelState(private[state] val model: Model = new Model) {
     case Commands.AddConnector(_, _, _) => model.prepare(command)
     case Commands.AddRelationship(_, _, _, _) => model.prepare(command)
     case Commands.AddView(_, _) => model.prepare(command)
-    case Commands.AddViewNotes(viewId, _) => view(viewId).prepare(command)
-    case Commands.AddViewConnection(viewId, _,_, _) => view(viewId).prepare(command)
-    case Commands.AddViewNodeConcept(viewId, _,_) => view(viewId).prepare(command)
-    case Commands.AddViewRelationship(viewId, _,_, _, _) => view(viewId).prepare(command)
+    case Commands.AddViewNotes(viewId, _) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewConnection(viewId, _,_, _) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewNodeConcept(viewId, _,_) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewRelationship(viewId, _,_, _, _) => (model, view(viewId)).prepare(command)
     case c: Commands.ConceptCommand with ById[_] => concept(c.id).prepare(command)
-    case c: Commands.ViewCommand with ById[_] => view(c.id).prepare(command)
+    case c: Commands.ViewCommand with ById[_] => (model, view(c.id)).prepare(command)
     case c: Commands.ViewObjectCommand with ById[_] => viewObject(c.viewId, c.id).prepare(command)
   }
 

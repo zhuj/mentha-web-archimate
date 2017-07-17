@@ -121,7 +121,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
 
   private[model] val _objects: Storage[ViewObject] = Storage.buildStorage
 
-  def get[X <: ViewObject](id: Identifiable.ID): X = _objects(id)
+  def get[X <: ViewObject](id: Identifiable.ID)(implicit tp: ClassTag[X]): X = _objects[X](id)
   def add[X <: ViewObject](id: Identifiable.ID)(vo: X): X = _objects.store(vo, id)
   def add[X <: ViewObject](vo: X): X = _objects.store(vo)
 

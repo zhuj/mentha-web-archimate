@@ -1,5 +1,5 @@
-import * as RJD from 'react-js-diagrams';
-import * as _ from 'lodash';
+import * as RJD from '../rjd'
+import * as _ from 'lodash'
 
 export const PORT_NAME = "port";
 

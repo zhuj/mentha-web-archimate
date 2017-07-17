@@ -1,5 +1,5 @@
-import * as RJD from 'react-js-diagrams';
-import * as _ from 'lodash';
+import * as RJD from '../rjd'
+import * as _ from 'lodash'
 
 export class BaseLinkModel extends RJD.LinkModel {
   constructor(linkType = 'default') {
@@ -18,13 +18,17 @@ export class BaseLinkModel extends RJD.LinkModel {
     this.deSerialize({
       id: id,
       type: /*edge._tp*/ 'default',
-      points: edge.points
+      points: [
+        {x: 0, y: 0},
+        ...edge.points,
+        {x: 0, y: 0}
+      ]
     });
   }
 
 }
 
-export class BaseLinkInstanceFactory extends RJD.LinkInstanceFactory {
+export class BaseLinkInstanceFactory extends RJD.AbstractInstanceFactory {
   constructor() {
     super('BaseLinkModel');
   }

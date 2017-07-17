@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { MODEL_NOOP_RECEIVED, MODEL_OBJECT_RECEIVED, MODEL_COMMIT_RECEIVED, MODEL_ERROR_RECEIVED } from "../actions"
 
 const applyNoop = (model, payload) => {
@@ -26,7 +27,7 @@ const applyObject = (model, payload) => {
 const applyCommit = (model, payload) => {
 
   const apply = (model, obj) => {
-    model = Object.assign({}, model);
+    model = { ...model };
 
     for (const name of Object.getOwnPropertyNames(obj)) {
       const prefix = name.substring(0, 1);

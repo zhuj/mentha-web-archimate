@@ -1,26 +1,27 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import _ from 'lodash';
-import * as RJD from 'react-js-diagrams';
+import React from 'react'
+import { connect } from 'react-redux'
+import { DropTarget } from 'react-dnd'
 
-import {DropTarget} from 'react-dnd';
+import _ from 'lodash'
+import * as RJD from './rjd'
 
-import diagramEngineBuilder from './engine';
-import * as actions from '../../actions/index';
+import diagramEngineBuilder from './engine'
+import { PORT_NAME } from './base/BasePortModel'
+import * as actions from '../../actions/index'
 
-import './rjd.sass.scss';
+import './rjd.sass.scss'
 
 
 const nodesTarget = {
   drop(props, monitor, component) {
-    // const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
-    // const {left = 0, top = 0} = diagramEngine.canvas.getBoundingClientRect();
-    // const diagramModel = diagramEngine.diagramModel;
-    // const {offsetX, offsetY} = diagramModel;
-    // const x = pageX - left - offsetX;
-    // const y = pageY - top - offsetY;
-    // const item = monitor.getItem();
-    //
+    const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
+    const {left = 0, top = 0} = component.diagramEngine.canvas.getBoundingClientRect();
+    const diagramModel = component.diagramEngine.diagramModel;
+    const {offsetX, offsetY} = diagramModel;
+    const x = pageX - left - offsetX;
+    const y = pageY - top - offsetY;
+    const item = monitor.getItem();
+
     // let node;
     // if (item.type === 'output') {
     //   node = new OutputNodeModel('Output Node');
@@ -31,11 +32,11 @@ const nodesTarget = {
     // if (item.type === 'connection') {
     //   node = new ConnectionNodeModel('Connection Node', item.color);
     // }
-    //
-    // node.x = x;
-    // node.y = y;
-    // diagramModel.addNode(node);
-    // props.updateModel(diagramModel.serializeDiagram());
+
+    node.x = x;
+    node.y = y;
+    diagramModel.addNode(node);
+    props.updateModel(diagramModel.serializeDiagram());
   }
 };
 
@@ -70,9 +71,7 @@ class ViewRJD extends React.Component {
       this.deSerialize({id: view.id});
 
       // Deserialize nodes
-      Object.getOwnPropertyNames(view.nodes).map((id) => {
-
-        const node = view.nodes[id];
+      _.map(view.nodes, (node, id) => {
         const nodeOb = diagramEngine.getInstanceFactory(/*node._tp*/'BaseNodeModel').getInstance();
         nodeOb.deSerializeViewNode(id, node);
 
@@ -83,17 +82,20 @@ class ViewRJD extends React.Component {
       });
 
       // Attach ports
-      Object.getOwnPropertyNames(view.edges).map((id) => {
-        const edge = view.edges[id];
-        const linkOb = diagramEngine.getInstanceFactory(/*edge._tp*/'default').getInstance();
+      _.map(view.edges, (edge, id) => {
+        const linkOb = diagramEngine.getInstanceFactory(/*edge._tp*/'BaseLinkModel').getInstance();
         linkOb.deSerializeViewEdge(id, edge);
 
-        if (edge.target) {
-          linkOb.setTargetPort(this.getNode(edge.target).getPortFromID(edge.target+'@port'));
+        if (edge.src) {
+          const node = this.getNode(edge.src);
+          linkOb.setSourcePort(node.getPort(PORT_NAME));
+          linkOb.getFirstPoint().updateLocation({x: node.x, y: node.y});
         }
 
-        if (edge.source) {
-          linkOb.setSourcePort(this.getNode(edge.source).getPortFromID(edge.target+'@port'));
+        if (edge.dst) {
+          const node = this.getNode(edge.dst);
+          linkOb.setTargetPort(node.getPort(PORT_NAME));
+          linkOb.getLastPoint().updateLocation({x: node.x, y: node.y});
         }
 
         this.addLink(linkOb);

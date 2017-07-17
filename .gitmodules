@@ -1,0 +1,3 @@
+[submodule "client/external/react-js-diagrams"]
+	path = client/external/react-js-diagrams
+	url = git@github.com:zhuj/react-js-diagrams.git
