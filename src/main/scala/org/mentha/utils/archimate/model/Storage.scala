@@ -7,6 +7,7 @@ import org.mentha.utils.uuid.FastTimeBasedIdGenerator
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
+import scala.runtime.Nothing$
 
 trait Identifiable {
 
@@ -47,10 +48,12 @@ object Identifiable {
 
 trait Storage[T <: Identifiable] {
 
+  def classTag: ClassTag[T]
   def get[X <: T](id: Identifiable.ID)(implicit tp: ClassTag[X]): Option[X]
   def apply[X <: T](id: Identifiable.ID)(implicit tp: ClassTag[X]): X = get(id)
     .getOrElse {
-      throw new NoSuchElementException(s"No ${tp.runtimeClass.getName} found with id=${id}.")
+      val cls = if (tp.runtimeClass == classOf[Nothing$]) { this.classTag.runtimeClass } else { tp.runtimeClass }
+      throw new NoSuchElementException(s"No ${cls.getSimpleName} found with id=${id}.")
     }
 
   def store[X <: T](entity: X): X = store(entity, Identifiable.generateId())
@@ -73,6 +76,9 @@ object Storage {
 class StorageImpl[T <: Identifiable](val entityName: String)(implicit et: ClassTag[T]) extends Storage[T] {
 
   private[model] val _map = mutable.LinkedHashMap[Identifiable.ID, T]()
+
+
+  override def classTag: ClassTag[T] = et
 
   override def get[X <: T](id: ID)(implicit tp: ClassTag[X]): Option[X] = _map.get(id).map { _.asInstanceOf[X] }
 

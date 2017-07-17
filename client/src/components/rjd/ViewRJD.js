@@ -1,26 +1,27 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import _ from 'lodash';
-import * as RJD from 'react-js-diagrams';
+import React from 'react'
+import { connect } from 'react-redux'
+import { DropTarget } from 'react-dnd'
 
-import {DropTarget} from 'react-dnd';
+import _ from 'lodash'
+import * as RJD from './rjd'
 
-import diagramEngineBuilder from './engine';
-import * as actions from '../../actions/index';
+import diagramEngineBuilder from './engine'
+import { PORT_NAME } from './base/BasePortModel'
+import * as actions from '../../actions/index'
 
-import './rjd.sass.scss';
+import './rjd.sass.scss'
 
 
 const nodesTarget = {
   drop(props, monitor, component) {
-    // const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
-    // const {left = 0, top = 0} = diagramEngine.canvas.getBoundingClientRect();
-    // const diagramModel = diagramEngine.diagramModel;
-    // const {offsetX, offsetY} = diagramModel;
-    // const x = pageX - left - offsetX;
-    // const y = pageY - top - offsetY;
-    // const item = monitor.getItem();
-    //
+    const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
+    const {left = 0, top = 0} = component.diagramEngine.canvas.getBoundingClientRect();
+    const diagramModel = component.diagramEngine.getDiagramModel();
+    const {offsetX, offsetY} = diagramModel;
+    const x = pageX - left - offsetX;
+    const y = pageY - top - offsetY;
+    const item = monitor.getItem();
+
     // let node;
     // if (item.type === 'output') {
     //   node = new OutputNodeModel('Output Node');
@@ -31,11 +32,11 @@ const nodesTarget = {
     // if (item.type === 'connection') {
     //   node = new ConnectionNodeModel('Connection Node', item.color);
     // }
-    //
-    // node.x = x;
-    // node.y = y;
-    // diagramModel.addNode(node);
-    // props.updateModel(diagramModel.serializeDiagram());
+
+    node.x = x;
+    node.y = y;
+    diagramModel.addNode(node);
+    props.updateModel(diagramModel.serializeDiagram());
   }
 };
 
@@ -46,10 +47,11 @@ const nodesTarget = {
 }))
 class ViewRJD extends React.Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.setupView({});
-  // }
+  constructor(props) {
+    super(props);
+    this.diagramEngine = diagramEngineBuilder(null);
+    this.setupView({});
+  }
 
   componentWillMount() {
     const { view } = this.props;
@@ -63,16 +65,14 @@ class ViewRJD extends React.Component {
   }
 
   setupView(view) {
-    this.diagramEngine = diagramEngineBuilder()
-    this.diagramModel = this.diagramEngine.diagramModel;
+    this.diagramModel = new RJD.DiagramModel();
+    this.diagramEngine.setDiagramModel(this.diagramModel);
 
     const deserialize = function(view, diagramEngine) {
       this.deSerialize({id: view.id});
 
       // Deserialize nodes
-      Object.getOwnPropertyNames(view.nodes).map((id) => {
-
-        const node = view.nodes[id];
+      _.map(view.nodes, (node, id) => {
         const nodeOb = diagramEngine.getInstanceFactory(/*node._tp*/'BaseNodeModel').getInstance();
         nodeOb.deSerializeViewNode(id, node);
 
@@ -83,17 +83,20 @@ class ViewRJD extends React.Component {
       });
 
       // Attach ports
-      Object.getOwnPropertyNames(view.edges).map((id) => {
-        const edge = view.edges[id];
-        const linkOb = diagramEngine.getInstanceFactory(/*edge._tp*/'default').getInstance();
+      _.map(view.edges, (edge, id) => {
+        const linkOb = diagramEngine.getInstanceFactory(edge._tp).getInstance();
         linkOb.deSerializeViewEdge(id, edge);
 
-        if (edge.target) {
-          linkOb.setTargetPort(this.getNode(edge.target).getPortFromID(edge.target+'@port'));
+        if (edge.src) {
+          const node = this.getNode(edge.src);
+          linkOb.setSourcePort(node.getPort(PORT_NAME));
+          linkOb.getFirstPoint().updateLocation({x: node.x, y: node.y});
         }
 
-        if (edge.source) {
-          linkOb.setSourcePort(this.getNode(edge.source).getPortFromID(edge.target+'@port'));
+        if (edge.dst) {
+          const node = this.getNode(edge.dst);
+          linkOb.setTargetPort(node.getPort(PORT_NAME));
+          linkOb.getLastPoint().updateLocation({x: node.x, y: node.y});
         }
 
         this.addLink(linkOb);
@@ -101,7 +104,6 @@ class ViewRJD extends React.Component {
     };
 
     deserialize.bind(this.diagramModel)(view, this.diagramEngine);
-    this.diagramEngine.setDiagramModel(this.diagramModel);
   }
 
   onChange(model, action) {
@@ -130,11 +132,22 @@ class ViewRJD extends React.Component {
       //FIXME: return updateModel({selectedNode: action.model});
     }
 
-    updateModel();
+    //FIXME: updateModel();
+
+    // update the rest
+    switch (action.type) {
+      case 'node-moved': {
+        let model = action.model;
+        this.props.updateViewNodePosition(this.props.id)(model.id, { x: model.x, y: model.y });
+        break;
+      }
+    }
+
   }
 
   render() {
     const {connectDropTarget} = this.props;
+    //const diagramEngine = diagramEngineBuilder(this.diagramModel);
 
     // Render the canvas
     return connectDropTarget(
@@ -152,12 +165,15 @@ class ViewRJD extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
   const view = (state.model.views[id] || {});
-  const rjd = (state.rjd[id] || {});
+  // const rjd = (state.rjd[id] || {});
   return {id, view /*, ...rjd*/}
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateModel: (id, model) => (props = {}) => dispatch(actions.rjdUpdateModel(id, model, props))
+  updateModel: (id, model) => (props = {}) => dispatch(actions.rjdUpdateModel(id, model, props)),
+  updateViewNodePosition: (id) => (voId, pos) => dispatch(actions.updateViewNodePosition(id, voId, pos)),
+  updateViewNodeSize: (id) => (voId, pos) => dispatch(actions.updateViewNodeSize(id, voId, pos)),
+  updateViewEdgePoints: (id) => (voId, points) => dispatch(actions.updateViewEdgePoints(id, voId, points))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewRJD);

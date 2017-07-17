@@ -64,6 +64,7 @@ package object json {
     val `views` = "views"
     
     val `concept` = "concept"
+    val `conceptInfo` = "conceptInfo"
     val `pos` = "pos"
     val `size` = "size"
     val `points` = "points"
@@ -76,8 +77,13 @@ package object json {
   implicit val pointWrites: Writes[Point] = Json.writes[Point]
   implicit val pointReads: Reads[Point] = Json.reads[Point]
 
+  def readPoint(json: JsonObject): Point = json.as[Point]
+  def readPoints(json: JsonArray): List[Point] = json.as[List[Point]]
+
   implicit val sizeWrites: Writes[Size] = Json.writes[Size]
   implicit val sizeReads: Reads[Size] = Json.reads[Size]
+
+  def readSize(json: JsonObject): Size = json.as[Size]
 
   implicit val accessTypeRW = new Reads[AccessType] with Writes[AccessType] {
     override def writes(o: AccessType): JsValue = o match {
@@ -278,12 +284,14 @@ package object json {
         case e: ViewNodeConcept[_] => writeArchimateObject(
           o,
           names.`concept` -> e.concept.id,
+          names.`conceptInfo` -> e.concept /* just for info */,
           names.`pos` -> o.position,
           names.`size` -> e.size
         )
         case r: ViewRelationship[_] => writeArchimateObject(
           o,
           names.`concept` -> r.concept.id,
+          names.`conceptInfo` -> r.concept /* just for info */,
           names.`src` -> r.source.id,
           names.`dst` -> r.target.id,
           names.`points` -> r.points

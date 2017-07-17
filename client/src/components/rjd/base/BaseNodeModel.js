@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import * as RJD from 'react-js-diagrams';
+import * as RJD from '../rjd'
+import * as _ from 'lodash'
 
-import { BasePortModel } from './BasePortModel';
+import { BasePortModel } from './BasePortModel'
 
 export class BaseNodeModel extends RJD.NodeModel {
   constructor() {
-    super('connection');
+    super('base-node');
     this.addPort(new BasePortModel());
     this.width = 100;
     this.height = 40;
@@ -26,7 +26,7 @@ export class BaseNodeModel extends RJD.NodeModel {
   deSerializeViewNode(id, node) {
     this.deSerialize({
       id: id,
-      type: /*node._tp*/ 'default',
+      type: /*node._tp*/ 'base-node',
       x: node.pos.x,
       y: node.pos.y
     });

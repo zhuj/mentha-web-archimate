@@ -4,6 +4,9 @@ var app_root = 'src'; // the app root folder: src, src_users, etc
 var path = require('path');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 
+// TODO: use https://github.com/postcss/autoprefixer
+// TODO: use https://github.com/postcss/postcss#plugins
+
 module.exports = {
   app_root: app_root, // the app root folder, needed by the other webpack configs
   entry: [

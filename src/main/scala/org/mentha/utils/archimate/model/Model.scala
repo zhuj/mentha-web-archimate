@@ -16,8 +16,8 @@ class Model extends IdentifiedArchimateObject with VersionedArchimateObject with
   private[model] val _concepts: Storage[Concept] = Storage.buildStorage
   private[model] val _views: Storage[View] = Storage.buildStorage
 
-  def concept[T <: Concept](id: Identifiable.ID)(implicit tp: ClassTag[T]): T = _concepts(id)
-  def view(id: Identifiable.ID): View = _views(id)
+  def concept[T <: Concept](id: Identifiable.ID)(implicit tp: ClassTag[T]): T = _concepts[T](id)
+  def view(id: Identifiable.ID): View = _views[View](id)
 
   def add(id: Identifiable.ID) = new {
     def apply[T <: Concept](concept: T): T = _concepts.store(concept, id)
