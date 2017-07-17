@@ -13,6 +13,36 @@ export const sendModelMessage = (payload) => (dispatch, getState) => {
     return dispatch( modelSendMessage(payload) )
 };
 
+export const updateViewNodePosition = (viewId, id, pos) => {
+    return sendModelMessage({
+      'mov-view-node': {
+          viewId: viewId,
+          id: id,
+          pos: pos
+      }
+    });
+};
+
+export const updateViewNodeSize = (viewId, id, size) => {
+  return sendModelMessage({
+    'mov-view-node': {
+      viewId: viewId,
+      id: id,
+      size: size
+    }
+  });
+};
+
+export const updateViewEdgePoints = (viewId, id, points) => {
+  return sendModelMessage({
+    'mov-view-edge': {
+      viewId: viewId,
+      id: id,
+      points: points
+    }
+  });
+};
+
 export const MODEL_CONNECTED = /*Symbol*/("MODEL_CONNECTED")
 export const modelConnected = () => ({
     type: MODEL_CONNECTED

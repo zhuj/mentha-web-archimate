@@ -47,12 +47,20 @@ sealed abstract class ViewNode extends ViewObject {
     this._position = position
     this
   }
+  def withPosition(opt: Option[Point]): this.type = {
+    for { position <- opt } { withPosition(position) }
+    this
+  }
 
   // box size in the center of _position
   private[model] var _size: Size = View.defaultSize
   @inline def size: Size = _size
   def withSize(size: Size): this.type = {
     this._size = size
+    this
+  }
+  def withSize(opt: Option[Size]): this.type = {
+    for { size <- opt } { withSize(size) }
     this
   }
 
@@ -65,6 +73,10 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
   @inline def points: Seq[Point] = _points
   def withPoints(points: Seq[Point]): this.type = {
     this._points = points
+    this
+  }
+  def withPoints(opt: Option[Seq[Point]]): this.type = {
+    for { points <- opt } { withPoints(points) }
     this
   }
 

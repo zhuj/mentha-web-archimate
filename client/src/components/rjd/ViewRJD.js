@@ -16,7 +16,7 @@ const nodesTarget = {
   drop(props, monitor, component) {
     const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
     const {left = 0, top = 0} = component.diagramEngine.canvas.getBoundingClientRect();
-    const diagramModel = component.diagramEngine.diagramModel;
+    const diagramModel = component.diagramEngine.getDiagramModel();
     const {offsetX, offsetY} = diagramModel;
     const x = pageX - left - offsetX;
     const y = pageY - top - offsetY;
@@ -47,10 +47,11 @@ const nodesTarget = {
 }))
 class ViewRJD extends React.Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.setupView({});
-  // }
+  constructor(props) {
+    super(props);
+    this.diagramEngine = diagramEngineBuilder(null);
+    this.setupView({});
+  }
 
   componentWillMount() {
     const { view } = this.props;
@@ -64,8 +65,8 @@ class ViewRJD extends React.Component {
   }
 
   setupView(view) {
-    this.diagramEngine = diagramEngineBuilder()
-    this.diagramModel = this.diagramEngine.diagramModel;
+    this.diagramModel = new RJD.DiagramModel();
+    this.diagramEngine.setDiagramModel(this.diagramModel);
 
     const deserialize = function(view, diagramEngine) {
       this.deSerialize({id: view.id});
@@ -83,7 +84,7 @@ class ViewRJD extends React.Component {
 
       // Attach ports
       _.map(view.edges, (edge, id) => {
-        const linkOb = diagramEngine.getInstanceFactory(/*edge._tp*/'BaseLinkModel').getInstance();
+        const linkOb = diagramEngine.getInstanceFactory(edge._tp).getInstance();
         linkOb.deSerializeViewEdge(id, edge);
 
         if (edge.src) {
@@ -103,7 +104,6 @@ class ViewRJD extends React.Component {
     };
 
     deserialize.bind(this.diagramModel)(view, this.diagramEngine);
-    this.diagramEngine.setDiagramModel(this.diagramModel);
   }
 
   onChange(model, action) {
@@ -132,11 +132,22 @@ class ViewRJD extends React.Component {
       //FIXME: return updateModel({selectedNode: action.model});
     }
 
-    updateModel();
+    //FIXME: updateModel();
+
+    // update the rest
+    switch (action.type) {
+      case 'node-moved': {
+        let model = action.model;
+        this.props.updateViewNodePosition(this.props.id)(model.id, { x: model.x, y: model.y });
+        break;
+      }
+    }
+
   }
 
   render() {
     const {connectDropTarget} = this.props;
+    //const diagramEngine = diagramEngineBuilder(this.diagramModel);
 
     // Render the canvas
     return connectDropTarget(
@@ -154,12 +165,15 @@ class ViewRJD extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
   const view = (state.model.views[id] || {});
-  const rjd = (state.rjd[id] || {});
+  // const rjd = (state.rjd[id] || {});
   return {id, view /*, ...rjd*/}
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateModel: (id, model) => (props = {}) => dispatch(actions.rjdUpdateModel(id, model, props))
+  updateModel: (id, model) => (props = {}) => dispatch(actions.rjdUpdateModel(id, model, props)),
+  updateViewNodePosition: (id) => (voId, pos) => dispatch(actions.updateViewNodePosition(id, voId, pos)),
+  updateViewNodeSize: (id) => (voId, pos) => dispatch(actions.updateViewNodeSize(id, voId, pos)),
+  updateViewEdgePoints: (id) => (voId, points) => dispatch(actions.updateViewEdgePoints(id, voId, points))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewRJD);

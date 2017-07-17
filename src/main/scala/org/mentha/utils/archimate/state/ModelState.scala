@@ -118,6 +118,8 @@ object ModelState {
     val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.ModViewObject(_, _, _) => ChangeSets.ModViewObject(c)
       case c @ Commands.DelViewObject(_, _) => ChangeSets.DelViewObject(c)
+      case c @ Commands.PlaceViewNode(_, _, _, _, _) => ChangeSets.PlaceViewObject(c)
+      case c @ Commands.PlaceViewEdge(_, _, _, _) => ChangeSets.PlaceViewObject(c)
     }
   }
 
@@ -255,9 +257,9 @@ object ModelState {
 
     sealed trait PlaceViewObjectCommand extends ViewObjectCommand with Mod[ViewObject] {}
 
-    case class PlaceViewNode(viewId: ID, id: ID, position: Point, size: Size, params: JsonObject) extends PlaceViewObjectCommand {}
+    case class PlaceViewNode(viewId: ID, id: ID, position: Option[Point], size: Option[Size], params: JsonObject) extends PlaceViewObjectCommand {}
 
-    case class PlaceViewEdge(viewId: ID, id: ID, points: List[Point], params: JsonObject) extends PlaceViewObjectCommand {}
+    case class PlaceViewEdge(viewId: ID, id: ID, points: Option[Seq[Point]], params: JsonObject) extends PlaceViewObjectCommand {}
 
   }
 
@@ -522,6 +524,20 @@ object ModelState {
       case "mod-concept" => Commands.ModConcept(id = (js \ "id").as[ID], params = js)
       case "mod-view" => Commands.ModView(id = (js \ "id").as[ID], params = js)
       case "mod-view-object" => Commands.ModViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID], params = js)
+
+      case "mov-view-node" => Commands.PlaceViewNode(
+        viewId = (js \ "viewId").as[ID],
+        id = (js \ "id").as[ID],
+        position = (js \ "pos").validate[json.JsonObject].asOpt.map { json.readPoint },
+        size = (js \ "size").validate[json.JsonObject].asOpt.map { json.readSize },
+        params = js)
+
+      case "mov-view-edge" => Commands.PlaceViewEdge(
+        viewId = (js \ "viewId").as[ID],
+        id = (js \ "id").as[ID],
+        points = (js \ "points").validate[json.JsonArray].asOpt.map { json.readPoints },
+        params = js
+      )
 
       case "noop" => Noop()
       case _ => throw new IllegalStateException(s"Unexpected command: ${cmd}.")

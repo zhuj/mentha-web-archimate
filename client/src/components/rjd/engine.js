@@ -6,11 +6,17 @@ import { BasePortInstanceFactory } from './base/BasePortModel'
 import { BaseLinkInstanceFactory } from './base/BaseLinkModel'
 
 import { BaseNodeWidgetFactory } from './base/BaseNodeWidget'
+import { BaseLinkWidgetFactory } from './base/BaseLinkWidget'
 
-export default () => {
+import { registerEdgeLinks } from './edges/engine'
+
+export default (model) => {
 
   // Setup the diagram engine
   const diagramEngine = new RJD.DiagramEngine();
+
+  // register all edges
+  registerEdgeLinks(diagramEngine);
 
   // register widget factories (for nodes)
   diagramEngine.registerNodeFactory(new RJD.DefaultNodeFactory());
@@ -18,6 +24,7 @@ export default () => {
 
   // register widget factories (for links)
   diagramEngine.registerLinkFactory(new RJD.DefaultLinkFactory());
+  diagramEngine.registerLinkFactory(new BaseLinkWidgetFactory());
 
   // Register instance/model factories
   diagramEngine.registerInstanceFactory(new BaseNodeInstanceFactory());
@@ -28,6 +35,8 @@ export default () => {
   diagramEngine.registerInstanceFactory(new RJD.DefaultPortInstanceFactory());
   diagramEngine.registerInstanceFactory(new RJD.LinkInstanceFactory());
 
-  diagramEngine.setDiagramModel(new RJD.DiagramModel());
+  diagramEngine.setLinkInstanceFactory('BaseLinkModel');
+
+  diagramEngine.setDiagramModel(model);
   return diagramEngine;
 }
