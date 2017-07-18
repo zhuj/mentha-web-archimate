@@ -1,5 +1,6 @@
 package org.mentha.utils.archimate.state
 
+import akka.serialization.Serializer
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.view._
 

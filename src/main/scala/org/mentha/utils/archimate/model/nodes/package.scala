@@ -24,6 +24,9 @@ package object nodes {
   val allRelationshipConnectors: Seq[RelationshipConnectorMeta[_]] =
     RelationshipConnectors.relationshipConnectors
 
+  val allNodes: Seq[ConceptMeta[_]] =
+    allElements ++ allRelationshipConnectors
+
   val businessInternalActiveStructureElements: Seq[ElementMeta[_]] = Seq(
     impl.BusinessElements.businessActor,
     impl.BusinessElements.businessRole,

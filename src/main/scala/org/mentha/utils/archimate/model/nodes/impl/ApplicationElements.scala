@@ -116,30 +116,39 @@ object ApplicationElements {
 
   case object applicationComponent extends ElementMeta[ApplicationComponent] {
     override def newInstance(): ApplicationComponent = new ApplicationComponent
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationCollaboration extends ElementMeta[ApplicationCollaboration] {
     override def newInstance(): ApplicationCollaboration = new ApplicationCollaboration
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationInterface extends ElementMeta[ApplicationInterface] {
     override def newInstance(): ApplicationInterface = new ApplicationInterface
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationFunction extends ElementMeta[ApplicationFunction] {
     override def newInstance(): ApplicationFunction = new ApplicationFunction
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationInteraction extends ElementMeta[ApplicationInteraction] {
     override def newInstance(): ApplicationInteraction = new ApplicationInteraction
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationProcess extends ElementMeta[ApplicationProcess] {
     override def newInstance(): ApplicationProcess = new ApplicationProcess
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationEvent extends ElementMeta[ApplicationEvent] {
     override def newInstance(): ApplicationEvent = new ApplicationEvent
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object applicationService extends ElementMeta[ApplicationService] {
     override def newInstance(): ApplicationService = new ApplicationService
+    override def layerObject: LayerObject = ApplicationLayer
   }
   case object dataObject extends ElementMeta[DataObject] {
     override def newInstance(): DataObject = new DataObject
+    override def layerObject: LayerObject = ApplicationLayer
   }
 
   val applicationElements: Seq[ElementMeta[_]] = Seq(applicationComponent, applicationCollaboration, applicationInterface, applicationFunction, applicationInteraction, applicationProcess, applicationEvent, applicationService, dataObject)

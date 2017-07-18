@@ -59,15 +59,19 @@ object PhysicalElements {
 
   case object equipment extends ElementMeta[Equipment] {
     override def newInstance(): Equipment = new Equipment
+    override def layerObject: LayerObject = PhysicalLayer
   }
   case object facility extends ElementMeta[Facility] {
     override def newInstance(): Facility = new Facility
+    override def layerObject: LayerObject = PhysicalLayer
   }
   case object distributionNetwork extends ElementMeta[DistributionNetwork] {
     override def newInstance(): DistributionNetwork = new DistributionNetwork
+    override def layerObject: LayerObject = PhysicalLayer
   }
   case object material extends ElementMeta[Material] {
     override def newInstance(): Material = new Material
+    override def layerObject: LayerObject = PhysicalLayer
   }
 
   val physicalElements: Seq[ElementMeta[_]] = Seq(equipment, facility, distributionNetwork, material)

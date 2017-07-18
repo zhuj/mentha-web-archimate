@@ -8,22 +8,22 @@ import { BaseLinkInstanceFactory } from './base/BaseLinkModel'
 import { BaseNodeWidgetFactory } from './base/BaseNodeWidget'
 import { BaseLinkWidgetFactory } from './base/BaseLinkWidget'
 
-import { registerEdgeLinks } from './edges/engine'
+import { registerEdges } from './edges/engine'
+import { registerNodes } from './nodes/engine'
 
 export default (model) => {
 
   // Setup the diagram engine
   const diagramEngine = new RJD.DiagramEngine();
 
-  // register all edges
-  registerEdgeLinks(diagramEngine);
+  // register all nodes & edges
+  registerNodes(diagramEngine);
+  registerEdges(diagramEngine);
 
   // register widget factories (for nodes)
-  diagramEngine.registerNodeFactory(new RJD.DefaultNodeFactory());
   diagramEngine.registerNodeFactory(new BaseNodeWidgetFactory());
 
   // register widget factories (for links)
-  diagramEngine.registerLinkFactory(new RJD.DefaultLinkFactory());
   diagramEngine.registerLinkFactory(new BaseLinkWidgetFactory());
 
   // Register instance/model factories
@@ -31,11 +31,15 @@ export default (model) => {
   diagramEngine.registerInstanceFactory(new BasePortInstanceFactory());
   diagramEngine.registerInstanceFactory(new BaseLinkInstanceFactory());
 
+  // default nodes, links and ports
+  diagramEngine.registerNodeFactory(new RJD.DefaultNodeFactory());
+  diagramEngine.registerLinkFactory(new RJD.DefaultLinkFactory());
   diagramEngine.registerInstanceFactory(new RJD.DefaultNodeInstanceFactory());
   diagramEngine.registerInstanceFactory(new RJD.DefaultPortInstanceFactory());
   diagramEngine.registerInstanceFactory(new RJD.LinkInstanceFactory());
 
-  diagramEngine.setLinkInstanceFactory('BaseLinkModel');
+  // abstract links - that's what we will create initially
+  diagramEngine.setLinkInstanceFactory('viewAbstractLink');
 
   diagramEngine.setDiagramModel(model);
   return diagramEngine;

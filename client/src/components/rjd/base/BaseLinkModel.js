@@ -8,7 +8,7 @@ export class BaseLinkModel extends RJD.LinkModel {
     super(linkType);
   }
 
-  getLinkType() {
+  defaultLinkType() {
     return TYPE;
   }
 
@@ -23,7 +23,7 @@ export class BaseLinkModel extends RJD.LinkModel {
   deSerializeSource(id, edge) {
     return {
       id: id,
-      type: this.getLinkType(),
+      type: this.defaultLinkType(),
       points: [
         {x: 0, y: 0},
         ...edge.points,

@@ -12,8 +12,9 @@ import { registerAssociationRelationshipLink } from './model/associationRelation
 
 import { registerViewConnectionLink } from './view/viewConnection'
 import { registerViewRelationshipLink } from './view/viewRelationship'
+import { registerViewAbstractLink } from './view/viewAbstractLink'
 
-export const registerEdgeLinks = (diagramEngine) => {
+export const registerEdges = (diagramEngine) => {
  registerCompositionRelationshipLink(diagramEngine);
  registerAggregationRelationshipLink(diagramEngine);
  registerAssignmentRelationshipLink(diagramEngine);
@@ -27,5 +28,6 @@ export const registerEdgeLinks = (diagramEngine) => {
  registerAssociationRelationshipLink(diagramEngine);
  registerViewConnectionLink(diagramEngine);
  registerViewRelationshipLink(diagramEngine);
+  registerViewAbstractLink(diagramEngine);
 }
 

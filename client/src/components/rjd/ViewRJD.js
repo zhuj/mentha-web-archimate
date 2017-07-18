@@ -50,30 +50,41 @@ class ViewRJD extends React.Component {
   constructor(props) {
     super(props);
     this.diagramEngine = diagramEngineBuilder(null);
-    this.setupView({});
+    this.setupDiagramModel({});
   }
 
   componentWillMount() {
     const { view } = this.props;
-    this.setupView(view);
+    this.setupDiagramModel(view);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEqual(this.props['view'], nextProps['view'])) {
-      this.setupView(nextProps['view']);
+      this.setupDiagramModel(nextProps['view']);
     }
   }
 
-  setupView(view) {
-    this.diagramModel = new RJD.DiagramModel();
-    this.diagramEngine.setDiagramModel(this.diagramModel);
+  setupDiagramModel(view) {
+    // TODO: merge instead of re-create
+    this.diagramEngine.setDiagramModel(new RJD.DiagramModel());
+
+    {
+      const { rjd } = this.props;
+      if (!!rjd) {
+        const diaModel = this.diagramEngine.getDiagramModel();
+        diaModel.offsetX = rjd.offsetX || 0;
+        diaModel.offsetY = rjd.offsetY || 0;
+        diaModel.zoom = rjd.zoom || 100;
+      }
+    }
+
 
     const deserialize = function(view, diagramEngine) {
       this.deSerialize({id: view.id});
 
       // Deserialize nodes
       _.map(view.nodes, (node, id) => {
-        const nodeOb = diagramEngine.getInstanceFactory(/*node._tp*/'BaseNodeModel').getInstance();
+        const nodeOb = diagramEngine.getInstanceFactory(node['_tp']).getInstance();
         nodeOb.deSerializeViewNode(id, node);
 
         const portOb = diagramEngine.getInstanceFactory('BasePortModel').getInstance();
@@ -84,7 +95,7 @@ class ViewRJD extends React.Component {
 
       // Attach ports
       _.map(view.edges, (edge, id) => {
-        const linkOb = diagramEngine.getInstanceFactory(edge._tp).getInstance();
+        const linkOb = diagramEngine.getInstanceFactory(edge['_tp']).getInstance();
         linkOb.deSerializeViewEdge(id, edge);
 
         if (edge.src) {
@@ -103,36 +114,40 @@ class ViewRJD extends React.Component {
       });
     };
 
-    deserialize.bind(this.diagramModel)(view, this.diagramEngine);
+    deserialize.bind(this.diagramEngine.getDiagramModel())(view, this.diagramEngine);
   }
 
   onChange(model, action) {
 
-    const updateModel = this.props.updateModel(this.props.id, model);
+    const updateModel = this.props.updateModel(this.props.id, {});
+    //
+    // // Ignore some events
+    // if (['items-copied'].indexOf(action.type) !== -1) {
+    //   return;
+    // }
+    //
+    // // Check for single selected items
+    // if (['node-selected', 'node-moved'].indexOf(action.type) !== -1) {
+    //   //FIXME: return updateModel({selectedNode: action.model});
+    // }
+    //
+    // // Check for canvas events
+    // const deselectEvts = ['canvas-click', 'canvas-drag', 'items-selected', 'items-drag-selected', 'items-moved'];
+    // if (deselectEvts.indexOf(action.type) !== -1) {
+    //   //FIXME: return updateModel({selectedNode: null});
+    // }
+    //
+    // // Check if this is a deselection and a single node exists
+    // const isDeselect = ['node-deselected', 'link-deselected'].indexOf(action.type) !== -1;
+    // if (isDeselect && action.items.length < 1 && action.model.nodeType) {
+    //   //FIXME: return updateModel({selectedNode: action.model});
+    // }
 
-    // Ignore some events
-    if (['items-copied'].indexOf(action.type) !== -1) {
-      return;
-    }
-
-    // Check for single selected items
-    if (['node-selected', 'node-moved'].indexOf(action.type) !== -1) {
-      //FIXME: return updateModel({selectedNode: action.model});
-    }
-
-    // Check for canvas events
-    const deselectEvts = ['canvas-click', 'canvas-drag', 'items-selected', 'items-drag-selected', 'items-moved'];
-    if (deselectEvts.indexOf(action.type) !== -1) {
-      //FIXME: return updateModel({selectedNode: null});
-    }
-
-    // Check if this is a deselection and a single node exists
-    const isDeselect = ['node-deselected', 'link-deselected'].indexOf(action.type) !== -1;
-    if (isDeselect && action.items.length < 1 && action.model.nodeType) {
-      //FIXME: return updateModel({selectedNode: action.model});
-    }
-
-    //FIXME: updateModel();
+    updateModel({
+      offsetX: model.offsetX,
+      offsetY: model.offsetY,
+      zoom: model.zoom
+    });
 
     // update the rest
     switch (action.type) {
@@ -147,7 +162,6 @@ class ViewRJD extends React.Component {
 
   render() {
     const {connectDropTarget} = this.props;
-    //const diagramEngine = diagramEngineBuilder(this.diagramModel);
 
     // Render the canvas
     return connectDropTarget(
@@ -164,9 +178,10 @@ class ViewRJD extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
-  const view = (state.model.views[id] || {});
-  // const rjd = (state.rjd[id] || {});
-  return {id, view /*, ...rjd*/}
+  const model = state.model || {};
+  const view = model.views[id] || {};
+  const rjd = (state.rjd[id] || {});
+  return { id, view, rjd }
 };
 
 const mapDispatchToProps = (dispatch) => ({

@@ -64,7 +64,6 @@ package object json {
     val `views` = "views"
     
     val `concept` = "concept"
-    val `conceptInfo` = "conceptInfo"
     val `pos` = "pos"
     val `size` = "size"
     val `points` = "points"
@@ -190,7 +189,10 @@ package object json {
       case NonFatal(e) => JsError(e.getMessage)
     }
 
-    override def writes(o: Element): JsValue = writeArchimateObject(o)
+    override def writes(o: Element): JsValue = writeArchimateObject(
+      o,
+      "layer" -> o.meta.layerObject.letter.toString
+    )
 
   }
 
@@ -242,19 +244,18 @@ package object json {
       names.`dst` -> o.target.id
     ) ++ {
       o match {
-        case a: AccessRelationship => Json.obj("access" -> a.access)
-        case i: InfluenceRelationship => Json.obj("influence" -> i.influence)
-        case f: FlowRelationship => Json.obj("flows" -> f.what)
+        case a: AccessRelationship if a.access != null => Json.obj("access" -> a.access)
+        case i: InfluenceRelationship if i.influence != null => Json.obj("influence" -> i.influence)
+        case f: FlowRelationship if f.what != null => Json.obj("flows" -> f.what)
         case _ => JsonObject.empty
       }
     }
-
   }
 
   def fillRelationship(rel: Relationship, json: JsValue): Relationship = fillArchimateObject(rel, json) match {
-    case a: AccessRelationship => a.withAccess((json \ "access").as[AccessType])
-    case i: InfluenceRelationship => i.withInfluence((json \ "influences").as[String])
-    case f: FlowRelationship => f.withFlows((json \ "flows").as[String])
+    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess(_) }; a
+    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence(_) }; i
+    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows(_) }; f
     case r => r
   }
 
@@ -284,14 +285,12 @@ package object json {
         case e: ViewNodeConcept[_] => writeArchimateObject(
           o,
           names.`concept` -> e.concept.id,
-          names.`conceptInfo` -> e.concept /* just for info */,
           names.`pos` -> o.position,
           names.`size` -> e.size
         )
         case r: ViewRelationship[_] => writeArchimateObject(
           o,
           names.`concept` -> r.concept.id,
-          names.`conceptInfo` -> r.concept /* just for info */,
           names.`src` -> r.source.id,
           names.`dst` -> r.target.id,
           names.`points` -> r.points
