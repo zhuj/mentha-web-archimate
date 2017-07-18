@@ -64,7 +64,6 @@ package object json {
     val `views` = "views"
     
     val `concept` = "concept"
-    val `conceptInfo` = "conceptInfo"
     val `pos` = "pos"
     val `size` = "size"
     val `points` = "points"
@@ -190,7 +189,10 @@ package object json {
       case NonFatal(e) => JsError(e.getMessage)
     }
 
-    override def writes(o: Element): JsValue = writeArchimateObject(o)
+    override def writes(o: Element): JsValue = writeArchimateObject(
+      o,
+      "layer" -> o.meta.layerObject.letter.toString
+    )
 
   }
 
@@ -284,14 +286,12 @@ package object json {
         case e: ViewNodeConcept[_] => writeArchimateObject(
           o,
           names.`concept` -> e.concept.id,
-          names.`conceptInfo` -> e.concept /* just for info */,
           names.`pos` -> o.position,
           names.`size` -> e.size
         )
         case r: ViewRelationship[_] => writeArchimateObject(
           o,
           names.`concept` -> r.concept.id,
-          names.`conceptInfo` -> r.concept /* just for info */,
           names.`src` -> r.source.id,
           names.`dst` -> r.target.id,
           names.`points` -> r.points

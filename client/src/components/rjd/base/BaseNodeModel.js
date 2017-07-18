@@ -11,8 +11,12 @@ export class BaseNodeModel extends RJD.NodeModel {
     this.height = 40;
   }
 
-  getName() {
+  getNodeName() {
+    return "";
+  }
 
+  defaultNodeType() {
+    return 'base-node';
   }
 
   serialize() {
@@ -23,15 +27,22 @@ export class BaseNodeModel extends RJD.NodeModel {
     super.deSerialize(object);
   }
 
-  deSerializeViewNode(id, node) {
-    this.deSerialize({
+  deSerializeSource(id, node) {
+    return {
       id: id,
-      type: /*node._tp*/ 'base-node',
+      type: this.defaultNodeType(),
       x: node.pos.x,
-      y: node.pos.y
-    });
-    this.width = node.size.width;
-    this.height = node.size.height;
+      y: node.pos.y,
+      width: node.size.width,
+      height: node.size.height
+    };
+  }
+
+  deSerializeViewNode(id, node) {
+    const source = this.deSerializeSource(id, node);
+    this.deSerialize(source);
+    this.width = source.width;
+    this.height = source.height;
   }
 
   getInPorts() {

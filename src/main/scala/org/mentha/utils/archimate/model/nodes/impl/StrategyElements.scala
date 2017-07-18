@@ -47,12 +47,15 @@ object StrategyElements {
 
   case object resource extends ElementMeta[Resource] {
     override def newInstance(): Resource = new Resource
+    override def layerObject: LayerObject = StrategyLayer
   }
   case object capability extends ElementMeta[Capability] {
     override def newInstance(): Capability = new Capability
+    override def layerObject: LayerObject = StrategyLayer
   }
   case object courseOfAction extends ElementMeta[CourseOfAction] {
     override def newInstance(): CourseOfAction = new CourseOfAction
+    override def layerObject: LayerObject = StrategyLayer
   }
 
   val strategyElements: Seq[ElementMeta[_]] = Seq(resource, capability, courseOfAction)

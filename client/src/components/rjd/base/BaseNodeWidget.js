@@ -12,7 +12,8 @@ export class BaseNodeWidget extends React.Component {
   }
 
   getNodeClassName() {
-    return "basic-node";
+    const { node } = this.props;
+    return "basic-node " + node.nodeType;
   }
 
   getNodeStyle() {
@@ -25,7 +26,7 @@ export class BaseNodeWidget extends React.Component {
       <div className={this.getNodeClassName()} style={this.getNodeStyle()}>
         <div className='title'>
           <div className='name'>
-            ------- {node.getName()} --------
+            ------- {node.getNodeName()} --------
           </div>
           {/*<div className='fa fa-close' onClick={this.onRemove.bind(this)} />*/}
         </div>

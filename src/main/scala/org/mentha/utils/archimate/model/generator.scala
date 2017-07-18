@@ -136,6 +136,8 @@ object generator {
           val variable = StringUtils.uncapitalize(name)
           writer.println(s"  case object ${variable} extends ElementMeta[${name}] {")
           writer.println(s"    override def newInstance(): ${name} = new ${name}")
+          writer.println(s"    override def layerObject: LayerObject = ${layer}Layer")
+
           writer.println(s"  }")
           writer.flush()
           variables += (layer -> variable)

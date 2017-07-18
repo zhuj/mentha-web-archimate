@@ -5,13 +5,14 @@ import { BaseLinkModel } from '../../base/BaseLinkModel'
 import * as RJD from '../../rjd'
 
 export const TYPE='viewRelationship';
+
 export class ViewRelationshipLinkModel extends BaseLinkModel {
   constructor(linkType = 'default') {
     super(linkType);
     this.conceptInfo = {};
   }
 
-  getLinkType() {
+  defaultLinkType() {
     return this.linkType;
   }
 

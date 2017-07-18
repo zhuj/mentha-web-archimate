@@ -70,18 +70,23 @@ object ImplementationElements {
 
   case object workPackage extends ElementMeta[WorkPackage] {
     override def newInstance(): WorkPackage = new WorkPackage
+    override def layerObject: LayerObject = ImplementationLayer
   }
   case object deliverable extends ElementMeta[Deliverable] {
     override def newInstance(): Deliverable = new Deliverable
+    override def layerObject: LayerObject = ImplementationLayer
   }
   case object implementationEvent extends ElementMeta[ImplementationEvent] {
     override def newInstance(): ImplementationEvent = new ImplementationEvent
+    override def layerObject: LayerObject = ImplementationLayer
   }
   case object plateau extends ElementMeta[Plateau] {
     override def newInstance(): Plateau = new Plateau
+    override def layerObject: LayerObject = ImplementationLayer
   }
   case object gap extends ElementMeta[Gap] {
     override def newInstance(): Gap = new Gap
+    override def layerObject: LayerObject = ImplementationLayer
   }
 
   val implementationElements: Seq[ElementMeta[_]] = Seq(workPackage, deliverable, implementationEvent, plateau, gap)

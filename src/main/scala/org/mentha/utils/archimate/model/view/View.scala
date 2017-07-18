@@ -4,8 +4,8 @@ import org.mentha.utils.archimate.model._
 
 import scala.reflect.ClassTag
 
-case class Point(x: Int, y: Int)
-case class Size(width: Int, height: Int)
+case class Point(x: Double, y: Double)
+case class Size(width: Double, height: Double)
 
 object View {
   private[model] val defaultPosition = Point(0, 0)

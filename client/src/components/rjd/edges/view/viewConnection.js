@@ -6,9 +6,10 @@ import { BaseLinkWidget } from '../../base/BaseLinkWidget'
 import * as RJD from '../../rjd'
 
 export const TYPE='viewConnection';
+
 export class ViewConnectionLinkModel extends BaseLinkModel {
   constructor(linkType = TYPE) { super(linkType); }
-  getLinkType() { return TYPE; }
+  defaultLinkType() { return TYPE; }
 }
 
 export class ViewConnectionLinkInstanceFactory extends RJD.AbstractInstanceFactory {
@@ -24,8 +25,8 @@ export class ViewConnectionLinkWidgetFactory extends RJD.LinkWidgetFactory {
   constructor() { super(TYPE); }
   generateReactWidget(diagramEngine, link) {
     return (
-        <ViewConnectionLinkWidget link={link} diagramEngine={diagramEngine} />
-      );
+      <ViewConnectionLinkWidget link={link} diagramEngine={diagramEngine} />
+    );
   }
 }
 

@@ -50,30 +50,30 @@ class ViewRJD extends React.Component {
   constructor(props) {
     super(props);
     this.diagramEngine = diagramEngineBuilder(null);
-    this.setupView({});
+    this.setupDiagramModel({});
   }
 
   componentWillMount() {
     const { view } = this.props;
-    this.setupView(view);
+    this.setupDiagramModel(view);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEqual(this.props['view'], nextProps['view'])) {
-      this.setupView(nextProps['view']);
+      this.setupDiagramModel(nextProps['view']);
     }
   }
 
-  setupView(view) {
-    this.diagramModel = new RJD.DiagramModel();
-    this.diagramEngine.setDiagramModel(this.diagramModel);
+  setupDiagramModel(view) {
+    // TODO: merge instead of re-create
+    this.diagramEngine.setDiagramModel(new RJD.DiagramModel());
 
     const deserialize = function(view, diagramEngine) {
       this.deSerialize({id: view.id});
 
       // Deserialize nodes
       _.map(view.nodes, (node, id) => {
-        const nodeOb = diagramEngine.getInstanceFactory(/*node._tp*/'BaseNodeModel').getInstance();
+        const nodeOb = diagramEngine.getInstanceFactory(node['_tp']).getInstance();
         nodeOb.deSerializeViewNode(id, node);
 
         const portOb = diagramEngine.getInstanceFactory('BasePortModel').getInstance();
@@ -84,7 +84,7 @@ class ViewRJD extends React.Component {
 
       // Attach ports
       _.map(view.edges, (edge, id) => {
-        const linkOb = diagramEngine.getInstanceFactory(edge._tp).getInstance();
+        const linkOb = diagramEngine.getInstanceFactory(edge['_tp']).getInstance();
         linkOb.deSerializeViewEdge(id, edge);
 
         if (edge.src) {
@@ -103,7 +103,7 @@ class ViewRJD extends React.Component {
       });
     };
 
-    deserialize.bind(this.diagramModel)(view, this.diagramEngine);
+    deserialize.bind(this.diagramEngine.getDiagramModel())(view, this.diagramEngine);
   }
 
   onChange(model, action) {
@@ -147,7 +147,6 @@ class ViewRJD extends React.Component {
 
   render() {
     const {connectDropTarget} = this.props;
-    //const diagramEngine = diagramEngineBuilder(this.diagramModel);
 
     // Render the canvas
     return connectDropTarget(
@@ -164,7 +163,8 @@ class ViewRJD extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
-  const view = (state.model.views[id] || {});
+  const model = state.model || {};
+  const view = model.views[id] || {};
   // const rjd = (state.rjd[id] || {});
   return {id, view /*, ...rjd*/}
 };

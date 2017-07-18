@@ -41,7 +41,7 @@ const messageReceived = (store, messageBody) => {
         store.dispatch(handler(payload[name]));
     } catch(exc) {
         console.error(exc);
-        store.dispatch(actions.modelErrorReceived(exc));
+        store.dispatch(actions.modelErrorReceived(exc.toString()));
     }
 }
 

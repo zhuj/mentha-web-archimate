@@ -1,6 +1,21 @@
 import _ from 'lodash';
 import { MODEL_NOOP_RECEIVED, MODEL_OBJECT_RECEIVED, MODEL_COMMIT_RECEIVED, MODEL_ERROR_RECEIVED } from "../actions"
 
+const postProcessModel = (model) => ({
+  ...model,
+  views: _.mapValues(model.views, (view) => ({
+    ...view,
+    nodes: _.mapValues(view.nodes, (node) => {
+      if (!!node.concept) { return { ...node, conceptInfo: model.nodes[node.concept] }; }
+      return node;
+    }),
+    edges: _.mapValues(view.edges, (edge) => {
+      if (!!edge.concept) { return {...edge, conceptInfo: model.edges[edge.concept]}; }
+      return edge;
+    })
+  }))
+});
+
 const applyNoop = (model, payload) => {
     return model;
 };
@@ -21,7 +36,7 @@ const applyObject = (model, payload) => {
     model = apply(model, obj);
   }
 
-  return model;
+  return postProcessModel(model);
 };
 
 const applyCommit = (model, payload) => {
@@ -53,15 +68,22 @@ const applyCommit = (model, payload) => {
     return model;
   };
 
-  return apply(model, payload)
+  model = apply(model, payload);
+  return postProcessModel(model);
 };
 
 const applyError = (model, payload) => {
-    return model
+    return model;
 };
 
 
-const reducer = (state = {}, action) => {
+const getInitialState = () => ({
+  nodes: {},
+  edges: {},
+  view: {}
+});
+
+const reducer = (state = getInitialState(), action) => {
   switch (action.type) {
     case MODEL_NOOP_RECEIVED: return applyNoop(state, action.payload);
     case MODEL_OBJECT_RECEIVED: return applyObject(state, action.payload);

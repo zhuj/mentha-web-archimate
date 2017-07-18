@@ -125,33 +125,43 @@ object MotivationElements {
 
   case object stakeholder extends ElementMeta[Stakeholder] {
     override def newInstance(): Stakeholder = new Stakeholder
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object driver extends ElementMeta[Driver] {
     override def newInstance(): Driver = new Driver
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object assessment extends ElementMeta[Assessment] {
     override def newInstance(): Assessment = new Assessment
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object goal extends ElementMeta[Goal] {
     override def newInstance(): Goal = new Goal
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object outcome extends ElementMeta[Outcome] {
     override def newInstance(): Outcome = new Outcome
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object principle extends ElementMeta[Principle] {
     override def newInstance(): Principle = new Principle
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object requirement extends ElementMeta[Requirement] {
     override def newInstance(): Requirement = new Requirement
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object constraint extends ElementMeta[Constraint] {
     override def newInstance(): Constraint = new Constraint
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object meaning extends ElementMeta[Meaning] {
     override def newInstance(): Meaning = new Meaning
+    override def layerObject: LayerObject = MotivationLayer
   }
   case object value extends ElementMeta[Value] {
     override def newInstance(): Value = new Value
+    override def layerObject: LayerObject = MotivationLayer
   }
 
   val motivationElements: Seq[ElementMeta[_]] = Seq(stakeholder, driver, assessment, goal, outcome, principle, requirement, constraint, meaning, value)
