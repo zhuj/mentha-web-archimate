@@ -244,19 +244,18 @@ package object json {
       names.`dst` -> o.target.id
     ) ++ {
       o match {
-        case a: AccessRelationship => Json.obj("access" -> a.access)
-        case i: InfluenceRelationship => Json.obj("influence" -> i.influence)
-        case f: FlowRelationship => Json.obj("flows" -> f.what)
+        case a: AccessRelationship if a.access != null => Json.obj("access" -> a.access)
+        case i: InfluenceRelationship if i.influence != null => Json.obj("influence" -> i.influence)
+        case f: FlowRelationship if f.what != null => Json.obj("flows" -> f.what)
         case _ => JsonObject.empty
       }
     }
-
   }
 
   def fillRelationship(rel: Relationship, json: JsValue): Relationship = fillArchimateObject(rel, json) match {
-    case a: AccessRelationship => a.withAccess((json \ "access").as[AccessType])
-    case i: InfluenceRelationship => i.withInfluence((json \ "influences").as[String])
-    case f: FlowRelationship => f.withFlows((json \ "flows").as[String])
+    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess(_) }; a
+    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence(_) }; i
+    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows(_) }; f
     case r => r
   }
 

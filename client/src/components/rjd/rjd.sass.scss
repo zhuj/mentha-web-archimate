@@ -193,9 +193,14 @@
       overflow: visible;
       font-size: 11px;
       box-shadow: 0 0 10px rgba(black, 0.5);
+      width: 100%;
+      height: 100%;
 
       .title {
         background: rgba(black, 0.1);
+        height: 100%;
+        width: 100%;
+
         display: flex;
         white-space: nowrap;
         > * {
@@ -213,6 +218,10 @@
         .name {
           flex-grow: 1;
           padding: 5px 5px;
+
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
 

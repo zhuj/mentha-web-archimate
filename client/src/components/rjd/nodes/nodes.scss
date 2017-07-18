@@ -302,8 +302,7 @@
   @extend .businessElement;
   @extend .elementWithTopRow;
   // TODO: try to implement the original curve
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 10px;
+  border-radius: 0% 0% 80% 10%/0% 0% 10% 40%;
 }
 
 .product:before {
