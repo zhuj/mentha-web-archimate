@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import View from './View'
+import Markers from './view/edges/markers'
+import View from './view/View'
 
 class ViewList extends React.Component {
 
@@ -9,6 +10,7 @@ class ViewList extends React.Component {
     const { views } = this.props;
     return (
       <div className="view-list">
+        <Markers/>
         { Object.getOwnPropertyNames(views).map((id) => <View key={id} id={id}/>) }
       </div>
     )
