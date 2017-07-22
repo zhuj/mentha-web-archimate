@@ -51,12 +51,7 @@
 }
 
 .element {
-  color: black;
-  border: solid 2px black;
-  background-repeat: no-repeat;
-  background-position: top right;
-  background-image: none;
-  background-size: 24px;
+  border: solid 1px black;
 }
 
 .compositeElement {
@@ -85,12 +80,22 @@
 
 .collaboration {
   @extend .internalActiveStructureElement;
-  background-image: url('/media/node-collaboration.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-collaboration.png') no-repeat top right !important;
+    background-size: 27px !important;
+  }
 }
 
 .externalActiveStructureElement {
   @extend .activeStructureElement;
-  background-image: url('/media/node-interface.png');
+}
+
+.interface {
+  @extend .externalActiveStructureElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-interface.png') no-repeat top right !important;
+    background-size: 21px !important;
+  }
 }
 
 .behaviorElement {
@@ -108,36 +113,50 @@
 
 .function {
   @extend .internalBehaviorElement;
-  background-image: url('/media/node-function.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-function.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .interaction {
   @extend .internalBehaviorElement;
-  background-image: url('/media/node-interaction.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-interaction.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .process {
   @extend .internalBehaviorElement;
-  background-image: url('/media/node-process.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-process.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .event {
   @extend .behaviorElement;
-  background-image: url('/media/node-event.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-event.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .externalBehaviorElement {
   @extend .behaviorElement;
-  background-image: url('/media/node-service.png');
-  // border-radius: 50px / 100px;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-service.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .elementWithTopRow:before {
   content: "";
   position: absolute;
   top: 10px;
-  left: 2px;
-  right: 2px;
+  left: 1px;
+  right: 1px;
   height: 1px;
   border-top: 1px solid black;
 }
@@ -146,8 +165,8 @@
   content: "";
   position: absolute;
   bottom: 10px;
-  left: 2px;
-  right: 2px;
+  left: 1px;
+  right: 1px;
   height: 1px;
   border-bottom: 1px solid black;
 }
@@ -198,6 +217,27 @@
 .applicationComponent {
   @extend .internalActiveStructureElement;
   @extend .applicationElement;
+
+  > div.x1 {
+    @extend .applicationElement;
+    position: absolute;
+    top: 18px;
+    left: -10px;
+    width: 16px;
+    height: 8px;
+    border: 1px solid black;
+  }
+
+  > div.x2 {
+    @extend .applicationElement;
+    position: absolute;
+    top: 8px;
+    left: -10px;
+    width: 16px;
+    height: 8px;
+    border: 1px solid black;
+  }
+
 }
 
 .applicationCollaboration {
@@ -206,7 +246,7 @@
 }
 
 .applicationInterface {
-  @extend .externalActiveStructureElement;
+  @extend .interface;
   @extend .applicationElement;
 }
 
@@ -244,13 +284,19 @@
 .businessActor {
   @extend .internalActiveStructureElement;
   @extend .businessElement;
-  background-image: url('/media/node-actor.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-actor.png') no-repeat top right !important;
+    background-size: 27px !important;
+  }
 }
 
 .businessRole {
   @extend .internalActiveStructureElement;
   @extend .businessElement;
-  background-image: url('/media/node-role.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-role.png') no-repeat top right !important;
+    background-size: 27px !important;
+  }
 }
 
 .businessCollaboration {
@@ -259,7 +305,7 @@
 }
 
 .businessInterface {
-  @extend .externalActiveStructureElement;
+  @extend .interface;
   @extend .businessElement;
 }
 
@@ -305,15 +351,18 @@
   @extend .passiveStructureElement;
   @extend .businessElement;
   @extend .elementWithTopRow;
-  // TODO: try to implement the original curve
-  border-radius: 0% 0% 80% 10%/0% 0% 10% 40%;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #ffffcc;
+  }
 }
 
 .product:before {
   content: "";
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 1px;
+  left: 1px;
   width: 75%;
   height: 10px;
   border-bottom: 1px solid black;
@@ -333,6 +382,11 @@
 .deliverable {
   @extend .passiveStructureElement;
   @extend .implementationElement;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #ffe0e0;
+  }
 }
 
 .implementationEvent {
@@ -343,56 +397,128 @@
 .plateau {
   @extend .compositeElement;
   @extend .implementationElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #c9ffc9;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-plateau.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .gap {
   @extend .passiveStructureElement;
   @extend .implementationElement;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #c9ffc9;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-gap.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
+}
+
+.motivationSvg {
+  @extend .motivationElement;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #e5e5ff;
+  }
+}
+
+.motivationSvgBase {
+  @extend .motivationSvg;
+  > div.title {
+    border-radius: 10px;
+  }
 }
 
 .stakeholder {
   @extend .externalActiveStructureElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-stakeholder.png') no-repeat top 2px right 2px !important;
+    background-size: 25px !important;
+  }
 }
 
 .driver {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-driver.png') no-repeat top 2px right 2px !important;
+    background-size: 15px !important;
+  }
 }
 
 .assessment {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-assessment.png') no-repeat top 2px right 2px !important;
+    background-size: 15px !important;
+  }
 }
 
 .goal {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-goal.png') no-repeat top 2px right 2px !important;
+    background-size: 15px !important;
+  }
 }
 
 .outcome {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-outcome.png') no-repeat top 2px right 2px !important;
+    background-size: 17px !important;
+  }
 }
 
 .principle {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-principle.png') no-repeat top 2px right 2px !important;
+    background-size: 15px !important;
+  }
 }
 
 .requirement {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-requirement.png') no-repeat top 2px right 2px !important;
+    background-size: 22px !important;
+  }
 }
 
 .constraint {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvgBase;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-constraint.png') no-repeat top 2px right 2px !important;
+    background-size: 22px !important;
+  }
 }
 
 .meaning {
   @extend .genericElement;
-  @extend .motivationElement;
+  @extend .motivationSvg;
+  padding: 4% 7% !important;
+  > div.title {
+    border-radius: 25%;
+  }
 }
 
 .value {
@@ -407,51 +533,126 @@
 .equipment {
   @extend .internalActiveStructureElement;
   @extend .physicalElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #97ff97;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-equipment.png') no-repeat top right !important;
+    background-size: 22px !important;
+  }
 }
 
 .facility {
   @extend .externalActiveStructureElement;
   @extend .physicalElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #97ff97;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-facility.png') no-repeat top right !important;
+    background-size: 22px !important;
+  }
 }
 
 .distributionNetwork {
   @extend .internalActiveStructureElement;
   @extend .physicalElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-distribution-network.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .material {
   @extend .passiveStructureElement;
   @extend .physicalElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-material.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .resource {
   @extend .structureElement;
   @extend .strategyElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-resource.png') no-repeat top 2px right 2px !important;
+    background-size: 22px !important;
+  }
 }
 
 .capability {
   @extend .behaviorElement;
   @extend .strategyElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-capacity.png') no-repeat top 2px right 2px !important;
+    background-size: 15px !important;
+  }
 }
 
 .courseOfAction {
   @extend .behaviorElement;
   @extend .strategyElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-course-of-action.png') no-repeat top 2px right 2px !important;
+    background-size: 22px !important;
+  }
 }
 
 .node {
   @extend .internalActiveStructureElement;
   @extend .technologyElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #c9ffc9;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-node.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .device {
   @extend .internalActiveStructureElement;
   @extend .technologyElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #c9ffc9;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-device.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .systemSoftware {
   @extend .internalActiveStructureElement;
   @extend .technologyElement;
+  padding-top: 10px !important;
+  padding-right: 10px !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #c9ffc9;
+  }
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-system-software.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .technologyCollaboration {
@@ -460,18 +661,26 @@
 }
 
 .technologyInterface {
-  @extend .externalActiveStructureElement;
+  @extend .interface;
   @extend .technologyElement;
 }
 
 .path {
   @extend .internalActiveStructureElement;
   @extend .technologyElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-path.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .communicationNetwork {
   @extend .internalActiveStructureElement;
   @extend .technologyElement;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-communication-network.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .technologyFunction {
@@ -502,7 +711,10 @@
 .artifact {
   @extend .passiveStructureElement;
   @extend .technologyElement;
-  background-image: url('/media/node-artifact.png');
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-artifact.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .andJunction {

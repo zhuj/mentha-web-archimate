@@ -184,6 +184,7 @@ object ModelState {
     * the command is parsed, verified and connected to the model (all the related data is stored in this wrapper)
     */
   sealed trait ChangeSet {
+    def simple: Boolean = false
     def command: Command
     def commit(state: ModelState): Try[JsonObject]
   }
@@ -427,6 +428,7 @@ object ModelState {
       override def viewId: ID = command.viewId
       override def id: ID = command.id
       override def params: JsonObject = command.params
+      override def simple: Boolean = true
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
         val vo = command match {
           case Commands.PlaceViewNode(_, id, position, size, _) => view.get[ViewNode](id).withPosition(position).withSize(size)
