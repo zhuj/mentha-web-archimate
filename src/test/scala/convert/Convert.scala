@@ -20,16 +20,17 @@ object Convert {
   val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m.asInstanceOf[ConceptMeta[Concept]]) }.toMap
 
   val tpTransformation: PartialFunction[String, String] = {
-    case "usedByRelationship" => "associationRelationship"
+    case "usedByRelationship" => "servingRelationship"
     case "realisationRelationship" => "realizationRelationship"
     case "specialisationRelationship" => "specializationRelationship"
     case s => s
   }
 
   def main(args: Array[String]): Unit = {
+    val name = "epp-price"
     val model = new Model
 
-    val xmlFile = new File("src/test/CIS_to-be.archimate")
+    val xmlFile = new File(s"src/test/${name}.archimate")
     val xmlContent = FileUtils.readFileToString(xmlFile, "UTF-8")
     val xml = XML.load(new StringReader(xmlContent))
 
@@ -155,7 +156,7 @@ object Convert {
           }
         }
 
-        println(points)
+        //println(points)
 
         if (null != relId && relId.length > 0) {
           val relationship = model.concept[Relationship](connection \@ "relationship")
@@ -169,11 +170,11 @@ object Convert {
         }
       }
 
-      println(dia)
+      //println(dia)
     }
 
 
-    val jsonFile = new File("src/test/CIS_to-be.json")
+    val jsonFile = new File(s"src/test/${name}.json")
     FileUtils.write(jsonFile, json.toJsonString(model), "UTF-8")
   }
 

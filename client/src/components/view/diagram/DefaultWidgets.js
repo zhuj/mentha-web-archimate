@@ -2,28 +2,6 @@ import React from 'react'
 import _ from 'lodash'
 
 import { intersect, shape } from 'svg-intersections'
-const borderPoint = (node, p) => {
-  /*if (false)*/ {
-    try {
-      const width = node.width || 0;
-      const height = node.height || 0;
-      const x = node.x - width / 2;
-      const y = node.y - height / 2;
-
-      const i = intersect(
-        shape("rect", {x, y, width, height}),
-        shape("line", {x1: node.x, y1: node.y, x2: p.x, y2: p.y})
-      );
-
-      return _.first(i.points) || node;
-
-    } catch (exc) {
-      console.error(exc);
-    }
-  }
-  return node;
-};
-
 
 export class PortWidget extends React.Component {
   constructor(props) {
@@ -49,8 +27,27 @@ export class PortWidget extends React.Component {
 
 export class DefaultNodeWidget extends React.Component {
 
+  borderShape(node) {
+    const width = node.width || 0;
+    const height = node.height || 0;
+    const x = node.x - width / 2;
+    const y = node.y - height / 2;
+    return shape("rect", {x, y, width, height});
+  }
+
   borderPoint(node, p) {
-    return borderPoint(node, p);
+    /*if (false)*/ {
+      try {
+        const i = intersect(
+          this.borderShape(node),
+          shape("line", {x1: node.x, y1: node.y, x2: p.x, y2: p.y})
+        );
+        return _.first(i.points) || node;
+      } catch (exc) {
+        console.error(exc);
+      }
+    }
+    return node;
   }
 
   updateLinkPoints(node) {

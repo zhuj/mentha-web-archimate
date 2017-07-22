@@ -48,7 +48,9 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
             val response = ModelState.Responses.ModelChangeSet(modelId, changeSet, json)
             dispatchAll(response)
             answerDirectly(response, user)
-            saveSnapshot(ModelState.toJson(state))
+            if (!changeSet.simple) {
+              saveSnapshot(ModelState.toJson(state))
+            }
             // TODO: if (lastSequenceNr != 0 && lastSequenceNr % snapshotInterval == 0) {
             // TODO:   saveSnapshot(ModelState.toJson(state))
             // TODO: }

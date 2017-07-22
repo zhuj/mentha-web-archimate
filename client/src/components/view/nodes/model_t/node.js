@@ -1,12 +1,9 @@
 import React from 'react'
-import _ from 'lodash'
-
-import { ModelNodeWidget } from '../BaseNodeWidget'
+import { BaseNodeLikeWidget } from '../_base'
 
 export const TYPE='node';
 
-export class NodeWidget extends ModelNodeWidget {
+export class NodeWidget extends BaseNodeLikeWidget {
   constructor(props) { super(props); }
   getClassName(node) { return 'a-node model_t node'; }
 }
-

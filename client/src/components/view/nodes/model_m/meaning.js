@@ -1,6 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
-
+import { shape } from 'svg-intersections'
 import { ModelNodeWidget } from '../BaseNodeWidget'
 
 export const TYPE='meaning';
@@ -8,5 +7,37 @@ export const TYPE='meaning';
 export class MeaningWidget extends ModelNodeWidget {
   constructor(props) { super(props); }
   getClassName(node) { return 'a-node model_m meaning'; }
+
+  borderPath(node) {
+    const w = (node.width || 0)/800.0;
+    const h = (node.height || 0)/600.0;
+    // special thx to https://codepen.io/anthonydugois/pen/mewdyZ
+    return (
+      `M ${w*50} ${h*250} `+
+      `Q ${-w*50} ${-h*50} ${w*200} ${h*50} `+
+      `Q ${w*300} ${-h*50} ${w*500} ${h*50} `+
+      `Q ${w*900} ${-h*50} ${w*750} ${h*350} `+
+      `Q ${w*850} ${h*600} ${w*600} ${h*550} `+
+      `Q ${w*500} ${h*650} ${w*250} ${h*550} `+
+      `Q ${-w*100} ${h*650} ${w*50} ${h*250}`
+    );
+  }
+
+  borderShape(node) {
+    return shape("path", {d: this.borderPath(node) });
+  }
+
+  render() {
+    const { node } = this.props;
+    return (
+      <div className={this.getClassName(node)}>
+        <svg className="border">
+          <path d={this.borderPath(node)} stroke="black" strokeWidth={1}/>
+        </svg>
+        { this.renderTitle(node) }
+        { this.renderPort(node) }
+      </div>
+    );
+  }
 }
 

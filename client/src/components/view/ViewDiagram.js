@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
 
+import reactLS from 'react-localstorage'
+
 import _ from 'lodash'
 
 import * as actions from '../../actions/index'
@@ -49,6 +51,25 @@ const nodesTarget = {
   canDrop: monitor.canDrop()
 }))
 class ViewDiagram extends DiagramWidget {
+
+  localStorageKey() {
+    const { id } = this.props;
+    return `view-diagram-${id}`;
+  }
+
+  getStateFilterKeys() {
+    return ["zoom", "offset"]
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    reactLS.componentWillUpdate.bind(this)(nextProps, nextState);
+    if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
+  }
+
+  componentDidMount() {
+    reactLS.componentDidMount.bind(this)();
+    if (!!super.componentDidMount) { return super.componentDidMount(); }
+  }
 
   generateWidgetForNode(props) {
     return viewNodeWidget({ diagram: this, ...props });
