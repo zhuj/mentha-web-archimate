@@ -1,0 +1,112 @@
+.viewPrototypeLink {
+  path {
+    stroke: rgb(192, 255, 255) !important;
+    stroke-width: 2;
+    stroke-dasharray: 10, 2;
+    animation: dash 1s linear infinite;
+  }
+}
+
+.compositionRelationship {
+  g.first {
+    path {
+      marker-start: url(#MarkerCompositionArrowSrc);
+    }
+  }
+}
+
+.aggregationRelationship {
+  g.first {
+    path {
+      marker-start: url(#MarkerAggregationArrowSrc);
+    }
+  }
+}
+
+.assignmentRelationship {
+  g.first {
+    path {
+      marker-start: url(#MarkerAssignmentArrowSrc);
+    }
+  }
+  g.last {
+    path {
+      marker-end: url(#MarkerAssignmentArrowDst);
+    }
+  }
+}
+
+.realizationRelationship {
+  path {
+    stroke-dasharray: 2, 6;
+  }
+  g.last {
+    path {
+      marker-end: url(#MarkerRealizationArrowDst);
+    }
+  }
+}
+
+.servingRelationship {
+  g.last {
+    path {
+      marker-end: url(#MarkerServingArrowDst);
+    }
+  }
+}
+
+.influenceRelationship {
+  path {
+    stroke-dasharray: 8, 4;
+  }
+  g.last {
+    path {
+      marker-end: url(#MarkerinfluenceArrowDst);
+    }
+  }
+}
+
+.accessRelationship {
+  path {
+    stroke-dasharray: 6, 2; // mb 4, 2
+   }
+
+  &.r > g.first {
+    path {
+      marker-start: url(#MarkerAccessArrowSrc);
+    }
+  }
+  &.w > g.last {
+    path {
+      marker-end: url(#MarkerAccessArrowDst);
+    }
+  }
+}
+
+.flowRelationship {
+  path {
+    stroke-dasharray: 12, 12;
+  }
+  g.last {
+    path {
+      marker-end: url(#MarkerFlowArrowDst);
+    }
+  }
+}
+
+.triggerRelationship {
+  g.last {
+    path {
+      marker-end: url(#MarkerTriggerArrowDst);
+    }
+  }
+}
+
+.specializationRelationship {
+  g.last {
+    path {
+      marker-end: url(#MarkerSpecializationArrowDst);
+    }
+  }
+}
+

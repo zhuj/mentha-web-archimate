@@ -46,7 +46,8 @@
     "redux-saga": "^0.14.3",
     "redux-thunk": "^2.1.0",
     "redux-undo": "^0.6.1",
-    "lodash": "4.17.4"
+    "lodash": "4.17.4",
+    "svg-intersections": "0.3.0"
   },
   "devDependencies": {
     "babel-core": "^6.21.0",

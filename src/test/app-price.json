@@ -1,1 +1,1839 @@
-{"":{"_tp":"model","nodes":{"404ce690":{"_tp":"businessEvent","name":"Распорядение о стоимости обучения","layer":"B"},"d82ac8e0":{"_tp":"businessProcess","name":"Создание цены для элемента реестра","layer":"B"},"a93de3a1":{"_tp":"businessProcess","name":"Заполнение вариантов цены для элемента реестра","layer":"B"},"da44bbf8":{"_tp":"businessProcess","name":"Публикация цены для элемента реестра","layer":"B"},"8c044888":{"_tp":"businessProcess","name":"Указание цены для элемента реестра","layer":"B"},"46c463a6":{"_tp":"businessObject","name":"Утвержденные цены для учебных единиц","layer":"B"},"2df2c3ca":{"_tp":"businessProcess","name":"Указание цены для УП(в)","layer":"B"},"31de5b9f":{"_tp":"businessProcess","name":"Создание цены для блока УП(в)","layer":"B"},"551d25a5":{"_tp":"businessProcess","name":"Заполнение вариантов цены для УП(в)","layer":"B"},"004fe59d":{"_tp":"businessProcess","name":"Рассчет стоимости блока УП(в)","layer":"B"},"24a5bb1e":{"_tp":"businessProcess","name":"Публикация цены для блоков УП(в)","layer":"B"},"789c3fb7":{"_tp":"businessObject","name":"Цена элемента реестра","layer":"B"},"9c9a8eec":{"_tp":"representation","name":"Распоряжение о стоимости","layer":"B"},"5f87b5b1":{"_tp":"businessObject","name":"Цена блока УП(в)","layer":"B"},"5c4a0c8b":{"_tp":"businessFunction","name":"настройка модуля","layer":"B"},"b0005fe9":{"_tp":"businessRole","name":"Ответственный за цены","layer":"B"},"69f48f2a":{"_tp":"businessRole","name":"внедренец","layer":"B"},"abd4c93f":{"_tp":"businessProcess","name":"ввод цен в систему","layer":"B"},"65c3abc4":{"_tp":"applicationInterface","name":"ввод цен","layer":"A"},"d8fbfc30":{"_tp":"dataObject","name":"категория цены","layer":"A"},"1186c24e":{"_tp":"dataObject","name":"сетка оплат","layer":"A"},"53d89924":{"_tp":"dataObject","name":"Блок учебного плана","layer":"A"},"532ab0ed":{"_tp":"dataObject","name":"Элемент реестра","layer":"A"},"b513001c":{"_tp":"dataObject","name":"Период действия цены для элемента реестра","layer":"A"},"cc34f57c":{"_tp":"dataObject","name":"цена","layer":"A"},"56b398a2":{"_tp":"dataObject","name":"Цена на элемент реестра","layer":"A"},"3e76ec73":{"_tp":"dataObject","name":"Период действия цены для УП(в)","layer":"A"},"592c5b19":{"_tp":"dataObject","name":"Цена для блока УП(в) (на категории и сетки)","layer":"A"},"a3962039":{"_tp":"applicationInterface","name":"карточка цены","layer":"A"},"c4fa987d":{"_tp":"dataObject","name":"Задание цена для УП","layer":"A"},"3669089a":{"_tp":"applicationInterface","name":"Указание цены в УП","layer":"A"},"9ce6710e":{"_tp":"applicationInterface","name":"Расчет стоимости блока УП","layer":"A"},"85f99f1a":{"_tp":"applicationInterface","name":"Настройка справочников","layer":"A"},"71cd5feb":{"_tp":"applicationInterface","name":"Вкладка «цена» в УП(в)","layer":"A"},"8aab040b":{"_tp":"dataObject","name":"Data Object","layer":"A"},"3fe7b298":{"_tp":"applicationService","name":"Application Service","layer":"A"},"e9132f09":{"_tp":"applicationInterface","name":"список цен","layer":"A"},"f5cf1dce":{"_tp":"applicationInterface","name":"Вкладка «цена» в элементе реестра","layer":"A"},"c920aab3":{"_tp":"applicationInterface","name":"Список периодов","layer":"A"},"9f644131":{"_tp":"dataObject","name":"Data Object","layer":"A"},"3f325fe2":{"_tp":"applicationInterface","name":"Каторчка цены","layer":"A"},"58e57eac":{"_tp":"applicationService","name":"Ввод цен по элементам реестра","layer":"A"},"b91ee196":{"_tp":"applicationService","name":"Ввод цен по УП(в)","layer":"A"},"3210fd24":{"_tp":"dataObject","name":"Элемент, обладающий ценой","layer":"A"},"b60e8ab6":{"_tp":"dataObject","name":"Период действия цены","layer":"A"},"f6b18a11":{"_tp":"dataObject","name":"Вариант цены","layer":"A"},"0acb8d6e":{"_tp":"dataObject","name":"Элемент цены","layer":"A"},"374cd45f":{"_tp":"dataObject","name":"Цена","layer":"A"},"6252d638":{"_tp":"applicationInterface","name":"Application Interface","layer":"A"},"860b14b7":{"_tp":"dataObject","name":"Data Object","layer":"A"},"6a316aca":{"_tp":"applicationService","name":"Пасчет стоимости блока УП(в)","layer":"A"},"5177f853":{"_tp":"dataObject","name":"Цена блока УП(в)","layer":"A"},"4158e3bb":{"_tp":"dataObject","name":"Цена элемента реестра","layer":"A"},"c545055c":{"_tp":"dataObject","name":"Блок УП(в)","layer":"A"},"c4c39601":{"_tp":"applicationService","name":"настройки модуля","layer":"A"},"e3d08397":{"_tp":"applicationComponent","name":"логика работы сеток","layer":"A"},"78b6f6f5":{"_tp":"applicationInterface","name":"Список цен элемена, обладающего ценой","layer":"A"},"2507f24b":{"_tp":"applicationInterface","name":"Вкладка «Цена» на элементе реестра","layer":"A"},"80621cab":{"_tp":"applicationInterface","name":"Список учебных единиц на вкладке «Цена» на УП(в)","layer":"A"},"dc81fe16":{"_tp":"dataObject","name":"Data Object","layer":"A"},"96bc126e":{"_tp":"applicationInterface","name":"Список цен на блок УП(в)","layer":"A"},"97b23803":{"_tp":"applicationInterface","name":"карточка цены","layer":"A"},"c29759ce":{"_tp":"applicationInterface","name":"Форма доб./ред. периода действия цены","layer":"A"},"7068757d":{"_tp":"dataObject","name":"Data Object","layer":"A"},"94bfaffe":{"_tp":"applicationInterface","name":"Форма доб./ред. варианта цены","layer":"A"},"19140866":{"_tp":"applicationInterface","name":"Карточка варианта цены","layer":"A"},"11380b4e":{"_tp":"applicationInterface","name":"Кнопка «рассчитать» для блока УП(в) ","layer":"A"},"88bfc62f":{"_tp":"applicationInterface","name":"CRUD цены","layer":"A"},"69395aaa":{"_tp":"applicationService","layer":"A"},"e97f6977":{"_tp":"applicationInterface","name":"Справочник категорий цен","layer":"A"}},"edges":{"319241f9":{"_tp":"compositionRelationship","src":"8c044888","dst":"a93de3a1"},"4c398ebe":{"_tp":"compositionRelationship","src":"8c044888","dst":"da44bbf8"},"8b267a1d":{"_tp":"compositionRelationship","src":"8c044888","dst":"d82ac8e0"},"bfc1cf6c":{"_tp":"associationRelationship","src":"404ce690","dst":"46c463a6"},"5d356247":{"_tp":"compositionRelationship","src":"2df2c3ca","dst":"31de5b9f"},"29e9f5af":{"_tp":"compositionRelationship","src":"2df2c3ca","dst":"551d25a5"},"1c032e97":{"_tp":"compositionRelationship","src":"2df2c3ca","dst":"004fe59d"},"9432d609":{"_tp":"compositionRelationship","src":"2df2c3ca","dst":"24a5bb1e"},"46eedc1a":{"_tp":"flowRelationship","src":"d82ac8e0","dst":"a93de3a1"},"19dd5d1f":{"_tp":"flowRelationship","src":"a93de3a1","dst":"da44bbf8"},"29647b89":{"_tp":"flowRelationship","src":"31de5b9f","dst":"004fe59d"},"9d253433":{"_tp":"flowRelationship","src":"004fe59d","dst":"551d25a5"},"9524e2c6":{"_tp":"flowRelationship","src":"551d25a5","dst":"24a5bb1e"},"cf5aa79c":{"_tp":"associationRelationship","src":"58e57eac","dst":"8c044888"},"a84c5766":{"_tp":"associationRelationship","src":"b91ee196","dst":"2df2c3ca"},"ad7e81df":{"_tp":"compositionRelationship","src":"f6b18a11","dst":"0acb8d6e"},"c6f78197":{"_tp":"compositionRelationship","src":"b60e8ab6","dst":"f6b18a11"},"af0746ba":{"_tp":"associationRelationship","src":"b60e8ab6","dst":"3210fd24"},"b3fc27de":{"_tp":"compositionRelationship","src":"374cd45f","dst":"b60e8ab6"},"49e353f1":{"_tp":"compositionRelationship","src":"374cd45f","dst":"f6b18a11"},"983adc25":{"_tp":"realizationRelationship","src":"4158e3bb","dst":"789c3fb7"},"71cf2478":{"_tp":"accessRelationship","src":"8c044888","dst":"789c3fb7","access":"rw"},"9e30c02b":{"_tp":"accessRelationship","src":"58e57eac","dst":"4158e3bb","access":"rw"},"11c6a40e":{"_tp":"realizationRelationship","src":"9c9a8eec","dst":"46c463a6"},"2d980c9c":{"_tp":"accessRelationship","src":"2df2c3ca","dst":"5f87b5b1","access":"rw"},"a589df64":{"_tp":"realizationRelationship","src":"5177f853","dst":"5f87b5b1"},"e93ceb4c":{"_tp":"accessRelationship","src":"b91ee196","dst":"5177f853","access":"rw"},"a7994594":{"_tp":"associationRelationship","src":"6a316aca","dst":"004fe59d"},"122de5ca":{"_tp":"specializationRelationship","src":"4158e3bb","dst":"374cd45f"},"7216e44a":{"_tp":"specializationRelationship","src":"5177f853","dst":"374cd45f"},"c12a7a9a":{"_tp":"accessRelationship","src":"6a316aca","dst":"4158e3bb","access":"rw"},"a552f7fd":{"_tp":"compositionRelationship","src":"b91ee196","dst":"6a316aca"},"eb366a58":{"_tp":"associationRelationship","src":"4158e3bb","dst":"532ab0ed"},"aded1427":{"_tp":"associationRelationship","src":"5177f853","dst":"c545055c"},"0cb3616c":{"_tp":"specializationRelationship","src":"c545055c","dst":"3210fd24"},"ccd90ef6":{"_tp":"specializationRelationship","src":"532ab0ed","dst":"3210fd24"},"246b7cdf":{"_tp":"accessRelationship","src":"c4c39601","dst":"d8fbfc30","access":"rw"},"b6e1f017":{"_tp":"associationRelationship","src":"c4c39601","dst":"5c4a0c8b"},"c5b87441":{"_tp":"accessRelationship","src":"e3d08397","dst":"1186c24e","access":"rw"},"a8d22dde":{"_tp":"associationRelationship","src":"f6b18a11","dst":"d8fbfc30"},"90ffaab1":{"_tp":"associationRelationship","src":"f6b18a11","dst":"1186c24e"},"025b9e7f":{"_tp":"assignmentRelationship","src":"69f48f2a","dst":"5c4a0c8b"},"9c87e259":{"_tp":"assignmentRelationship","src":"b0005fe9","dst":"abd4c93f"},"cb235f11":{"_tp":"compositionRelationship","src":"abd4c93f","dst":"2df2c3ca"},"390724b4":{"_tp":"compositionRelationship","src":"abd4c93f","dst":"8c044888"},"9ed87e7f":{"_tp":"flowRelationship","src":"5c4a0c8b","dst":"abd4c93f"},"ae184bdd":{"_tp":"flowRelationship","src":"8c044888","dst":"2df2c3ca"},"78def75e":{"_tp":"triggeringRelationship","src":"404ce690","dst":"abd4c93f"},"bb22b35a":{"_tp":"accessRelationship","src":"abd4c93f","dst":"46c463a6","access":"rw"},"7cbd64cc":{"_tp":"aggregationRelationship","src":"2507f24b","dst":"78b6f6f5"},"63742736":{"_tp":"aggregationRelationship","src":"96bc126e","dst":"78b6f6f5"},"6dcf7033":{"_tp":"associationRelationship","src":"2507f24b","dst":"58e57eac"},"8a075a90":{"_tp":"associationRelationship","src":"96bc126e","dst":"b91ee196"},"ce8bd9a2":{"_tp":"associationRelationship","src":"80621cab","dst":"b91ee196"},"a3024e8f":{"_tp":"compositionRelationship","src":"80621cab","dst":"11380b4e"},"28425938":{"_tp":"associationRelationship","src":"11380b4e","dst":"6a316aca"},"fae6bc07":{"_tp":"compositionRelationship","src":"88bfc62f","dst":"c29759ce"},"992e2fee":{"_tp":"compositionRelationship","src":"88bfc62f","dst":"94bfaffe"},"ff341256":{"_tp":"compositionRelationship","src":"88bfc62f","dst":"19140866"},"12020a6c":{"_tp":"associationRelationship","src":"88bfc62f","dst":"b91ee196"},"75719f4f":{"_tp":"associationRelationship","src":"88bfc62f","dst":"58e57eac"},"3858e67a":{"_tp":"accessRelationship","src":"78b6f6f5","dst":"b60e8ab6","access":"rw"},"0113b9ad":{"_tp":"accessRelationship","src":"c29759ce","dst":"b60e8ab6","access":"rw"},"a0b8b204":{"_tp":"aggregationRelationship","src":"78b6f6f5","dst":"c29759ce"},"f805b1f8":{"_tp":"accessRelationship","src":"94bfaffe","dst":"f6b18a11","access":"rw"},"ba3d05a1":{"_tp":"accessRelationship","src":"19140866","dst":"f6b18a11","access":"rw"},"1015e8ca":{"_tp":"accessRelationship","src":"19140866","dst":"0acb8d6e","access":"rw"},"143c7fdb":{"_tp":"associationRelationship","src":"e97f6977","dst":"c4c39601"},"3a6d8fac":{"_tp":"accessRelationship","src":"e97f6977","dst":"d8fbfc30","access":"rw"},"8d44e768":{"_tp":"aggregationRelationship","src":"78b6f6f5","dst":"88bfc62f"},"d674d676":{"_tp":"aggregationRelationship","src":"80621cab","dst":"96bc126e"}},"views":{"8a471224":{"_tp":"view","name":"Процесс ввода цен","viewpoint":"layered","nodes":{"34288587":{"_tp":"viewNodeConcept","concept":"d8fbfc30","pos":{"x":552,"y":900},"size":{"width":100,"height":40}},"efe926c3":{"_tp":"viewNodeConcept","concept":"532ab0ed","pos":{"x":1140,"y":720},"size":{"width":100,"height":40}},"e2411faf":{"_tp":"viewNodeConcept","concept":"404ce690","pos":{"x":779,"y":192},"size":{"width":100,"height":40}},"0766f393":{"_tp":"viewNodeConcept","concept":"46c463a6","pos":{"x":768,"y":441},"size":{"width":144,"height":64}},"10baedf4":{"_tp":"viewNodeConcept","concept":"58e57eac","pos":{"x":1140,"y":600},"size":{"width":100,"height":40}},"1bef8faf":{"_tp":"viewNodeConcept","concept":"b91ee196","pos":{"x":1656,"y":579},"size":{"width":181,"height":97}},"f6960b24":{"_tp":"viewNodeConcept","concept":"6a316aca","pos":{"x":24,"y":24},"size":{"width":100,"height":40}},"738546fa":{"_tp":"viewNodeConcept","concept":"3210fd24","pos":{"x":1224,"y":892},"size":{"width":120,"height":71}},"08c74a97":{"_tp":"viewNodeConcept","concept":"374cd45f","pos":{"x":1368,"y":852},"size":{"width":481,"height":145}},"f84e075b":{"_tp":"viewNodeConcept","concept":"b60e8ab6","pos":{"x":10,"y":40},"size":{"width":120,"height":71}},"5a52bc71":{"_tp":"viewNodeConcept","concept":"f6b18a11","pos":{"x":264,"y":25},"size":{"width":100,"height":40}},"3d5d0053":{"_tp":"viewNodeConcept","concept":"0acb8d6e","pos":{"x":60,"y":36},"size":{"width":100,"height":40}},"9fa7b338":{"_tp":"viewNodeConcept","concept":"789c3fb7","pos":{"x":1272,"y":441},"size":{"width":120,"height":64}},"14f3b144":{"_tp":"viewNodeConcept","concept":"9c9a8eec","pos":{"x":780,"y":549},"size":{"width":100,"height":40}},"17b6dd73":{"_tp":"viewNodeConcept","concept":"5f87b5b1","pos":{"x":1812,"y":441},"size":{"width":120,"height":64}},"27f78682":{"_tp":"viewNodeConcept","concept":"5177f853","pos":{"x":1812,"y":720},"size":{"width":100,"height":40}},"1a4fa0ee":{"_tp":"viewNodeConcept","concept":"4158e3bb","pos":{"x":1272,"y":720},"size":{"width":100,"height":40}},"0932f03b":{"_tp":"viewNodeConcept","concept":"c545055c","pos":{"x":1681,"y":720},"size":{"width":100,"height":40}},"e7cb4429":{"_tp":"viewNodeConcept","concept":"c4c39601","pos":{"x":552,"y":600},"size":{"width":100,"height":40}},"810e1ed9":{"_tp":"viewNodeConcept","concept":"5c4a0c8b","pos":{"x":552,"y":309},"size":{"width":100,"height":40}},"8f444ff5":{"_tp":"viewNodeConcept","concept":"e3d08397","pos":{"x":407,"y":600},"size":{"width":100,"height":40}},"50fa7d94":{"_tp":"viewNodeConcept","concept":"1186c24e","pos":{"x":408,"y":900},"size":{"width":100,"height":40}},"acdd766d":{"_tp":"viewNodeConcept","concept":"b0005fe9","pos":{"x":1441,"y":120},"size":{"width":100,"height":40}},"d36265c2":{"_tp":"viewNodeConcept","concept":"69f48f2a","pos":{"x":552,"y":120},"size":{"width":100,"height":40}},"94b761c7":{"_tp":"viewNodeConcept","concept":"abd4c93f","pos":{"x":972,"y":264},"size":{"width":1057,"height":145}},"10c45371":{"_tp":"viewNodeConcept","concept":"2df2c3ca","pos":{"x":504,"y":24},"size":{"width":541,"height":109}},"8349e3eb":{"_tp":"viewNodeConcept","concept":"31de5b9f","pos":{"x":12,"y":24},"size":{"width":120,"height":72}},"e6ee9e29":{"_tp":"viewNodeConcept","concept":"551d25a5","pos":{"x":276,"y":24},"size":{"width":120,"height":72}},"679248e6":{"_tp":"viewNodeConcept","concept":"004fe59d","pos":{"x":144,"y":24},"size":{"width":120,"height":72}},"6e2090db":{"_tp":"viewNodeConcept","concept":"24a5bb1e","pos":{"x":408,"y":24},"size":{"width":120,"height":72}},"4850f498":{"_tp":"viewNodeConcept","concept":"8c044888","pos":{"x":13,"y":24},"size":{"width":433,"height":109}},"0ba0c9f8":{"_tp":"viewNodeConcept","concept":"a93de3a1","pos":{"x":144,"y":24},"size":{"width":144,"height":72}},"520aa127":{"_tp":"viewNodeConcept","concept":"da44bbf8","pos":{"x":300,"y":24},"size":{"width":120,"height":72}},"5f617182":{"_tp":"viewNodeConcept","concept":"d82ac8e0","pos":{"x":12,"y":24},"size":{"width":120,"height":72}}},"edges":{"df7de78b":{"_tp":"viewRelationship","concept":"ccd90ef6","src":"efe926c3","dst":"738546fa","points":[]},"d6d84b0a":{"_tp":"viewRelationship","concept":"bfc1cf6c","src":"e2411faf","dst":"0766f393","points":[]},"9be52ac4":{"_tp":"viewRelationship","concept":"78def75e","src":"e2411faf","dst":"94b761c7","points":[]},"ad62e32c":{"_tp":"viewRelationship","concept":"cf5aa79c","src":"10baedf4","dst":"4850f498","points":[]},"c3aa22ca":{"_tp":"viewRelationship","concept":"9e30c02b","src":"10baedf4","dst":"1a4fa0ee","points":[]},"586eebc6":{"_tp":"viewRelationship","concept":"a84c5766","src":"1bef8faf","dst":"10c45371","points":[]},"3c0180a3":{"_tp":"viewRelationship","concept":"e93ceb4c","src":"1bef8faf","dst":"27f78682","points":[]},"a70e1433":{"_tp":"viewRelationship","concept":"a7994594","src":"f6960b24","dst":"679248e6","points":[]},"2358a67d":{"_tp":"viewRelationship","concept":"c12a7a9a","src":"f6960b24","dst":"1a4fa0ee","points":[]},"854570f9":{"_tp":"viewRelationship","concept":"c6f78197","src":"f84e075b","dst":"5a52bc71","points":[]},"d6d16d20":{"_tp":"viewRelationship","concept":"af0746ba","src":"f84e075b","dst":"738546fa","points":[]},"af412531":{"_tp":"viewRelationship","concept":"ad7e81df","src":"5a52bc71","dst":"3d5d0053","points":[]},"6af9ab37":{"_tp":"viewRelationship","concept":"a8d22dde","src":"5a52bc71","dst":"34288587","points":[]},"35e5f776":{"_tp":"viewRelationship","concept":"90ffaab1","src":"5a52bc71","dst":"50fa7d94","points":[]},"2492e80a":{"_tp":"viewRelationship","concept":"11c6a40e","src":"14f3b144","dst":"0766f393","points":[]},"575294ad":{"_tp":"viewRelationship","concept":"a589df64","src":"27f78682","dst":"17b6dd73","points":[]},"bca5352f":{"_tp":"viewRelationship","concept":"7216e44a","src":"27f78682","dst":"08c74a97","points":[]},"55a4322b":{"_tp":"viewRelationship","concept":"aded1427","src":"27f78682","dst":"0932f03b","points":[]},"e9233b55":{"_tp":"viewRelationship","concept":"983adc25","src":"1a4fa0ee","dst":"9fa7b338","points":[]},"ee586582":{"_tp":"viewRelationship","concept":"122de5ca","src":"1a4fa0ee","dst":"08c74a97","points":[]},"d99763dd":{"_tp":"viewRelationship","concept":"eb366a58","src":"1a4fa0ee","dst":"efe926c3","points":[]},"93915188":{"_tp":"viewRelationship","concept":"0cb3616c","src":"0932f03b","dst":"738546fa","points":[]},"6b8d6834":{"_tp":"viewRelationship","concept":"246b7cdf","src":"e7cb4429","dst":"34288587","points":[]},"3dc1f66f":{"_tp":"viewRelationship","concept":"b6e1f017","src":"e7cb4429","dst":"810e1ed9","points":[]},"58a12c52":{"_tp":"viewRelationship","concept":"9ed87e7f","src":"810e1ed9","dst":"94b761c7","points":[]},"bf752194":{"_tp":"viewRelationship","concept":"c5b87441","src":"8f444ff5","dst":"50fa7d94","points":[]},"70be444e":{"_tp":"viewRelationship","concept":"9c87e259","src":"acdd766d","dst":"94b761c7","points":[]},"1e7b8f3a":{"_tp":"viewRelationship","concept":"025b9e7f","src":"d36265c2","dst":"810e1ed9","points":[]},"32ad7c22":{"_tp":"viewRelationship","concept":"bb22b35a","src":"94b761c7","dst":"0766f393","points":[]},"fbe8b1ae":{"_tp":"viewRelationship","concept":"2d980c9c","src":"10c45371","dst":"17b6dd73","points":[]},"d75b9e8d":{"_tp":"viewRelationship","concept":"29647b89","src":"8349e3eb","dst":"679248e6","points":[]},"1e65f2b1":{"_tp":"viewRelationship","concept":"9524e2c6","src":"e6ee9e29","dst":"6e2090db","points":[]},"304c1e2c":{"_tp":"viewRelationship","concept":"9d253433","src":"679248e6","dst":"e6ee9e29","points":[]},"75edca9a":{"_tp":"viewRelationship","concept":"71cf2478","src":"4850f498","dst":"9fa7b338","points":[]},"9b1b10e4":{"_tp":"viewRelationship","concept":"ae184bdd","src":"4850f498","dst":"10c45371","points":[]},"3d097dcf":{"_tp":"viewRelationship","concept":"19dd5d1f","src":"0ba0c9f8","dst":"520aa127","points":[]},"6c7bfdc0":{"_tp":"viewRelationship","concept":"46eedc1a","src":"5f617182","dst":"0ba0c9f8","points":[]}}},"e0c081c1":{"_tp":"view","name":"Структура модуля","viewpoint":"layered","nodes":{"d493cf13":{"_tp":"viewNodeConcept","concept":"d8fbfc30","pos":{"x":324,"y":637},"size":{"width":100,"height":40}},"4c990a8b":{"_tp":"viewNodeConcept","concept":"58e57eac","pos":{"x":649,"y":72},"size":{"width":100,"height":40}},"89bfed4a":{"_tp":"viewNodeConcept","concept":"b91ee196","pos":{"x":1121,"y":51},"size":{"width":181,"height":97}},"3987b888":{"_tp":"viewNodeConcept","concept":"6a316aca","pos":{"x":24,"y":24},"size":{"width":100,"height":40}},"41f3115c":{"_tp":"viewNodeConcept","concept":"3210fd24","pos":{"x":673,"y":628},"size":{"width":120,"height":73}},"593d3989":{"_tp":"viewNodeConcept","concept":"374cd45f","pos":{"x":828,"y":576},"size":{"width":505,"height":155}},"1d4d8e00":{"_tp":"viewNodeConcept","concept":"b60e8ab6","pos":{"x":20,"y":51},"size":{"width":120,"height":71}},"c923235e":{"_tp":"viewNodeConcept","concept":"f6b18a11","pos":{"x":300,"y":36},"size":{"width":100,"height":40}},"fefbef4d":{"_tp":"viewNodeConcept","concept":"0acb8d6e","pos":{"x":60,"y":30},"size":{"width":100,"height":40}},"a0a6d17a":{"_tp":"viewNodeConcept","concept":"c4c39601","pos":{"x":324,"y":71},"size":{"width":100,"height":40}},"b66d2228":{"_tp":"viewNodeConcept","concept":"e3d08397","pos":{"x":180,"y":71},"size":{"width":100,"height":40}},"31e0d275":{"_tp":"viewNodeConcept","concept":"1186c24e","pos":{"x":180,"y":637},"size":{"width":100,"height":40}},"64934eea":{"_tp":"viewNodeConcept","concept":"78b6f6f5","pos":{"x":780,"y":348},"size":{"width":170,"height":55}},"6a032965":{"_tp":"viewNodeConcept","concept":"2507f24b","pos":{"x":624,"y":240},"size":{"width":169,"height":55}},"a9a3d45b":{"_tp":"viewNodeConcept","concept":"80621cab","pos":{"x":1128,"y":240},"size":{"width":167,"height":55}},"ab0e62d1":{"_tp":"viewNodeConcept","concept":"96bc126e","pos":{"x":972,"y":240},"size":{"width":100,"height":40}},"b200c96b":{"_tp":"viewNodeConcept","concept":"c29759ce","pos":{"x":924,"y":444},"size":{"width":181,"height":55}},"e7c50781":{"_tp":"viewNodeConcept","concept":"94bfaffe","pos":{"x":1116,"y":444},"size":{"width":181,"height":55}},"57c0450d":{"_tp":"viewNodeConcept","concept":"19140866","pos":{"x":1308,"y":444},"size":{"width":164,"height":55}},"1af2c576":{"_tp":"viewNodeConcept","concept":"11380b4e","pos":{"x":1332,"y":240},"size":{"width":100,"height":40}},"278f1333":{"_tp":"viewNodeConcept","concept":"88bfc62f","pos":{"x":1147,"y":348},"size":{"width":100,"height":40}},"b2763d6a":{"_tp":"viewNodeConcept","concept":"e97f6977","pos":{"x":324,"y":443},"size":{"width":100,"height":40}}},"edges":{"9ebd2328":{"_tp":"viewRelationship","concept":"af0746ba","src":"1d4d8e00","dst":"41f3115c","points":[]},"c74d513f":{"_tp":"viewRelationship","concept":"c6f78197","src":"1d4d8e00","dst":"c923235e","points":[]},"131ccd44":{"_tp":"viewRelationship","concept":"90ffaab1","src":"c923235e","dst":"31e0d275","points":[]},"47cc8269":{"_tp":"viewRelationship","concept":"ad7e81df","src":"c923235e","dst":"fefbef4d","points":[]},"7786dbd4":{"_tp":"viewRelationship","concept":"a8d22dde","src":"c923235e","dst":"d493cf13","points":[]},"cc4700ce":{"_tp":"viewRelationship","concept":"c5b87441","src":"b66d2228","dst":"31e0d275","points":[]},"ff728b64":{"_tp":"viewRelationship","concept":"3858e67a","src":"64934eea","dst":"1d4d8e00","points":[]},"115b89dd":{"_tp":"viewRelationship","concept":"8d44e768","src":"64934eea","dst":"278f1333","points":[]},"a56c776e":{"_tp":"viewRelationship","concept":"7cbd64cc","src":"6a032965","dst":"64934eea","points":[]},"7e247ce6":{"_tp":"viewRelationship","concept":"6dcf7033","src":"6a032965","dst":"4c990a8b","points":[]},"bcc5ea76":{"_tp":"viewRelationship","concept":"ce8bd9a2","src":"a9a3d45b","dst":"89bfed4a","points":[]},"51d534b2":{"_tp":"viewRelationship","concept":"a3024e8f","src":"a9a3d45b","dst":"1af2c576","points":[]},"cd01f712":{"_tp":"viewRelationship","concept":"d674d676","src":"a9a3d45b","dst":"ab0e62d1","points":[]},"3693072d":{"_tp":"viewRelationship","concept":"63742736","src":"ab0e62d1","dst":"64934eea","points":[]},"fedfc9f3":{"_tp":"viewRelationship","concept":"0113b9ad","src":"b200c96b","dst":"1d4d8e00","points":[]},"15374fd9":{"_tp":"viewRelationship","concept":"f805b1f8","src":"e7c50781","dst":"c923235e","points":[]},"d600cdc4":{"_tp":"viewRelationship","concept":"ba3d05a1","src":"57c0450d","dst":"c923235e","points":[]},"8a574c02":{"_tp":"viewRelationship","concept":"28425938","src":"1af2c576","dst":"3987b888","points":[]},"f0606f76":{"_tp":"viewRelationship","concept":"fae6bc07","src":"278f1333","dst":"b200c96b","points":[]},"24975c9b":{"_tp":"viewRelationship","concept":"992e2fee","src":"278f1333","dst":"e7c50781","points":[]},"1fe1eefa":{"_tp":"viewRelationship","concept":"ff341256","src":"278f1333","dst":"57c0450d","points":[]},"550976cc":{"_tp":"viewRelationship","concept":"143c7fdb","src":"b2763d6a","dst":"a0a6d17a","points":[]},"df373f0f":{"_tp":"viewRelationship","concept":"3a6d8fac","src":"b2763d6a","dst":"d493cf13","points":[]}}}}}}
+{
+  "": {
+    "_tp": "model",
+    "nodes": {
+      "404ce690": {
+        "_tp": "businessEvent",
+        "name": "Распорядение о стоимости обучения",
+        "layer": "B"
+      },
+      "d82ac8e0": {
+        "_tp": "businessProcess",
+        "name": "Создание цены для элемента реестра",
+        "layer": "B"
+      },
+      "a93de3a1": {
+        "_tp": "businessProcess",
+        "name": "Заполнение вариантов цены для элемента реестра",
+        "layer": "B"
+      },
+      "da44bbf8": {
+        "_tp": "businessProcess",
+        "name": "Публикация цены для элемента реестра",
+        "layer": "B"
+      },
+      "8c044888": {
+        "_tp": "businessProcess",
+        "name": "Указание цены для элемента реестра",
+        "layer": "B"
+      },
+      "46c463a6": {
+        "_tp": "businessObject",
+        "name": "Утвержденные цены для учебных единиц",
+        "layer": "B"
+      },
+      "2df2c3ca": {
+        "_tp": "businessProcess",
+        "name": "Указание цены для УП(в)",
+        "layer": "B"
+      },
+      "31de5b9f": {
+        "_tp": "businessProcess",
+        "name": "Создание цены для блока УП(в)",
+        "layer": "B"
+      },
+      "551d25a5": {
+        "_tp": "businessProcess",
+        "name": "Заполнение вариантов цены для УП(в)",
+        "layer": "B"
+      },
+      "004fe59d": {
+        "_tp": "businessProcess",
+        "name": "Рассчет стоимости блока УП(в)",
+        "layer": "B"
+      },
+      "24a5bb1e": {
+        "_tp": "businessProcess",
+        "name": "Публикация цены для блоков УП(в)",
+        "layer": "B"
+      },
+      "789c3fb7": {
+        "_tp": "businessObject",
+        "name": "Цена элемента реестра",
+        "layer": "B"
+      },
+      "9c9a8eec": {
+        "_tp": "representation",
+        "name": "Распоряжение о стоимости",
+        "layer": "B"
+      },
+      "5f87b5b1": {
+        "_tp": "businessObject",
+        "name": "Цена блока УП(в)",
+        "layer": "B"
+      },
+      "5c4a0c8b": {
+        "_tp": "businessFunction",
+        "name": "настройка модуля",
+        "layer": "B"
+      },
+      "b0005fe9": {
+        "_tp": "businessRole",
+        "name": "Ответственный за цены",
+        "layer": "B"
+      },
+      "69f48f2a": {
+        "_tp": "businessRole",
+        "name": "внедренец",
+        "layer": "B"
+      },
+      "abd4c93f": {
+        "_tp": "businessProcess",
+        "name": "ввод цен в систему",
+        "layer": "B"
+      },
+      "65c3abc4": {
+        "_tp": "applicationInterface",
+        "name": "ввод цен",
+        "layer": "A"
+      },
+      "d8fbfc30": {
+        "_tp": "dataObject",
+        "name": "категория цены",
+        "layer": "A"
+      },
+      "1186c24e": {
+        "_tp": "dataObject",
+        "name": "сетка оплат",
+        "layer": "A"
+      },
+      "53d89924": {
+        "_tp": "dataObject",
+        "name": "Блок учебного плана",
+        "layer": "A"
+      },
+      "532ab0ed": {
+        "_tp": "dataObject",
+        "name": "Элемент реестра",
+        "layer": "A"
+      },
+      "b513001c": {
+        "_tp": "dataObject",
+        "name": "Период действия цены для элемента реестра",
+        "layer": "A"
+      },
+      "cc34f57c": {
+        "_tp": "dataObject",
+        "name": "цена",
+        "layer": "A"
+      },
+      "56b398a2": {
+        "_tp": "dataObject",
+        "name": "Цена на элемент реестра",
+        "layer": "A"
+      },
+      "3e76ec73": {
+        "_tp": "dataObject",
+        "name": "Период действия цены для УП(в)",
+        "layer": "A"
+      },
+      "592c5b19": {
+        "_tp": "dataObject",
+        "name": "Цена для блока УП(в) (на категории и сетки)",
+        "layer": "A"
+      },
+      "a3962039": {
+        "_tp": "applicationInterface",
+        "name": "карточка цены",
+        "layer": "A"
+      },
+      "c4fa987d": {
+        "_tp": "dataObject",
+        "name": "Задание цена для УП",
+        "layer": "A"
+      },
+      "3669089a": {
+        "_tp": "applicationInterface",
+        "name": "Указание цены в УП",
+        "layer": "A"
+      },
+      "9ce6710e": {
+        "_tp": "applicationInterface",
+        "name": "Расчет стоимости блока УП",
+        "layer": "A"
+      },
+      "85f99f1a": {
+        "_tp": "applicationInterface",
+        "name": "Настройка справочников",
+        "layer": "A"
+      },
+      "71cd5feb": {
+        "_tp": "applicationInterface",
+        "name": "Вкладка «цена» в УП(в)",
+        "layer": "A"
+      },
+      "8aab040b": {
+        "_tp": "dataObject",
+        "name": "Data Object",
+        "layer": "A"
+      },
+      "3fe7b298": {
+        "_tp": "applicationService",
+        "name": "Application Service",
+        "layer": "A"
+      },
+      "e9132f09": {
+        "_tp": "applicationInterface",
+        "name": "список цен",
+        "layer": "A"
+      },
+      "f5cf1dce": {
+        "_tp": "applicationInterface",
+        "name": "Вкладка «цена» в элементе реестра",
+        "layer": "A"
+      },
+      "c920aab3": {
+        "_tp": "applicationInterface",
+        "name": "Список периодов",
+        "layer": "A"
+      },
+      "9f644131": {
+        "_tp": "dataObject",
+        "name": "Data Object",
+        "layer": "A"
+      },
+      "3f325fe2": {
+        "_tp": "applicationInterface",
+        "name": "Каторчка цены",
+        "layer": "A"
+      },
+      "58e57eac": {
+        "_tp": "applicationService",
+        "name": "Ввод цен по элементам реестра",
+        "layer": "A"
+      },
+      "b91ee196": {
+        "_tp": "applicationService",
+        "name": "Ввод цен по УП(в)",
+        "layer": "A"
+      },
+      "3210fd24": {
+        "_tp": "dataObject",
+        "name": "Элемент, обладающий ценой",
+        "layer": "A"
+      },
+      "b60e8ab6": {
+        "_tp": "dataObject",
+        "name": "Период действия цены",
+        "layer": "A"
+      },
+      "f6b18a11": {
+        "_tp": "dataObject",
+        "name": "Вариант цены",
+        "layer": "A"
+      },
+      "0acb8d6e": {
+        "_tp": "dataObject",
+        "name": "Элемент цены",
+        "layer": "A"
+      },
+      "374cd45f": {
+        "_tp": "dataObject",
+        "name": "Цена",
+        "layer": "A"
+      },
+      "6252d638": {
+        "_tp": "applicationInterface",
+        "name": "Application Interface",
+        "layer": "A"
+      },
+      "860b14b7": {
+        "_tp": "dataObject",
+        "name": "Data Object",
+        "layer": "A"
+      },
+      "6a316aca": {
+        "_tp": "applicationService",
+        "name": "Пасчет стоимости блока УП(в)",
+        "layer": "A"
+      },
+      "5177f853": {
+        "_tp": "dataObject",
+        "name": "Цена блока УП(в)",
+        "layer": "A"
+      },
+      "4158e3bb": {
+        "_tp": "dataObject",
+        "name": "Цена элемента реестра",
+        "layer": "A"
+      },
+      "c545055c": {
+        "_tp": "dataObject",
+        "name": "Блок УП(в)",
+        "layer": "A"
+      },
+      "c4c39601": {
+        "_tp": "applicationService",
+        "name": "настройки модуля",
+        "layer": "A"
+      },
+      "e3d08397": {
+        "_tp": "applicationComponent",
+        "name": "логика работы сеток",
+        "layer": "A"
+      },
+      "78b6f6f5": {
+        "_tp": "applicationInterface",
+        "name": "Список цен элемена, обладающего ценой",
+        "layer": "A"
+      },
+      "2507f24b": {
+        "_tp": "applicationInterface",
+        "name": "Вкладка «Цена» на элементе реестра",
+        "layer": "A"
+      },
+      "80621cab": {
+        "_tp": "applicationInterface",
+        "name": "Список учебных единиц на вкладке «Цена» на УП(в)",
+        "layer": "A"
+      },
+      "dc81fe16": {
+        "_tp": "dataObject",
+        "name": "Data Object",
+        "layer": "A"
+      },
+      "96bc126e": {
+        "_tp": "applicationInterface",
+        "name": "Список цен на блок УП(в)",
+        "layer": "A"
+      },
+      "97b23803": {
+        "_tp": "applicationInterface",
+        "name": "карточка цены",
+        "layer": "A"
+      },
+      "c29759ce": {
+        "_tp": "applicationInterface",
+        "name": "Форма доб./ред. периода действия цены",
+        "layer": "A"
+      },
+      "7068757d": {
+        "_tp": "dataObject",
+        "name": "Data Object",
+        "layer": "A"
+      },
+      "94bfaffe": {
+        "_tp": "applicationInterface",
+        "name": "Форма доб./ред. варианта цены",
+        "layer": "A"
+      },
+      "19140866": {
+        "_tp": "applicationInterface",
+        "name": "Карточка варианта цены",
+        "layer": "A"
+      },
+      "11380b4e": {
+        "_tp": "applicationInterface",
+        "name": "Кнопка «рассчитать» для блока УП(в) ",
+        "layer": "A"
+      },
+      "88bfc62f": {
+        "_tp": "applicationInterface",
+        "name": "CRUD цены",
+        "layer": "A"
+      },
+      "69395aaa": {
+        "_tp": "applicationService",
+        "layer": "A"
+      },
+      "e97f6977": {
+        "_tp": "applicationInterface",
+        "name": "Справочник категорий цен",
+        "layer": "A"
+      }
+    },
+    "edges": {
+      "319241f9": {
+        "_tp": "compositionRelationship",
+        "src": "8c044888",
+        "dst": "a93de3a1"
+      },
+      "4c398ebe": {
+        "_tp": "compositionRelationship",
+        "src": "8c044888",
+        "dst": "da44bbf8"
+      },
+      "8b267a1d": {
+        "_tp": "compositionRelationship",
+        "src": "8c044888",
+        "dst": "d82ac8e0"
+      },
+      "bfc1cf6c": {
+        "_tp": "associationRelationship",
+        "src": "404ce690",
+        "dst": "46c463a6"
+      },
+      "5d356247": {
+        "_tp": "compositionRelationship",
+        "src": "2df2c3ca",
+        "dst": "31de5b9f"
+      },
+      "29e9f5af": {
+        "_tp": "compositionRelationship",
+        "src": "2df2c3ca",
+        "dst": "551d25a5"
+      },
+      "1c032e97": {
+        "_tp": "compositionRelationship",
+        "src": "2df2c3ca",
+        "dst": "004fe59d"
+      },
+      "9432d609": {
+        "_tp": "compositionRelationship",
+        "src": "2df2c3ca",
+        "dst": "24a5bb1e"
+      },
+      "46eedc1a": {
+        "_tp": "flowRelationship",
+        "src": "d82ac8e0",
+        "dst": "a93de3a1"
+      },
+      "19dd5d1f": {
+        "_tp": "flowRelationship",
+        "src": "a93de3a1",
+        "dst": "da44bbf8"
+      },
+      "29647b89": {
+        "_tp": "flowRelationship",
+        "src": "31de5b9f",
+        "dst": "004fe59d"
+      },
+      "9d253433": {
+        "_tp": "flowRelationship",
+        "src": "004fe59d",
+        "dst": "551d25a5"
+      },
+      "9524e2c6": {
+        "_tp": "flowRelationship",
+        "src": "551d25a5",
+        "dst": "24a5bb1e"
+      },
+      "cf5aa79c": {
+        "_tp": "associationRelationship",
+        "src": "58e57eac",
+        "dst": "8c044888"
+      },
+      "a84c5766": {
+        "_tp": "associationRelationship",
+        "src": "b91ee196",
+        "dst": "2df2c3ca"
+      },
+      "ad7e81df": {
+        "_tp": "compositionRelationship",
+        "src": "f6b18a11",
+        "dst": "0acb8d6e"
+      },
+      "c6f78197": {
+        "_tp": "compositionRelationship",
+        "src": "b60e8ab6",
+        "dst": "f6b18a11"
+      },
+      "af0746ba": {
+        "_tp": "associationRelationship",
+        "src": "b60e8ab6",
+        "dst": "3210fd24"
+      },
+      "b3fc27de": {
+        "_tp": "compositionRelationship",
+        "src": "374cd45f",
+        "dst": "b60e8ab6"
+      },
+      "49e353f1": {
+        "_tp": "compositionRelationship",
+        "src": "374cd45f",
+        "dst": "f6b18a11"
+      },
+      "983adc25": {
+        "_tp": "realizationRelationship",
+        "src": "4158e3bb",
+        "dst": "789c3fb7"
+      },
+      "71cf2478": {
+        "_tp": "accessRelationship",
+        "src": "8c044888",
+        "dst": "789c3fb7",
+        "access": "rw"
+      },
+      "9e30c02b": {
+        "_tp": "accessRelationship",
+        "src": "58e57eac",
+        "dst": "4158e3bb",
+        "access": "rw"
+      },
+      "11c6a40e": {
+        "_tp": "realizationRelationship",
+        "src": "9c9a8eec",
+        "dst": "46c463a6"
+      },
+      "2d980c9c": {
+        "_tp": "accessRelationship",
+        "src": "2df2c3ca",
+        "dst": "5f87b5b1",
+        "access": "rw"
+      },
+      "a589df64": {
+        "_tp": "realizationRelationship",
+        "src": "5177f853",
+        "dst": "5f87b5b1"
+      },
+      "e93ceb4c": {
+        "_tp": "accessRelationship",
+        "src": "b91ee196",
+        "dst": "5177f853",
+        "access": "rw"
+      },
+      "a7994594": {
+        "_tp": "associationRelationship",
+        "src": "6a316aca",
+        "dst": "004fe59d"
+      },
+      "122de5ca": {
+        "_tp": "specializationRelationship",
+        "src": "4158e3bb",
+        "dst": "374cd45f"
+      },
+      "7216e44a": {
+        "_tp": "specializationRelationship",
+        "src": "5177f853",
+        "dst": "374cd45f"
+      },
+      "c12a7a9a": {
+        "_tp": "accessRelationship",
+        "src": "6a316aca",
+        "dst": "4158e3bb",
+        "access": "rw"
+      },
+      "a552f7fd": {
+        "_tp": "compositionRelationship",
+        "src": "b91ee196",
+        "dst": "6a316aca"
+      },
+      "eb366a58": {
+        "_tp": "associationRelationship",
+        "src": "4158e3bb",
+        "dst": "532ab0ed"
+      },
+      "aded1427": {
+        "_tp": "associationRelationship",
+        "src": "5177f853",
+        "dst": "c545055c"
+      },
+      "0cb3616c": {
+        "_tp": "specializationRelationship",
+        "src": "c545055c",
+        "dst": "3210fd24"
+      },
+      "ccd90ef6": {
+        "_tp": "specializationRelationship",
+        "src": "532ab0ed",
+        "dst": "3210fd24"
+      },
+      "246b7cdf": {
+        "_tp": "accessRelationship",
+        "src": "c4c39601",
+        "dst": "d8fbfc30",
+        "access": "rw"
+      },
+      "b6e1f017": {
+        "_tp": "associationRelationship",
+        "src": "c4c39601",
+        "dst": "5c4a0c8b"
+      },
+      "c5b87441": {
+        "_tp": "accessRelationship",
+        "src": "e3d08397",
+        "dst": "1186c24e",
+        "access": "rw"
+      },
+      "a8d22dde": {
+        "_tp": "associationRelationship",
+        "src": "f6b18a11",
+        "dst": "d8fbfc30"
+      },
+      "90ffaab1": {
+        "_tp": "associationRelationship",
+        "src": "f6b18a11",
+        "dst": "1186c24e"
+      },
+      "025b9e7f": {
+        "_tp": "assignmentRelationship",
+        "src": "69f48f2a",
+        "dst": "5c4a0c8b"
+      },
+      "9c87e259": {
+        "_tp": "assignmentRelationship",
+        "src": "b0005fe9",
+        "dst": "abd4c93f"
+      },
+      "cb235f11": {
+        "_tp": "compositionRelationship",
+        "src": "abd4c93f",
+        "dst": "2df2c3ca"
+      },
+      "390724b4": {
+        "_tp": "compositionRelationship",
+        "src": "abd4c93f",
+        "dst": "8c044888"
+      },
+      "9ed87e7f": {
+        "_tp": "flowRelationship",
+        "src": "5c4a0c8b",
+        "dst": "abd4c93f"
+      },
+      "ae184bdd": {
+        "_tp": "flowRelationship",
+        "src": "8c044888",
+        "dst": "2df2c3ca"
+      },
+      "78def75e": {
+        "_tp": "triggeringRelationship",
+        "src": "404ce690",
+        "dst": "abd4c93f"
+      },
+      "bb22b35a": {
+        "_tp": "accessRelationship",
+        "src": "abd4c93f",
+        "dst": "46c463a6",
+        "access": "rw"
+      },
+      "7cbd64cc": {
+        "_tp": "aggregationRelationship",
+        "src": "2507f24b",
+        "dst": "78b6f6f5"
+      },
+      "63742736": {
+        "_tp": "aggregationRelationship",
+        "src": "96bc126e",
+        "dst": "78b6f6f5"
+      },
+      "6dcf7033": {
+        "_tp": "associationRelationship",
+        "src": "2507f24b",
+        "dst": "58e57eac"
+      },
+      "8a075a90": {
+        "_tp": "associationRelationship",
+        "src": "96bc126e",
+        "dst": "b91ee196"
+      },
+      "ce8bd9a2": {
+        "_tp": "associationRelationship",
+        "src": "80621cab",
+        "dst": "b91ee196"
+      },
+      "a3024e8f": {
+        "_tp": "compositionRelationship",
+        "src": "80621cab",
+        "dst": "11380b4e"
+      },
+      "28425938": {
+        "_tp": "associationRelationship",
+        "src": "11380b4e",
+        "dst": "6a316aca"
+      },
+      "fae6bc07": {
+        "_tp": "compositionRelationship",
+        "src": "88bfc62f",
+        "dst": "c29759ce"
+      },
+      "992e2fee": {
+        "_tp": "compositionRelationship",
+        "src": "88bfc62f",
+        "dst": "94bfaffe"
+      },
+      "ff341256": {
+        "_tp": "compositionRelationship",
+        "src": "88bfc62f",
+        "dst": "19140866"
+      },
+      "12020a6c": {
+        "_tp": "associationRelationship",
+        "src": "88bfc62f",
+        "dst": "b91ee196"
+      },
+      "75719f4f": {
+        "_tp": "associationRelationship",
+        "src": "88bfc62f",
+        "dst": "58e57eac"
+      },
+      "3858e67a": {
+        "_tp": "accessRelationship",
+        "src": "78b6f6f5",
+        "dst": "b60e8ab6",
+        "access": "rw"
+      },
+      "0113b9ad": {
+        "_tp": "accessRelationship",
+        "src": "c29759ce",
+        "dst": "b60e8ab6",
+        "access": "rw"
+      },
+      "a0b8b204": {
+        "_tp": "aggregationRelationship",
+        "src": "78b6f6f5",
+        "dst": "c29759ce"
+      },
+      "f805b1f8": {
+        "_tp": "accessRelationship",
+        "src": "94bfaffe",
+        "dst": "f6b18a11",
+        "access": "rw"
+      },
+      "ba3d05a1": {
+        "_tp": "accessRelationship",
+        "src": "19140866",
+        "dst": "f6b18a11",
+        "access": "rw"
+      },
+      "1015e8ca": {
+        "_tp": "accessRelationship",
+        "src": "19140866",
+        "dst": "0acb8d6e",
+        "access": "rw"
+      },
+      "143c7fdb": {
+        "_tp": "associationRelationship",
+        "src": "e97f6977",
+        "dst": "c4c39601"
+      },
+      "3a6d8fac": {
+        "_tp": "accessRelationship",
+        "src": "e97f6977",
+        "dst": "d8fbfc30",
+        "access": "rw"
+      },
+      "8d44e768": {
+        "_tp": "aggregationRelationship",
+        "src": "78b6f6f5",
+        "dst": "88bfc62f"
+      },
+      "d674d676": {
+        "_tp": "aggregationRelationship",
+        "src": "80621cab",
+        "dst": "96bc126e"
+      }
+    },
+    "views": {
+      "8a471224": {
+        "_tp": "view",
+        "name": "Процесс ввода цен",
+        "viewpoint": "layered",
+        "nodes": {
+          "34288587": {
+            "_tp": "viewNodeConcept",
+            "concept": "d8fbfc30",
+            "pos": {
+              "x": 552,
+              "y": 900
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "efe926c3": {
+            "_tp": "viewNodeConcept",
+            "concept": "532ab0ed",
+            "pos": {
+              "x": 1140,
+              "y": 720
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "e2411faf": {
+            "_tp": "viewNodeConcept",
+            "concept": "404ce690",
+            "pos": {
+              "x": 779,
+              "y": 192
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "0766f393": {
+            "_tp": "viewNodeConcept",
+            "concept": "46c463a6",
+            "pos": {
+              "x": 768,
+              "y": 441
+            },
+            "size": {
+              "width": 144,
+              "height": 64
+            }
+          },
+          "10baedf4": {
+            "_tp": "viewNodeConcept",
+            "concept": "58e57eac",
+            "pos": {
+              "x": 1140,
+              "y": 600
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "1bef8faf": {
+            "_tp": "viewNodeConcept",
+            "concept": "b91ee196",
+            "pos": {
+              "x": 1656,
+              "y": 579
+            },
+            "size": {
+              "width": 181,
+              "height": 97
+            }
+          },
+          "f6960b24": {
+            "_tp": "viewNodeConcept",
+            "concept": "6a316aca",
+            "pos": {
+              "x": 24,
+              "y": 24
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "738546fa": {
+            "_tp": "viewNodeConcept",
+            "concept": "3210fd24",
+            "pos": {
+              "x": 1224,
+              "y": 892
+            },
+            "size": {
+              "width": 120,
+              "height": 71
+            }
+          },
+          "08c74a97": {
+            "_tp": "viewNodeConcept",
+            "concept": "374cd45f",
+            "pos": {
+              "x": 1368,
+              "y": 852
+            },
+            "size": {
+              "width": 481,
+              "height": 145
+            }
+          },
+          "f84e075b": {
+            "_tp": "viewNodeConcept",
+            "concept": "b60e8ab6",
+            "pos": {
+              "x": 10,
+              "y": 40
+            },
+            "size": {
+              "width": 120,
+              "height": 71
+            }
+          },
+          "5a52bc71": {
+            "_tp": "viewNodeConcept",
+            "concept": "f6b18a11",
+            "pos": {
+              "x": 264,
+              "y": 25
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "3d5d0053": {
+            "_tp": "viewNodeConcept",
+            "concept": "0acb8d6e",
+            "pos": {
+              "x": 60,
+              "y": 36
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "9fa7b338": {
+            "_tp": "viewNodeConcept",
+            "concept": "789c3fb7",
+            "pos": {
+              "x": 1272,
+              "y": 441
+            },
+            "size": {
+              "width": 120,
+              "height": 64
+            }
+          },
+          "14f3b144": {
+            "_tp": "viewNodeConcept",
+            "concept": "9c9a8eec",
+            "pos": {
+              "x": 780,
+              "y": 549
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "17b6dd73": {
+            "_tp": "viewNodeConcept",
+            "concept": "5f87b5b1",
+            "pos": {
+              "x": 1812,
+              "y": 441
+            },
+            "size": {
+              "width": 120,
+              "height": 64
+            }
+          },
+          "27f78682": {
+            "_tp": "viewNodeConcept",
+            "concept": "5177f853",
+            "pos": {
+              "x": 1812,
+              "y": 720
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "1a4fa0ee": {
+            "_tp": "viewNodeConcept",
+            "concept": "4158e3bb",
+            "pos": {
+              "x": 1272,
+              "y": 720
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "0932f03b": {
+            "_tp": "viewNodeConcept",
+            "concept": "c545055c",
+            "pos": {
+              "x": 1681,
+              "y": 720
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "e7cb4429": {
+            "_tp": "viewNodeConcept",
+            "concept": "c4c39601",
+            "pos": {
+              "x": 552,
+              "y": 600
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "810e1ed9": {
+            "_tp": "viewNodeConcept",
+            "concept": "5c4a0c8b",
+            "pos": {
+              "x": 552,
+              "y": 309
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "8f444ff5": {
+            "_tp": "viewNodeConcept",
+            "concept": "e3d08397",
+            "pos": {
+              "x": 407,
+              "y": 600
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "50fa7d94": {
+            "_tp": "viewNodeConcept",
+            "concept": "1186c24e",
+            "pos": {
+              "x": 408,
+              "y": 900
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "acdd766d": {
+            "_tp": "viewNodeConcept",
+            "concept": "b0005fe9",
+            "pos": {
+              "x": 1441,
+              "y": 120
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "d36265c2": {
+            "_tp": "viewNodeConcept",
+            "concept": "69f48f2a",
+            "pos": {
+              "x": 552,
+              "y": 120
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "94b761c7": {
+            "_tp": "viewNodeConcept",
+            "concept": "abd4c93f",
+            "pos": {
+              "x": 972,
+              "y": 264
+            },
+            "size": {
+              "width": 1057,
+              "height": 145
+            }
+          },
+          "10c45371": {
+            "_tp": "viewNodeConcept",
+            "concept": "2df2c3ca",
+            "pos": {
+              "x": 504,
+              "y": 24
+            },
+            "size": {
+              "width": 541,
+              "height": 109
+            }
+          },
+          "8349e3eb": {
+            "_tp": "viewNodeConcept",
+            "concept": "31de5b9f",
+            "pos": {
+              "x": 12,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          },
+          "e6ee9e29": {
+            "_tp": "viewNodeConcept",
+            "concept": "551d25a5",
+            "pos": {
+              "x": 276,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          },
+          "679248e6": {
+            "_tp": "viewNodeConcept",
+            "concept": "004fe59d",
+            "pos": {
+              "x": 144,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          },
+          "6e2090db": {
+            "_tp": "viewNodeConcept",
+            "concept": "24a5bb1e",
+            "pos": {
+              "x": 408,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          },
+          "4850f498": {
+            "_tp": "viewNodeConcept",
+            "concept": "8c044888",
+            "pos": {
+              "x": 13,
+              "y": 24
+            },
+            "size": {
+              "width": 433,
+              "height": 109
+            }
+          },
+          "0ba0c9f8": {
+            "_tp": "viewNodeConcept",
+            "concept": "a93de3a1",
+            "pos": {
+              "x": 144,
+              "y": 24
+            },
+            "size": {
+              "width": 144,
+              "height": 72
+            }
+          },
+          "520aa127": {
+            "_tp": "viewNodeConcept",
+            "concept": "da44bbf8",
+            "pos": {
+              "x": 300,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          },
+          "5f617182": {
+            "_tp": "viewNodeConcept",
+            "concept": "d82ac8e0",
+            "pos": {
+              "x": 12,
+              "y": 24
+            },
+            "size": {
+              "width": 120,
+              "height": 72
+            }
+          }
+        },
+        "edges": {
+          "df7de78b": {
+            "_tp": "viewRelationship",
+            "concept": "ccd90ef6",
+            "src": "efe926c3",
+            "dst": "738546fa",
+            "points": []
+          },
+          "d6d84b0a": {
+            "_tp": "viewRelationship",
+            "concept": "bfc1cf6c",
+            "src": "e2411faf",
+            "dst": "0766f393",
+            "points": []
+          },
+          "9be52ac4": {
+            "_tp": "viewRelationship",
+            "concept": "78def75e",
+            "src": "e2411faf",
+            "dst": "94b761c7",
+            "points": []
+          },
+          "ad62e32c": {
+            "_tp": "viewRelationship",
+            "concept": "cf5aa79c",
+            "src": "10baedf4",
+            "dst": "4850f498",
+            "points": []
+          },
+          "c3aa22ca": {
+            "_tp": "viewRelationship",
+            "concept": "9e30c02b",
+            "src": "10baedf4",
+            "dst": "1a4fa0ee",
+            "points": []
+          },
+          "586eebc6": {
+            "_tp": "viewRelationship",
+            "concept": "a84c5766",
+            "src": "1bef8faf",
+            "dst": "10c45371",
+            "points": []
+          },
+          "3c0180a3": {
+            "_tp": "viewRelationship",
+            "concept": "e93ceb4c",
+            "src": "1bef8faf",
+            "dst": "27f78682",
+            "points": []
+          },
+          "a70e1433": {
+            "_tp": "viewRelationship",
+            "concept": "a7994594",
+            "src": "f6960b24",
+            "dst": "679248e6",
+            "points": []
+          },
+          "2358a67d": {
+            "_tp": "viewRelationship",
+            "concept": "c12a7a9a",
+            "src": "f6960b24",
+            "dst": "1a4fa0ee",
+            "points": []
+          },
+          "854570f9": {
+            "_tp": "viewRelationship",
+            "concept": "c6f78197",
+            "src": "f84e075b",
+            "dst": "5a52bc71",
+            "points": []
+          },
+          "d6d16d20": {
+            "_tp": "viewRelationship",
+            "concept": "af0746ba",
+            "src": "f84e075b",
+            "dst": "738546fa",
+            "points": []
+          },
+          "af412531": {
+            "_tp": "viewRelationship",
+            "concept": "ad7e81df",
+            "src": "5a52bc71",
+            "dst": "3d5d0053",
+            "points": []
+          },
+          "6af9ab37": {
+            "_tp": "viewRelationship",
+            "concept": "a8d22dde",
+            "src": "5a52bc71",
+            "dst": "34288587",
+            "points": []
+          },
+          "35e5f776": {
+            "_tp": "viewRelationship",
+            "concept": "90ffaab1",
+            "src": "5a52bc71",
+            "dst": "50fa7d94",
+            "points": []
+          },
+          "2492e80a": {
+            "_tp": "viewRelationship",
+            "concept": "11c6a40e",
+            "src": "14f3b144",
+            "dst": "0766f393",
+            "points": []
+          },
+          "575294ad": {
+            "_tp": "viewRelationship",
+            "concept": "a589df64",
+            "src": "27f78682",
+            "dst": "17b6dd73",
+            "points": []
+          },
+          "bca5352f": {
+            "_tp": "viewRelationship",
+            "concept": "7216e44a",
+            "src": "27f78682",
+            "dst": "08c74a97",
+            "points": []
+          },
+          "55a4322b": {
+            "_tp": "viewRelationship",
+            "concept": "aded1427",
+            "src": "27f78682",
+            "dst": "0932f03b",
+            "points": []
+          },
+          "e9233b55": {
+            "_tp": "viewRelationship",
+            "concept": "983adc25",
+            "src": "1a4fa0ee",
+            "dst": "9fa7b338",
+            "points": []
+          },
+          "ee586582": {
+            "_tp": "viewRelationship",
+            "concept": "122de5ca",
+            "src": "1a4fa0ee",
+            "dst": "08c74a97",
+            "points": []
+          },
+          "d99763dd": {
+            "_tp": "viewRelationship",
+            "concept": "eb366a58",
+            "src": "1a4fa0ee",
+            "dst": "efe926c3",
+            "points": []
+          },
+          "93915188": {
+            "_tp": "viewRelationship",
+            "concept": "0cb3616c",
+            "src": "0932f03b",
+            "dst": "738546fa",
+            "points": []
+          },
+          "6b8d6834": {
+            "_tp": "viewRelationship",
+            "concept": "246b7cdf",
+            "src": "e7cb4429",
+            "dst": "34288587",
+            "points": []
+          },
+          "3dc1f66f": {
+            "_tp": "viewRelationship",
+            "concept": "b6e1f017",
+            "src": "e7cb4429",
+            "dst": "810e1ed9",
+            "points": []
+          },
+          "58a12c52": {
+            "_tp": "viewRelationship",
+            "concept": "9ed87e7f",
+            "src": "810e1ed9",
+            "dst": "94b761c7",
+            "points": []
+          },
+          "bf752194": {
+            "_tp": "viewRelationship",
+            "concept": "c5b87441",
+            "src": "8f444ff5",
+            "dst": "50fa7d94",
+            "points": []
+          },
+          "70be444e": {
+            "_tp": "viewRelationship",
+            "concept": "9c87e259",
+            "src": "acdd766d",
+            "dst": "94b761c7",
+            "points": []
+          },
+          "1e7b8f3a": {
+            "_tp": "viewRelationship",
+            "concept": "025b9e7f",
+            "src": "d36265c2",
+            "dst": "810e1ed9",
+            "points": []
+          },
+          "32ad7c22": {
+            "_tp": "viewRelationship",
+            "concept": "bb22b35a",
+            "src": "94b761c7",
+            "dst": "0766f393",
+            "points": []
+          },
+          "fbe8b1ae": {
+            "_tp": "viewRelationship",
+            "concept": "2d980c9c",
+            "src": "10c45371",
+            "dst": "17b6dd73",
+            "points": []
+          },
+          "d75b9e8d": {
+            "_tp": "viewRelationship",
+            "concept": "29647b89",
+            "src": "8349e3eb",
+            "dst": "679248e6",
+            "points": []
+          },
+          "1e65f2b1": {
+            "_tp": "viewRelationship",
+            "concept": "9524e2c6",
+            "src": "e6ee9e29",
+            "dst": "6e2090db",
+            "points": []
+          },
+          "304c1e2c": {
+            "_tp": "viewRelationship",
+            "concept": "9d253433",
+            "src": "679248e6",
+            "dst": "e6ee9e29",
+            "points": []
+          },
+          "75edca9a": {
+            "_tp": "viewRelationship",
+            "concept": "71cf2478",
+            "src": "4850f498",
+            "dst": "9fa7b338",
+            "points": []
+          },
+          "9b1b10e4": {
+            "_tp": "viewRelationship",
+            "concept": "ae184bdd",
+            "src": "4850f498",
+            "dst": "10c45371",
+            "points": []
+          },
+          "3d097dcf": {
+            "_tp": "viewRelationship",
+            "concept": "19dd5d1f",
+            "src": "0ba0c9f8",
+            "dst": "520aa127",
+            "points": []
+          },
+          "6c7bfdc0": {
+            "_tp": "viewRelationship",
+            "concept": "46eedc1a",
+            "src": "5f617182",
+            "dst": "0ba0c9f8",
+            "points": []
+          }
+        }
+      },
+      "e0c081c1": {
+        "_tp": "view",
+        "name": "Структура модуля",
+        "viewpoint": "layered",
+        "nodes": {
+          "d493cf13": {
+            "_tp": "viewNodeConcept",
+            "concept": "d8fbfc30",
+            "pos": {
+              "x": 324,
+              "y": 637
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "4c990a8b": {
+            "_tp": "viewNodeConcept",
+            "concept": "58e57eac",
+            "pos": {
+              "x": 649,
+              "y": 72
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "89bfed4a": {
+            "_tp": "viewNodeConcept",
+            "concept": "b91ee196",
+            "pos": {
+              "x": 1121,
+              "y": 51
+            },
+            "size": {
+              "width": 181,
+              "height": 97
+            }
+          },
+          "3987b888": {
+            "_tp": "viewNodeConcept",
+            "concept": "6a316aca",
+            "pos": {
+              "x": 24,
+              "y": 24
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "41f3115c": {
+            "_tp": "viewNodeConcept",
+            "concept": "3210fd24",
+            "pos": {
+              "x": 673,
+              "y": 628
+            },
+            "size": {
+              "width": 120,
+              "height": 73
+            }
+          },
+          "593d3989": {
+            "_tp": "viewNodeConcept",
+            "concept": "374cd45f",
+            "pos": {
+              "x": 828,
+              "y": 576
+            },
+            "size": {
+              "width": 505,
+              "height": 155
+            }
+          },
+          "1d4d8e00": {
+            "_tp": "viewNodeConcept",
+            "concept": "b60e8ab6",
+            "pos": {
+              "x": 20,
+              "y": 51
+            },
+            "size": {
+              "width": 120,
+              "height": 71
+            }
+          },
+          "c923235e": {
+            "_tp": "viewNodeConcept",
+            "concept": "f6b18a11",
+            "pos": {
+              "x": 300,
+              "y": 36
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "fefbef4d": {
+            "_tp": "viewNodeConcept",
+            "concept": "0acb8d6e",
+            "pos": {
+              "x": 60,
+              "y": 30
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "a0a6d17a": {
+            "_tp": "viewNodeConcept",
+            "concept": "c4c39601",
+            "pos": {
+              "x": 324,
+              "y": 71
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "b66d2228": {
+            "_tp": "viewNodeConcept",
+            "concept": "e3d08397",
+            "pos": {
+              "x": 180,
+              "y": 71
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "31e0d275": {
+            "_tp": "viewNodeConcept",
+            "concept": "1186c24e",
+            "pos": {
+              "x": 180,
+              "y": 637
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "64934eea": {
+            "_tp": "viewNodeConcept",
+            "concept": "78b6f6f5",
+            "pos": {
+              "x": 780,
+              "y": 348
+            },
+            "size": {
+              "width": 170,
+              "height": 55
+            }
+          },
+          "6a032965": {
+            "_tp": "viewNodeConcept",
+            "concept": "2507f24b",
+            "pos": {
+              "x": 624,
+              "y": 240
+            },
+            "size": {
+              "width": 169,
+              "height": 55
+            }
+          },
+          "a9a3d45b": {
+            "_tp": "viewNodeConcept",
+            "concept": "80621cab",
+            "pos": {
+              "x": 1128,
+              "y": 240
+            },
+            "size": {
+              "width": 167,
+              "height": 55
+            }
+          },
+          "ab0e62d1": {
+            "_tp": "viewNodeConcept",
+            "concept": "96bc126e",
+            "pos": {
+              "x": 972,
+              "y": 240
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "b200c96b": {
+            "_tp": "viewNodeConcept",
+            "concept": "c29759ce",
+            "pos": {
+              "x": 924,
+              "y": 444
+            },
+            "size": {
+              "width": 181,
+              "height": 55
+            }
+          },
+          "e7c50781": {
+            "_tp": "viewNodeConcept",
+            "concept": "94bfaffe",
+            "pos": {
+              "x": 1116,
+              "y": 444
+            },
+            "size": {
+              "width": 181,
+              "height": 55
+            }
+          },
+          "57c0450d": {
+            "_tp": "viewNodeConcept",
+            "concept": "19140866",
+            "pos": {
+              "x": 1308,
+              "y": 444
+            },
+            "size": {
+              "width": 164,
+              "height": 55
+            }
+          },
+          "1af2c576": {
+            "_tp": "viewNodeConcept",
+            "concept": "11380b4e",
+            "pos": {
+              "x": 1332,
+              "y": 240
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "278f1333": {
+            "_tp": "viewNodeConcept",
+            "concept": "88bfc62f",
+            "pos": {
+              "x": 1147,
+              "y": 348
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          },
+          "b2763d6a": {
+            "_tp": "viewNodeConcept",
+            "concept": "e97f6977",
+            "pos": {
+              "x": 324,
+              "y": 443
+            },
+            "size": {
+              "width": 100,
+              "height": 40
+            }
+          }
+        },
+        "edges": {
+          "9ebd2328": {
+            "_tp": "viewRelationship",
+            "concept": "af0746ba",
+            "src": "1d4d8e00",
+            "dst": "41f3115c",
+            "points": []
+          },
+          "c74d513f": {
+            "_tp": "viewRelationship",
+            "concept": "c6f78197",
+            "src": "1d4d8e00",
+            "dst": "c923235e",
+            "points": []
+          },
+          "131ccd44": {
+            "_tp": "viewRelationship",
+            "concept": "90ffaab1",
+            "src": "c923235e",
+            "dst": "31e0d275",
+            "points": []
+          },
+          "47cc8269": {
+            "_tp": "viewRelationship",
+            "concept": "ad7e81df",
+            "src": "c923235e",
+            "dst": "fefbef4d",
+            "points": []
+          },
+          "7786dbd4": {
+            "_tp": "viewRelationship",
+            "concept": "a8d22dde",
+            "src": "c923235e",
+            "dst": "d493cf13",
+            "points": []
+          },
+          "cc4700ce": {
+            "_tp": "viewRelationship",
+            "concept": "c5b87441",
+            "src": "b66d2228",
+            "dst": "31e0d275",
+            "points": []
+          },
+          "ff728b64": {
+            "_tp": "viewRelationship",
+            "concept": "3858e67a",
+            "src": "64934eea",
+            "dst": "1d4d8e00",
+            "points": []
+          },
+          "115b89dd": {
+            "_tp": "viewRelationship",
+            "concept": "8d44e768",
+            "src": "64934eea",
+            "dst": "278f1333",
+            "points": []
+          },
+          "a56c776e": {
+            "_tp": "viewRelationship",
+            "concept": "7cbd64cc",
+            "src": "6a032965",
+            "dst": "64934eea",
+            "points": []
+          },
+          "7e247ce6": {
+            "_tp": "viewRelationship",
+            "concept": "6dcf7033",
+            "src": "6a032965",
+            "dst": "4c990a8b",
+            "points": []
+          },
+          "bcc5ea76": {
+            "_tp": "viewRelationship",
+            "concept": "ce8bd9a2",
+            "src": "a9a3d45b",
+            "dst": "89bfed4a",
+            "points": []
+          },
+          "51d534b2": {
+            "_tp": "viewRelationship",
+            "concept": "a3024e8f",
+            "src": "a9a3d45b",
+            "dst": "1af2c576",
+            "points": []
+          },
+          "cd01f712": {
+            "_tp": "viewRelationship",
+            "concept": "d674d676",
+            "src": "a9a3d45b",
+            "dst": "ab0e62d1",
+            "points": []
+          },
+          "3693072d": {
+            "_tp": "viewRelationship",
+            "concept": "63742736",
+            "src": "ab0e62d1",
+            "dst": "64934eea",
+            "points": []
+          },
+          "fedfc9f3": {
+            "_tp": "viewRelationship",
+            "concept": "0113b9ad",
+            "src": "b200c96b",
+            "dst": "1d4d8e00",
+            "points": []
+          },
+          "15374fd9": {
+            "_tp": "viewRelationship",
+            "concept": "f805b1f8",
+            "src": "e7c50781",
+            "dst": "c923235e",
+            "points": []
+          },
+          "d600cdc4": {
+            "_tp": "viewRelationship",
+            "concept": "ba3d05a1",
+            "src": "57c0450d",
+            "dst": "c923235e",
+            "points": []
+          },
+          "8a574c02": {
+            "_tp": "viewRelationship",
+            "concept": "28425938",
+            "src": "1af2c576",
+            "dst": "3987b888",
+            "points": []
+          },
+          "f0606f76": {
+            "_tp": "viewRelationship",
+            "concept": "fae6bc07",
+            "src": "278f1333",
+            "dst": "b200c96b",
+            "points": []
+          },
+          "24975c9b": {
+            "_tp": "viewRelationship",
+            "concept": "992e2fee",
+            "src": "278f1333",
+            "dst": "e7c50781",
+            "points": []
+          },
+          "1fe1eefa": {
+            "_tp": "viewRelationship",
+            "concept": "ff341256",
+            "src": "278f1333",
+            "dst": "57c0450d",
+            "points": []
+          },
+          "550976cc": {
+            "_tp": "viewRelationship",
+            "concept": "143c7fdb",
+            "src": "b2763d6a",
+            "dst": "a0a6d17a",
+            "points": []
+          },
+          "df373f0f": {
+            "_tp": "viewRelationship",
+            "concept": "3a6d8fac",
+            "src": "b2763d6a",
+            "dst": "d493cf13",
+            "points": []
+          }
+        }
+      }
+    }
+  }
+}
