@@ -13,7 +13,7 @@ export class BaseNodeLikeWidget extends ModelNodeWidget {
     // special thx to https://codepen.io/anthonydugois/pen/mewdyZ
     return (
       `M 1 7 `+
-      `M 7 1 `+
+      `L 7 1 `+
       `L ${(w-1).toFixed(0)} 1 `+
       `L ${(w-1).toFixed(0)} ${(h-7).toFixed(0)} `+
       `L ${(w-7).toFixed(0)} ${(h-1).toFixed(0)} `+

@@ -31,7 +31,7 @@ export default class Markers extends React.Component {
             </marker>
 
             <marker id="MarkerInfluenceArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="0,0 20,10 0,20" fill="none" strokeWidth="2" stroke="black"/>
+              <polyline points="12,2 20,10 12,18" fill="none" strokeWidth="2" stroke="black"/>
             </marker>
 
             <marker id="MarkerAccessArrowSrc" refX="0" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
