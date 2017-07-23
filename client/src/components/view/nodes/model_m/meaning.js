@@ -23,9 +23,10 @@ export class MeaningWidget extends ModelNodeWidget {
     );
   }
 
-  borderShape(node) {
-    return shape("path", {d: this.borderPath(node) });
-  }
+  // TODO: make 'svg-intersections' work with Q-paths
+  // borderShape(node) {
+  //   return shape("path", {d: this.borderPath(node) });
+  // }
 
   render() {
     const { node } = this.props;

@@ -207,11 +207,28 @@
 .grouping {
   @extend .compositeElement;
   @extend .compositionElement;
+
+  padding: 0 !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #ffffff;
+  }
+  > .title {
+    width: 75% !important;
+    height: 18px !important;
+  }
+
 }
 
 .location {
   @extend .compositeElement;
   @extend .compositionElement;
+  background-color: #ffb973;
+  > .title {
+    background: rgba(black, 0.1) url('/media/node-location.png') no-repeat top right !important;
+    background-size: 29px !important;
+  }
 }
 
 .applicationComponent {
