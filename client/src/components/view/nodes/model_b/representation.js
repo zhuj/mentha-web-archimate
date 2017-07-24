@@ -27,16 +27,11 @@ export class RepresentationWidget extends ModelNodeWidget {
   //   return shape("path", {d: this.borderPath(node) });
   // }
 
-  render() {
-    const { node } = this.props;
+  renderBorder(node) {
     return (
-      <div className={this.getClassName(node)}>
-        <svg className="border">
-          <path d={this.borderPath(node)} stroke="black" strokeWidth={1}/>
-        </svg>
-        { this.renderTitle(node) }
-        { this.renderPort(node) }
-      </div>
+      <svg className="border">
+        <path d={this.borderPath(node)} stroke="black" strokeWidth={1}/>
+      </svg>
     );
   }
 }

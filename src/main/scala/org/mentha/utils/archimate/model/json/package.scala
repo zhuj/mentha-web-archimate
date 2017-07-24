@@ -71,9 +71,12 @@ package object json {
     val `deleted` = "deleted"
   }
 
-  
-  
-  implicit val pointWrites: Writes[Point] = Json.writes[Point]
+  implicit val pointWrites: Writes[Point] = new Writes[Point] {
+    override def writes(o: Point): JsonValue = Json.obj(
+      "x" -> Math.floor(o.x),
+      "y" -> Math.floor(o.y)
+    )
+  }
   implicit val pointReads: Reads[Point] = Json.reads[Point]
 
   def readPoint(json: JsonObject): Point = json.as[Point]

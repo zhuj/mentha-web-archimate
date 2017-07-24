@@ -35,10 +35,14 @@ object CompositionElements {
   case object grouping extends ElementMeta[Grouping] {
     override def newInstance(): Grouping = new Grouping
     override def layerObject: LayerObject = CompositionLayer
+    override def key: String = "cgr"
+    override def name: String = "grouping"
   }
   case object location extends ElementMeta[Location] {
     override def newInstance(): Location = new Location
     override def layerObject: LayerObject = CompositionLayer
+    override def key: String = "clo"
+    override def name: String = "location"
   }
 
   val compositionElements: Seq[ElementMeta[_]] = Seq(grouping, location)

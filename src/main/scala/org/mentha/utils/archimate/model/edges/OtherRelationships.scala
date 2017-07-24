@@ -8,9 +8,13 @@ import org.mentha.utils.archimate.model._
 object OtherRelationships {
 
   case object specialization extends RelationshipMeta[SpecializationRelationship] {
+    override def key: Char = 's'
+    override def name: String = "specializationRelationship"
     override def newInstance(source: Concept, target: Concept): SpecializationRelationship = new SpecializationRelationship(source, target)
   }
   case object association extends RelationshipMeta[AssociationRelationship] {
+    override def key: Char = 'o'
+    override def name: String = "associationRelationship"
     override def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)
   }
 

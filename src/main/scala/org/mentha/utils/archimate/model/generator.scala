@@ -131,12 +131,14 @@ object generator {
         }
 
         val variables = mutable.ListBuffer[(String, String)]()
-        for {(name, (layer, _, _)) <- elements} {
+        for {(name, (layer, _, el)) <- elements} {
           val writer = new PrintWriter(streams(layer))
           val variable = StringUtils.uncapitalize(name)
           writer.println(s"  case object ${variable} extends ElementMeta[${name}] {")
           writer.println(s"    override def newInstance(): ${name} = new ${name}")
           writer.println(s"    override def layerObject: LayerObject = ${layer}Layer")
+          writer.println(s"    override def key: String = ${"\""}${(el \ "@key").text}${"\""}")
+          writer.println(s"    override def name: String = ${"\""}${variable}${"\""}")
 
           writer.println(s"  }")
           writer.flush()
@@ -265,6 +267,23 @@ object generator {
           "UTF-8"
         )
       }
+
+    }
+
+    // edges validator
+    {
+      val rels = (xml \ "relations" \ "source").flatMap {
+        s => (s \ "target").flatMap {
+          t => (t \ "@relations").text.toSeq
+            .map { keys }
+            .map { case (r, _) => (
+              (s \ "@concept").text,
+              (t \ "@concept").text,
+              r
+            ) }
+        }
+      }
+
 
     }
   }

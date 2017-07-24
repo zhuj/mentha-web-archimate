@@ -173,9 +173,11 @@ object Convert {
       //println(dia)
     }
 
+    val str = json.toJsonString(model)
+    json.fromJsonString(str) // check
 
     val jsonFile = new File(s"src/test/${name}.json")
-    FileUtils.write(jsonFile, json.toJsonString(model), "UTF-8")
+    FileUtils.write(jsonFile, str, "UTF-8")
   }
 
   private def getTp(el: Node) = {

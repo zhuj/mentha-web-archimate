@@ -15,10 +15,7 @@ class View extends React.Component {
     const { id } = this.props
     return (
       <div className="view">
-        <div>{id}</div>
-        <div>
-          <ViewDiagram id={id}/>
-        </div>
+        <ViewDiagram id={id}/>
       </div>
     )
   }
@@ -26,9 +23,6 @@ class View extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return { id: ownProps.id };
-  //const model = state.model;
-  //const view = model.views[id];
-  // return { id , model, view }
 };
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,5 +1,5 @@
 .viewPrototypeLink {
-  path {
+  path.p {
     stroke: rgb(192, 255, 255) !important;
     stroke-width: 1;
     stroke-dasharray: 10, 2;
@@ -9,7 +9,7 @@
 
 .compositionRelationship {
   g.first {
-    path {
+    path.p {
       marker-start: url(#MarkerCompositionArrowSrc);
     }
   }
@@ -17,7 +17,7 @@
 
 .aggregationRelationship {
   g.first {
-    path {
+    path.p {
       marker-start: url(#MarkerAggregationArrowSrc);
     }
   }
@@ -25,78 +25,80 @@
 
 .assignmentRelationship {
   g.first {
-    path {
+    path.p {
       marker-start: url(#MarkerAssignmentArrowSrc);
     }
   }
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerAssignmentArrowDst);
     }
   }
 }
 
 .realizationRelationship {
-  path {
-    stroke-dasharray: 2, 6;
+  path.p {
+    stroke-dasharray: 4, 4;
   }
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerRealizationArrowDst);
     }
   }
 }
 
 .servingRelationship {
+  path.p {
+    stroke-width: 0.5 !important;
+  }
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerServingArrowDst);
     }
   }
 }
 
 .influenceRelationship {
-  path {
-    stroke-dasharray: 8, 4;
+  path.p {
+    stroke-dasharray: 4, 2;
   }
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerInfluenceArrowDst);
     }
   }
 }
 
 .accessRelationship {
-  path {
-    stroke-dasharray: 6, 2; // mb 4, 2
-   }
-
+  path.p {
+    stroke-dasharray: 2, 2;
+  }
   &.r > g.first {
-    path {
+    path.p {
       marker-start: url(#MarkerAccessArrowSrc);
     }
   }
   &.w > g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerAccessArrowDst);
     }
   }
 }
 
 .flowRelationship {
-  path {
-    stroke-dasharray: 12, 12;
+  path.p {
+    stroke-dasharray: 4, 2;
   }
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerFlowArrowDst);
     }
   }
 }
 
-.triggerRelationship {
+.triggeringRelationship {
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerTriggerArrowDst);
     }
   }
@@ -104,7 +106,7 @@
 
 .specializationRelationship {
   g.last {
-    path {
+    path.p {
       marker-end: url(#MarkerSpecializationArrowDst);
     }
   }

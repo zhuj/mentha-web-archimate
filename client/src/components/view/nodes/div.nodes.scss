@@ -1,5 +1,6 @@
 .junction {
-  background-color: #202020;
+  border: solid 1px black;
+  border-radius: 50%;
 }
 
 .layer {
@@ -235,7 +236,7 @@
   @extend .internalActiveStructureElement;
   @extend .applicationElement;
 
-  > div.x1 {
+  div.x1 {
     @extend .applicationElement;
     position: absolute;
     top: 18px;
@@ -245,7 +246,7 @@
     border: 1px solid black;
   }
 
-  > div.x2 {
+  div.x2 {
     @extend .applicationElement;
     position: absolute;
     top: 8px;
@@ -736,10 +737,12 @@
 
 .andJunction {
   @extend .junction;
+  background-color: #202020;
 }
 
 .orJunction {
   @extend .junction;
+  background-color: #dfdfdf;
 }
 
 .viewNotes {

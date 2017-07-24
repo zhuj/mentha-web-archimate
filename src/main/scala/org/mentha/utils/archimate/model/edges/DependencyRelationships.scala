@@ -8,12 +8,18 @@ import org.mentha.utils.archimate.model._
 object DependencyRelationships {
 
   case object serving extends RelationshipMeta[ServingRelationship] {
+    override def key: Char = 'v'
+    override def name: String = "servingRelationship"
     override def newInstance(source: Concept, target: Concept): ServingRelationship = new ServingRelationship(source, target)
   }
   case object access extends RelationshipMeta[AccessRelationship] {
+    override def key: Char = 'a'
+    override def name: String = "accessRelationship"
     override def newInstance(source: Concept, target: Concept): AccessRelationship = new AccessRelationship(source, target)()
   }
   case object influence extends RelationshipMeta[InfluenceRelationship] {
+    override def key: Char = 'n'
+    override def name: String = "influenceRelationship"
     override def newInstance(source: Concept, target: Concept): InfluenceRelationship = new InfluenceRelationship(source, target)()
   }
 

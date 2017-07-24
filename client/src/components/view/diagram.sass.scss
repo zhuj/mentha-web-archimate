@@ -1,6 +1,6 @@
 .diagram-root {
-	width: 1400px;
-	height: 1050px;
+	//width: 1400px;
+	height: 800px;
 	background: rgb(60,60,60);
 	display: flex;
 }
@@ -18,6 +18,14 @@
     .diagrams-canvas {
       flex: 1;
       background: rgb(60, 60, 60);
+
+      .diagram-center {
+        position: relative;
+        left: 50%;
+        top: 50%;
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
@@ -28,13 +36,6 @@
   display: flex;
   cursor: move;
   overflow: hidden;
-
-  .point {
-    fill: rgba(white,0.5);
-    &.selected {
-      fill: rgb(0,192,255);
-    }
-  }
 
   .selector {
     position: absolute;
@@ -99,27 +100,73 @@
     }
   }
 
-  .port {
-    width: 15px;
-    height: 15px;
-    background: rgba(white,0.1);
-    &:hover,&.selected {
-      background: rgb(192,255,0);
-    }
-  }
-
   svg.link-view {
 
-    path {
-      fill:none;
-      pointer-events:all;
-      stroke: black;
-      stroke-width: 1;
+    rect.port {
+      pointer-events: all;
+      fill: rgba(white,0.1);
+      &:hover {
+        fill: rgb(192,255,0);
+      }
+    }
 
-      &.selected {
-        stroke: rgb(0,192,255) !important;
-        stroke-dasharray: 10,2;
-        animation: dash 1s linear infinite;
+
+    g.link {
+      path {
+        fill: none;
+        stroke: black;
+
+        &.p {
+          stroke-linecap: round;
+          stroke-width: 1;
+
+          &.selected {
+            stroke: rgb(0, 192, 255) !important;
+            //stroke-dasharray: 10, 2;
+            animation: dash 1s linear infinite;
+          }
+        }
+
+        &.t {
+          pointer-events: all;
+          stroke-linecap: round;
+          stroke-width: 20;
+        }
+
+      }
+    }
+
+    g.point {
+      circle {
+
+        &.p {
+          fill: rgba(white, 0.5);
+          &.selected {
+            fill: rgb(0, 192, 255);
+          }
+        }
+
+        &.t {
+          pointer-events: all;
+        }
+
+      }
+    }
+
+    g.point-j {
+      circle {
+
+        &.p {
+          fill: rgba(black, 0.5);
+          &.selected {
+            fill: rgb(0, 192, 255);
+          }
+        }
+
+        &.t {
+          pointer-events: all;
+        }
+
       }
     }
 
@@ -169,17 +216,6 @@
         }
       }
 
-      .ports {
-        display: flex;
-        background-image: linear-gradient(rgba(black, 0.1), rgba(black, 0.2));
-        .center {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-
       svg.border {
         position: absolute;
         left: 0;
@@ -192,7 +228,60 @@
     }
   }
 
+  .node > .resize {
+
+    position: absolute;
+    display: block;
+    width: 6px;
+    height: 6px;
+    background-color: black;
+
+    &.ct {
+      top: -6px;
+      left: 50%;
+      margin-left: -3px;
+      cursor: n-resize;
+    }
+    &.cb {
+      bottom: -6px;
+      left: 50%;
+      margin-left: -3px;
+      cursor: s-resize;
+    }
+    &.lc {
+      left: -6px;
+      top: 50%;
+      margin-top: -3px;
+      cursor: w-resize;
+    }
+    &.rc {
+      right: -6px;
+      top: 50%;
+      margin-top: -3px;
+      cursor: e-resize;
+    }
+    &.lt {
+      left: -6px;
+      top: -6px;
+      cursor: nw-resize;
+    }
+    &.rt {
+      right: -6px;
+      top: -6px;
+      cursor: ne-resize;
+    }
+    &.lb {
+      left: -6px;
+      bottom: -6px;
+      cursor: sw-resize;
+    }
+    &.rb {
+      right: -6px;
+      bottom: -6px;
+      cursor: se-resize;
+    }
+
+  }
+
 }
-
-
 

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import {PointModel} from "./models";
 
 class BaseAction {
   constructor(diagram, relativeMouse) {
@@ -15,17 +16,43 @@ export class MoveCanvasAction extends BaseAction {
   }
 }
 
+const isLinkLastPointSelection = (selectedItems) => {
+  if (selectedItems.length == 1) {
+    const item = selectedItems[0];
+    if (item instanceof PointModel) {
+      return item.link.getLastPoint() === item;
+    }
+  }
+  return false;
+};
+
 export class MoveItemsAction extends BaseAction {
   constructor(diagram, relativeMouse) {
     super(diagram, relativeMouse);
     this.selectedItems = diagram.getDiagramModel().getSelectedItems();
+    this.linkLastPointSelection = isLinkLastPointSelection(this.selectedItems);
     this.selectionData = _.map(this.selectedItems, item => ({
        ref: item,
        initialX: item.x,
        initialY: item.y,
     }));
     diagram.enableRepaintEntities(this.selectedItems);
-    this.moved = false;
+  }
+}
+
+export class ResizeItemAction extends BaseAction {
+  constructor(diagram, relativeMouse, kind) {
+    super(diagram, relativeMouse);
+    this.kind = kind;
+    this.selectedItems = diagram.getDiagramModel().getSelectedItems();
+    this.selectionData = _.map(this.selectedItems, item => ({
+      ref: item,
+      initialX: item.x,
+      initialY: item.y,
+      initialW: item.width || 0,
+      initialH: item.height || 0
+    }));
+    diagram.enableRepaintEntities(this.selectedItems);
   }
 }
 

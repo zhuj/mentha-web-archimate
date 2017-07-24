@@ -1,6 +1,5 @@
 package org.mentha.utils.archimate.model
 
-
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -24,6 +23,8 @@ abstract class ConceptMeta[T <: Concept](implicit val classTag: ClassTag[T]) {
 
   def runtimeClass: Class[T] = classTag.runtimeClass.asInstanceOf[Class[T]]
   def name: String = StringUtils.uncapitalize(runtimeClass.getSimpleName)
+
+  override def toString: String = s"ConceptMeta(${name})"
 
   {
     import java.lang.reflect.Modifier

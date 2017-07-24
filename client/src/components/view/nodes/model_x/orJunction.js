@@ -1,6 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
-
+import { shape } from 'svg-intersections'
 import { ModelNodeWidget } from '../BaseNodeWidget'
 
 export const TYPE='orJunction';
@@ -8,5 +7,11 @@ export const TYPE='orJunction';
 export class OrJunctionWidget extends ModelNodeWidget {
   constructor(props) { super(props); }
   getClassName(node) { return 'a-node model_x orJunction'; }
+  renderTitle(node) { return null; }
+  borderShape(node) {
+    const width = node.width || 0;
+    const height = node.height || 0;
+    return shape("ellipse", {cx:width/2, cy:height/2, rx:width/2, ry:height/2});
+  }
 }
 
