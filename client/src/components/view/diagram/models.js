@@ -194,10 +194,10 @@ export class DiagramModel extends BaseEntity {
       node.setSelected(predicate(node));
     });
     _.forEach(this.getLinks(), (link) => {
-      let allSelected = true;
+      let allSelected = predicate(link);
       _.forEach(link.getPoints(), (point) => {
         point.setSelected(predicate(point));
-        allSelected &= point.isSelected();
+        allSelected |= point.isSelected();
       });
       link.setSelected(allSelected);
     });

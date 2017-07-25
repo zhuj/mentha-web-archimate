@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import Markers from './edges/markers'
 import ViewDiagram from './ViewDiagram'
 
 class View extends React.Component {
@@ -14,7 +15,8 @@ class View extends React.Component {
   render() {
     const { id } = this.props
     return (
-      <div className="view">
+      <div className="view" style={{display:'inline'}}>
+        <Markers/>
         <ViewDiagram id={id}/>
       </div>
     )

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import {PointModel} from "./models";
 
+/** Base action class */
 class BaseAction {
   constructor(diagram, relativeMouse) {
     this.diagram = diagram;
@@ -9,9 +10,31 @@ class BaseAction {
   }
 }
 
+
+const MouseDownActionThreshold = 3.0;
+
+/** */
+export class MouseDownAction extends BaseAction {
+  constructor(diagram, relativeMouse, clientXY, mouseElement, shiftKey) {
+    super(diagram, relativeMouse);
+    this.clientXY = { clientX: clientXY.clientX, clientY: clientXY.clientY };
+    this.mouseElement = mouseElement;
+    this.shiftKey = !!shiftKey;
+  }
+
+  isSignificant(relativeMouse) {
+    return (
+      (Math.abs(this.relativeMouse.x - relativeMouse.x) > MouseDownActionThreshold) ||
+      (Math.abs(this.relativeMouse.y - relativeMouse.y) > MouseDownActionThreshold)
+    );
+  }
+
+}
+
+/** */
 export class MoveCanvasAction extends BaseAction {
-  constructor(diagram, mouseX, mouseY) {
-    super(diagram, mouseX, mouseY);
+  constructor(diagram, relativeMouse) {
+    super(diagram, relativeMouse);
     this.initialOffset = diagram.getOffset();
   }
 }
@@ -26,6 +49,7 @@ const isLinkLastPointSelection = (selectedItems) => {
   return false;
 };
 
+/** */
 export class MoveItemsAction extends BaseAction {
   constructor(diagram, relativeMouse) {
     super(diagram, relativeMouse);
@@ -40,6 +64,7 @@ export class MoveItemsAction extends BaseAction {
   }
 }
 
+/** */
 export class ResizeItemAction extends BaseAction {
   constructor(diagram, relativeMouse, kind) {
     super(diagram, relativeMouse);
@@ -56,22 +81,21 @@ export class ResizeItemAction extends BaseAction {
   }
 }
 
+/** */
 export class SelectingAction extends BaseAction {
-  constructor(diagram, relativeMouse) {
+  constructor(diagram, relativeMouse, internalMouse) {
     super(diagram, relativeMouse);
-    this.relativeMouse2 = relativeMouse;
+    this.internalMouse1 = internalMouse;
+    this.internalMouse2 = internalMouse;
   }
 
   containsElement(x, y) {
-    const { x: elX, y: elY } = this.diagram.toRelativeCoordinates(x, y);
-    const { mouseX1, mouseY1 } = this.relativeMouse;
-    const { mouseX2, mouseY2 } = this.relativeMouse2;
-    return (
-      ((mouseX2 < mouseX1) ? elX < mouseX1 : elX > mouseX1) &&
-      ((mouseX2 < mouseX1) ? elX > mouseX2 : elX < mouseX2) &&
-      ((mouseY2 < mouseY1) ? elY < mouseY1 : elY > mouseY1) &&
-      ((mouseY2 < mouseY1) ? elY > mouseY2 : elY < mouseY2)
-    );
+    const { x:mouseX1, y:mouseY1 } = this.internalMouse1;
+    const { x:mouseX2, y:mouseY2 } = this.internalMouse2;
+
+    const x1 = Math.min(mouseX1, mouseX2), x2 = Math.max(mouseX1, mouseX2);
+    const y1 = Math.min(mouseY1, mouseY2), y2 = Math.max(mouseY1, mouseY2);
+    return ((x1 <= x) && (x <= x2) && (y1 <= y) && (y <= y2));
   }
 }
 

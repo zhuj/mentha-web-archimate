@@ -2,7 +2,7 @@ import React from "react";
 import { Router, Route, IndexRoute } from "react-router";
 import { history } from "./store.js";
 
-import App from "./components/App";
+import AppFrame from "./components/AppFrame";
 import Home from "./components/Home";
 import ModelPage from "./components/ModelPage";
 import NotFound from "./components/NotFound";
@@ -10,7 +10,7 @@ import NotFound from "./components/NotFound";
 // build the router
 const router = (
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
-    <Route path="/" component={App}>
+    <Route path="/" component={AppFrame}>
       <IndexRoute component={Home}/>
       <Route path="/model/:id" component={ModelPage} />
       <Route path="*" component={NotFound}/>
