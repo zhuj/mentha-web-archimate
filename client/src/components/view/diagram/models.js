@@ -37,8 +37,9 @@ export class PointModel extends BaseModel {
 }
 
 export class LinkModel extends BaseModel {
-  constructor(linkType = 'default') {
+  constructor(id, linkType = 'default') {
     super();
+    this.id = id;
     this.linkType = linkType;
     this.points = this.getDefaultPoints();
     this.sourceNode = null;
@@ -46,6 +47,9 @@ export class LinkModel extends BaseModel {
   }
 
   setSourceNode(node) {
+    if (!!this.sourceNode) {
+      this.sourceNode.unregisterLink(this);
+    }
     if (!!(this.sourceNode = node)) {
       node.registerLink(this);
       this.getFirstPoint().updateLocation(node);
@@ -53,6 +57,9 @@ export class LinkModel extends BaseModel {
   }
 
   setTargetNode(node) {
+    if (!!this.targetNode) {
+      this.targetNode.unregisterLink(this);
+    }
     if (!!(this.targetNode = node)) {
       node.registerLink(this);
       this.getLastPoint().updateLocation(node);
@@ -108,16 +115,24 @@ export class PortModel extends BaseModel {
 }
 
 export class NodeModel extends BaseModel {
-  constructor(nodeType = 'default') {
+  constructor(id, nodeType = 'default') {
     super();
+    this.id = id;
     this.nodeType = nodeType;
     this.x = 0;
     this.y = 0;
+    this.width = 100;
+    this.height = 40;
+    this.zIndex = 0;
     this.links = [];
   }
 
   registerLink(link) {
     this.links.push(link);
+  }
+
+  unregisterLink(link) {
+    this.links = _.filter(this.links, (l) => l !== link);
   }
 
   getLinks() {
@@ -134,8 +149,9 @@ export class NodeModel extends BaseModel {
 }
 
 export class DiagramModel extends BaseEntity {
-  constructor() {
+  constructor(id) {
     super();
+    this.id = id;
     this.links = {};
     this.nodes = {};
     this.rendered = false;
@@ -219,6 +235,18 @@ export class DiagramModel extends BaseEntity {
     return result;
   }
 
+  acquireRuntimeState(prev) {
+    _.forEach(this.getNodes(), (ref) => {
+      const node = prev.getNode(ref.id);
+      if (!!node) { ref.selected |= !!node.selected; }
+    });
+    _.forEach(this.getLinks(), (ref) => {
+      const link = prev.getLink(ref.id);
+      if (!!link) {
+        ref.selected |= !!link.selected;
+      }
+    });
+  }
 
 }
 

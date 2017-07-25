@@ -3,57 +3,55 @@ import React from 'react'
 export default class Markers extends React.Component {
   render() {
     return (
-      <div className="markers">
+      <div className="markers" style={{width:0, height:0}}>
         <svg style={{width:0, height:0}}>
           <defs>
 
-            <marker id="MarkerCompositionArrowSrc" refX="0" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="0,10 10,4 20,10 10,16 0,10" fill="black" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerCompositionArrowSrc" refX="2" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="2,10 10,5 18,10 10,15 2,10" fill="black" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerAggregationArrowSrc" refX="0" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="0,10 10,4 20,10 10,16 0,10" fill="white" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerAggregationArrowSrc" refX="2" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="2,10 10,5 18,10 10,15 2,10" fill="white" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerAssignmentArrowSrc" refX="0" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+            <marker id="MarkerAssignmentArrowSrc" refX="4" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
               <circle cx="4" cy="10" r="4" color="black" strokeWidth="1"/>
             </marker>
-            <marker id="MarkerAssignmentArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="8,4 20,10 8,16 8,4" fill="black" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerAssignmentArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="6,4 18,10 6,16 6,4" fill="black" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerRealizationArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="8,4 20,10 8,16 8,4" fill="white" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerRealizationArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="6,4 18,10 6,16 6,4" fill="white" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerServingArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="12,2 20,10 12,18" fill="none" strokeWidth="2" stroke="black"/>
+            <marker id="MarkerServingArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,5 18,10 10,15" fill="none" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerInfluenceArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="12,2 20,10 12,18" fill="none" strokeWidth="2" stroke="black"/>
+            <marker id="MarkerInfluenceArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,5 18,10 10,15" fill="none" strokeWidth="2" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerAccessArrowSrc" refX="0" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="8,2 0,10 8,18" fill="none" strokeWidth="2" stroke="black"/>
+            <marker id="MarkerAccessArrowSrc" refX="2" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,5 2,10 10,15" fill="none" strokeWidth="2" strokeLinecap="round" stroke="black"/>
             </marker>
-            <marker id="MarkerAccessArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="12,2 20,10 12,18" fill="none" strokeWidth="2" stroke="black"/>
-            </marker>
-
-            <marker id="MarkerFlowArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="12,6 20,10 12,14 12,6" fill="black" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerAccessArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,5 18,10 10,15" fill="none" strokeWidth="2" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerTriggerArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
-              <polyline points="12,6 20,10 12,14 12,6" fill="black" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerFlowArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,6 18,10 10,14 10,6" fill="black" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-            <marker id="MarkerSpecializationArrowDst" refX="20" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="30">
-              <polyline points="0,0 20,10 0,20 0,0" fill="white" strokeWidth="1" stroke="black"/>
+            <marker id="MarkerTriggerArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="20">
+              <polyline points="10,6 18,10 10,14 10,6" fill="black" strokeWidth="1" strokeLinecap="round" stroke="black"/>
             </marker>
 
-
+            <marker id="MarkerSpecializationArrowDst" refX="18" refY="10" markerUnits="userSpaceOnUse" orient="auto" markerWidth="20" markerHeight="30">
+              <polyline points="3,2 18,10 3,18 3,2" fill="white" strokeWidth="1" strokeLinecap="round" stroke="black"/>
+            </marker>
 
           </defs>
         </svg>

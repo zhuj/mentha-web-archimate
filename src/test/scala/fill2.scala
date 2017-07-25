@@ -10,7 +10,7 @@ import org.mentha.utils.archimate.model.view._
 
 import scala.xml.XML
 
-object fill {
+object fill2 {
 
   val random = new util.Random(0)
   val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
@@ -52,9 +52,8 @@ object fill {
 
     val W = 140
     val H = 50
-    val E = 20
-    val WE = W + E
-    val HE = H + E
+    val WE = W + 40
+    val HE = H + 50
 
     val model = new Model
     val view = model.add { new View() }
@@ -75,10 +74,36 @@ object fill {
       layer -> add(layer, y)
     }
 
+    for {
+      (_, l1v) <- layers_v
+      (e1, e1v) <- l1v
+    } {
+      for { (_, l2v) <- layers_v } {
+
+        val candidates = l2v
+          .filter { case (e, _) => e != e1 }
+          .sortBy { _ => random.nextInt() }
+          .toStream
+          .map { case (e, v) => (e, v, rels.get((e1.meta.name, e.meta.name))) }
+          .collect { case (e, v, Some(rr)) => (e, v, rr(random.nextInt(rr.length))) }
+          .take(3)
+
+        for {(e2, e2v, (rn, _, _)) <- candidates } {
+          println(e1.meta.name + " -- (" + rn + ") --> " + e2.meta.name)
+
+          val r = model.add { edges.mapRelations(rn).newInstance(e1, e2) }
+          val v = view.add { new ViewRelationship[Relationship](e1v, e2v)(r) }
+        }
+
+      }
+
+    }
+
+
     val j = json.toJsonString(model)
     json.fromJsonString(j)
 
-    val jsonFile = new File(s"src/test/elements.json")
+    val jsonFile = new File(s"src/test/elements2.json")
     FileUtils.write(jsonFile, j, "UTF-8")
 
   }

@@ -10,7 +10,7 @@ import * as actions from '../actions'
 
 const loadData = ({ id, connectModel }) => {
   connectModel(id)
-}
+};
 
 @DragDropContext(HTML5Backend)
 class ModelPage extends React.Component {

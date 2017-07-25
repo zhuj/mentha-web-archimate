@@ -9,16 +9,13 @@ export class ApplicationComponentWidget extends ModelNodeWidget {
   constructor(props) { super(props); }
   getClassName(node) { return 'a-node model_a applicationComponent'; }
 
-  render() {
-    const { node } = this.props;
+  renderBorder(node) {
     return (
-      <div className={this.getClassName(node)}>
+      <div>
         <div className="x1"/>
         <div className="x2"/>
-        { this.renderTitle(node) }
-        { this.renderPort(node) }
       </div>
-    );
+    )
   }
 }
 

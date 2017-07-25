@@ -32,7 +32,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   override def receiveRecover: Receive = {
     case RecoveryCompleted => saveSnapshot(ModelState.toJson(state))
-    case SnapshotOffer(_, json: String) => setState(ModelState.fromJson(json))
+    case SnapshotOffer(_, json: String) => setState(ModelState.fromJson(id = modelId, json = json))
     case e: ModelState.ChangeSet => commit(e)
   }
 

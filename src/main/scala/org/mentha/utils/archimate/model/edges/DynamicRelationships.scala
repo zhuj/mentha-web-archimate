@@ -8,9 +8,13 @@ import org.mentha.utils.archimate.model._
 object DynamicRelationships {
 
   case object triggering extends RelationshipMeta[TriggeringRelationship] {
+    override def key: Char = 't'
+    override def name: String = "triggeringRelationship"
     override def newInstance(source: Concept, target: Concept): TriggeringRelationship = new TriggeringRelationship(source, target)
   }
   case object flow extends RelationshipMeta[FlowRelationship] {
+    override def key: Char = 'f'
+    override def name: String = "flowRelationship"
     override def newInstance(source: Concept, target: Concept): FlowRelationship = new FlowRelationship(source, target)()
   }
 

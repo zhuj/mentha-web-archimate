@@ -26,21 +26,16 @@ export class BaseNodeLikeWidget extends ModelNodeWidget {
     return shape("path", {d: this.borderPath(node) });
   }
 
-  render() {
-    const { node } = this.props;
+  renderBorder(node) {
     const w = (node.width || 0);
     const h = (node.height || 0);
     return (
-      <div className={this.getClassName(node)}>
-        <svg className="border">
-          <path d={this.borderPath(node)} stroke="black" strokeWidth={1}/>
-          <path d={`M ${(w-7).toFixed(0)} 7 L 1 7`} stroke="black" strokeWidth={1}/>
-          <path d={`M ${(w-7).toFixed(0)} 7 L ${(w-7).toFixed(0)} ${(h-1).toFixed(0)}`} stroke="black" strokeWidth={1}/>
-          <path d={`M ${(w-7).toFixed(0)} 7 L ${(w-1).toFixed(0)} ${1}`} stroke="black" strokeWidth={1}/>
-        </svg>
-        { this.renderTitle(node) }
-        { this.renderPort(node) }
-      </div>
+      <svg className="border">
+        <path d={this.borderPath(node)} stroke="black" strokeWidth={1}/>
+        <path d={`M ${(w-7).toFixed(0)} 7 L 1 7`} stroke="black" strokeWidth={1}/>
+        <path d={`M ${(w-7).toFixed(0)} 7 L ${(w-7).toFixed(0)} ${(h-1).toFixed(0)}`} stroke="black" strokeWidth={1}/>
+        <path d={`M ${(w-7).toFixed(0)} 7 L ${(w-1).toFixed(0)} ${1}`} stroke="black" strokeWidth={1}/>
+      </svg>
     );
   }
 }

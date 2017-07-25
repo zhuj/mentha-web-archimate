@@ -52,13 +52,15 @@ const nodesTarget = {
 }))
 class ViewDiagram extends DiagramWidget {
 
-  localStorageKey() {
+  /* @override: react-localstorage */
+  getLocalStorageKey() {
     const { id } = this.props;
     return `view-diagram-${id}`;
   }
 
+  /* @override: react-localstorage */
   getStateFilterKeys() {
-    return ["zoom", "offset"]
+    return ["zoom", "offset"];
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -79,12 +81,18 @@ class ViewDiagram extends DiagramWidget {
     return viewEdgeWidget({ diagram: this, ...props});
   }
 
+  /* @overide: DiagramWidget */
   onChange(action) {
     // update the rest
     switch (action.type) {
       case 'node-moved': {
-        let model = action.model;
-        this.props.updateViewNodePosition(this.props.id)(model.id, { x: model.x, y: model.y });
+        let vo = action.model;
+        this.props.updateViewNodePosAndSize(this.props.id)(vo.id, vo, vo);
+        break;
+      }
+      case 'node-sized': {
+        let vo = action.model;
+        this.props.updateViewNodePosAndSize(this.props.id)(vo.id, vo, vo);
         break;
       }
     }
@@ -122,21 +130,19 @@ const mapStateToProps = (state, ownProps) => {
   // sort nodes by z-index...
   const zIndexMap = buildNodeZIndexMap(view);
 
-  const diagramModel = new models.DiagramModel();
-  diagramModel.id = view.id;
+  const diagramModel = new models.DiagramModel(view.id);
 
   // nodes
   _.forEach(view.nodes, (node, id) => {
     diagramModel.addNode(
-      Object.assign(new models.NodeModel(), {
-        id: id,
+      Object.assign(new models.NodeModel(id), {
         nodeType: node['_tp'],
         x: node.pos.x,
         y: node.pos.y,
         width: node.size.width,
         height: node.size.height,
-        viewObject: node,
-        zIndex: zIndexMap[id] || 0
+        zIndex: zIndexMap[id] || 0,
+        viewObject: node
       })
     );
   });
@@ -146,8 +152,7 @@ const mapStateToProps = (state, ownProps) => {
     const sourceNode = diagramModel.getNode(edge.src);
     const targetNode = diagramModel.getNode(edge.dst);
     const linkModel = diagramModel.addLink(
-      Object.assign(new models.LinkModel(), {
-        id: id,
+      Object.assign(new models.LinkModel(id), {
         linkType: edge['_tp'],
         viewObject: edge
       })
@@ -161,9 +166,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateViewNodePosition: (id) => (voId, pos) => dispatch(actions.updateViewNodePosition(id, voId, pos)),
-  updateViewNodeSize: (id) => (voId, pos) => dispatch(actions.updateViewNodeSize(id, voId, pos)),
-  updateViewEdgePoints: (id) => (voId, points) => dispatch(actions.updateViewEdgePoints(id, voId, points))
+  updateViewNodePosAndSize: (viewId) => (voId, pos, size) => dispatch(actions.updateViewNodePosAndSize(viewId, voId, { x:pos.x, y:pos.y }, { width: size.width, height: size.height })),
+  updateViewEdgePoints: (viewId) => (voId, points) => dispatch(actions.updateViewEdgePoints(viewId, voId, points))
 });
 
 

@@ -172,54 +172,80 @@ object TechnologyElements {
   case object node extends ElementMeta[Node] {
     override def newInstance(): Node = new Node
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tnd"
+    override def name: String = "node"
   }
   case object device extends ElementMeta[Device] {
     override def newInstance(): Device = new Device
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tdv"
+    override def name: String = "device"
   }
   case object systemSoftware extends ElementMeta[SystemSoftware] {
     override def newInstance(): SystemSoftware = new SystemSoftware
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tss"
+    override def name: String = "systemSoftware"
   }
   case object technologyCollaboration extends ElementMeta[TechnologyCollaboration] {
     override def newInstance(): TechnologyCollaboration = new TechnologyCollaboration
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tcl"
+    override def name: String = "technologyCollaboration"
   }
   case object technologyInterface extends ElementMeta[TechnologyInterface] {
     override def newInstance(): TechnologyInterface = new TechnologyInterface
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tif"
+    override def name: String = "technologyInterface"
   }
   case object path extends ElementMeta[Path] {
     override def newInstance(): Path = new Path
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tph"
+    override def name: String = "path"
   }
   case object communicationNetwork extends ElementMeta[CommunicationNetwork] {
     override def newInstance(): CommunicationNetwork = new CommunicationNetwork
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tcn"
+    override def name: String = "communicationNetwork"
   }
   case object technologyFunction extends ElementMeta[TechnologyFunction] {
     override def newInstance(): TechnologyFunction = new TechnologyFunction
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tfn"
+    override def name: String = "technologyFunction"
   }
   case object technologyProcess extends ElementMeta[TechnologyProcess] {
     override def newInstance(): TechnologyProcess = new TechnologyProcess
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tpr"
+    override def name: String = "technologyProcess"
   }
   case object technologyInteraction extends ElementMeta[TechnologyInteraction] {
     override def newInstance(): TechnologyInteraction = new TechnologyInteraction
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tia"
+    override def name: String = "technologyInteraction"
   }
   case object technologyEvent extends ElementMeta[TechnologyEvent] {
     override def newInstance(): TechnologyEvent = new TechnologyEvent
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tev"
+    override def name: String = "technologyEvent"
   }
   case object technologyService extends ElementMeta[TechnologyService] {
     override def newInstance(): TechnologyService = new TechnologyService
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "tsv"
+    override def name: String = "technologyService"
   }
   case object artifact extends ElementMeta[Artifact] {
     override def newInstance(): Artifact = new Artifact
     override def layerObject: LayerObject = TechnologyLayer
+    override def key: String = "taf"
+    override def name: String = "artifact"
   }
 
   val technologyElements: Seq[ElementMeta[_]] = Seq(node, device, systemSoftware, technologyCollaboration, technologyInterface, path, communicationNetwork, technologyFunction, technologyProcess, technologyInteraction, technologyEvent, technologyService, artifact)

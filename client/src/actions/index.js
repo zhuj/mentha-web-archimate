@@ -13,21 +13,12 @@ export const sendModelMessage = (payload) => (dispatch, getState) => {
     return dispatch( modelSendMessage(payload) )
 };
 
-export const updateViewNodePosition = (viewId, id, pos) => {
-    return sendModelMessage({
-      'mov-view-node': {
-          viewId: viewId,
-          id: id,
-          pos: pos
-      }
-    });
-};
-
-export const updateViewNodeSize = (viewId, id, size) => {
+export const updateViewNodePosAndSize = (viewId, voId, pos, size) => {
   return sendModelMessage({
     'mov-view-node': {
       viewId: viewId,
-      id: id,
+      id: voId,
+      pos: pos,
       size: size
     }
   });

@@ -8,15 +8,23 @@ import org.mentha.utils.archimate.model._
 object StructuralRelationships {
 
   case object composition extends RelationshipMeta[CompositionRelationship] {
+    override def key: Char = 'c'
+    override def name: String = "compositionRelationship"
     override def newInstance(source: Concept, target: Concept): CompositionRelationship = new CompositionRelationship(source, target)
   }
   case object aggregation extends RelationshipMeta[AggregationRelationship] {
+    override def key: Char = 'g'
+    override def name: String = "aggregationRelationship"
     override def newInstance(source: Concept, target: Concept): AggregationRelationship = new AggregationRelationship(source, target)
   }
   case object assignment extends RelationshipMeta[AssignmentRelationship] {
+    override def key: Char = 'i'
+    override def name: String = "assignmentRelationship"
     override def newInstance(source: Concept, target: Concept): AssignmentRelationship = new AssignmentRelationship(source, target)
   }
   case object realization extends RelationshipMeta[RealizationRelationship] {
+    override def key: Char = 'r'
+    override def name: String = "realizationRelationship"
     override def newInstance(source: Concept, target: Concept): RealizationRelationship = new RealizationRelationship(source, target)
   }
 

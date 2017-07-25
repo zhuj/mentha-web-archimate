@@ -3,29 +3,8 @@ import _ from 'lodash'
 
 import { intersect, shape } from 'svg-intersections'
 
-export class PortWidget extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: false
-    };
-  }
-  render() {
-    const { selected } = this.state;
-    const { node } = this.props;
-    return (
-      <div
-        className={`port${(selected ? ' selected' : '')}`}
-        onMouseEnter={() => this.setState({ selected: true })}
-        onMouseLeave={() => this.setState({ selected: false })}
-        data-id={node.id}
-        data-nodeid={node.id}
-      />
-    );
-  }
-}
-
 export class DefaultNodeWidget extends React.Component {
+  constructor(props) { super(props); }
 
   borderShape(node) {
     const width = node.width || 0;
@@ -102,14 +81,8 @@ export class DefaultNodeWidget extends React.Component {
     )
   }
 
-  renderPort(node) {
-    return (
-      <div className='ports'>
-        <div className='center'>
-          {/*<PortWidget node={node} key={`port-${node.id}`} />*/}
-        </div>
-      </div>
-    )
+  renderBorder(node) {
+    return null;
   }
 
   render() {
@@ -117,13 +90,14 @@ export class DefaultNodeWidget extends React.Component {
     return (
       <div className={this.getClassName(node)}>
         { this.renderTitle(node) }
-        { this.renderPort(node) }
+        { this.renderBorder(node) }
       </div>
     );
   }
 
 }
 
+const useSmooth = true;
 export class DefaultLinkWidget extends React.Component {
 
   constructor(props) {
@@ -136,13 +110,13 @@ export class DefaultLinkWidget extends React.Component {
   generatePoint(link, index) {
     const point = link.points[index];
     const uiCircleProps = {
-      className: `point pointui${(point.isSelected() ? ' selected' : '')}`,
+      className: `p${(point.isSelected() ? ' selected' : '')}`,
       cx: point.x,
       cy: point.y,
       r: 5,
     };
     const circleProps = {
-      className: 'point',
+      className: 'point t',
       'data-linkid': link.id,
       'data-index': index,
       cx: point.x,
@@ -154,7 +128,7 @@ export class DefaultLinkWidget extends React.Component {
     };
 
     return (
-      <g key={`point-${index}`}>
+      <g key={`point-${index}`} className="point">
         <circle {...uiCircleProps}/>
         <circle {...circleProps}/>
       </g>
@@ -164,71 +138,111 @@ export class DefaultLinkWidget extends React.Component {
   generateLink(first, last, extraProps) {
     const {link} = this.props;
     const {selected} = this.state;
-    const bottom = (
-      <path
-        className={((selected || link.isSelected()) ? 'selected' : '')}
-        {...extraProps}
-      />
-    );
+    const uiPathProps = {
+      className: `p${((selected || link.isSelected()) ? ' selected' : '')}`,
+      d: extraProps.d
+    };
+    const pathProps = {
+      ... extraProps,
+      className: 'link t',
+      'data-linkid': link.id,
+      strokeOpacity: (selected ? 0.1 : 0),
+      onMouseLeave: () => this.setState({ selected: false }),
+      onMouseEnter: () => this.setState({ selected: true })
+    };
 
-    const top = (
-      <path
-        strokeLinecap={'round'}
-        data-linkid={link.id}
-        strokeOpacity={selected ? 0.1 : 0}
-        strokeWidth={20}
-        onMouseLeave={() => this.setState({selected: false})}
-        onMouseEnter={() => this.setState({selected: true})}
-        onContextMenu={event => {
-          event.preventDefault();
-          // TODO:
-        }}
-        {...extraProps}
-      />
-    );
-
-    const className = ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
+    const className = 'link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
     return (
       <g key={`link-${extraProps.id}`} className={className}>
-        {bottom}
-        {top}
+        <path {...uiPathProps}/>
+        <path {...pathProps}/>
       </g>
     );
   }
 
-  drawAdvancedLine() {
-    const smooth = false;
+  drawSmoothPaths() {
+    const { selected } = this.state;
     const { link, diagram } = this.props;
-
     const { points } = link;
+
+    let paths = [];
+
+    let path = "";
+
+    path = path + `M ${points[0].x.toFixed(0)} ${points[0].y.toFixed(0)} `;
+
+    let last = points.length - 1;
+    for (let i = 0; i < last; i++) {
+      const x = (points[i].x + points[i + 1].x) / 2;
+      const y = (points[i].y + points[i + 1].y) / 2;
+
+      if (i > 0) {
+        path = path + ` Q ${points[i].x.toFixed(0)} ${points[i].y.toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)}`;
+      }
+
+      if (selected) {
+        paths.push(
+          <g key={`point-j-${i}`} className="point-j">
+            <circle
+              className="p"
+              cx={x} cy={y} r={3}
+            />
+            <circle
+              className="t"
+              cx={x} cy={y} r={15} opacity={0}
+              onMouseLeave={() => this.setState({ selected: false })}
+              onMouseEnter={() => this.setState({ selected: true })}
+              onMouseDown={(event) => {
+                // TODO: make it better
+                if (event.buttons !== 1) { return; } // only a single button
+                if (event.button !== 0) { return; } // only the left button
+
+                if (!event.shiftKey) {
+                  const point = diagram.addPointIntoLink.bind(diagram)(event, link, i);
+                  point.setSelected(true);
+                  this.forceUpdate();
+                }
+              }}
+            />
+          </g>
+        );
+      }
+
+    }
+
+    path = path + ` L ${points[last].x.toFixed(0)} ${points[last].y.toFixed(0)}`;
+
+    return [
+      this.generateLink(true, true, {
+        id: `${link.id}-path`,
+        d: path,
+        'data-linkid': link.id,
+        'data-index': 'path'
+      }),
+      ... paths
+    ];
+  }
+
+  drawSimplePaths() {
+    const { link, diagram } = this.props;
+    const { points } = link;
+
     const ds = [];
-
-    if (smooth) {
-      ds.push(
-        ` M${points[0].x} ${points[0].y} C ${points[0].x + 50} ${points[0].y} ${points[1].x} ${points[1].y} ${points[1].x} ${points[1].y}` // eslint-disable-line
-      );
-
-      let i;
-      for (i = 1; i < points.length - 2; i++) {
-        ds.push(` M ${points[i].x} ${points[i].y} L ${points[i + 1].x} ${points[i + 1].y}`);
-      }
-
-      ds.push(
-        ` M${points[i].x} ${points[i].y} C ${points[i].x} ${points[i].y} ${points[i + 1].x - 50} ${points[i + 1].y} ${points[i + 1].x} ${points[i + 1].y}` // eslint-disable-line
-      );
-    } else {
-      for (let i = 0; i < points.length - 1; i++) {
-        ds.push(` M ${points[i].x} ${points[i].y} L ${points[i + 1].x} ${points[i + 1].y}`);
-      }
+    for (let i = 0; i < points.length - 1; i++) {
+      ds.push(` M ${points[i].x} ${points[i].y} L ${points[i + 1].x} ${points[i + 1].y}`);
     }
 
     const dsFirst = 0, dsLast = ds.length-1;
-    const paths = ds.map((data, index) => this.generateLink((dsFirst == index), (dsLast == index), {
-      id: index,
+    return ds.map((data, index) => this.generateLink((dsFirst == index), (dsLast == index), {
+      id: `${link.id}-${index}`,
       d: data,
       'data-linkid': link.id,
       'data-index': index,
       onMouseDown: event => {
+        // TODO: make it better
+        if (event.buttons !== 1) { return; } // only a single button
+        if (event.button !== 0) { return; } // only the left button
+
         if (!event.shiftKey) {
           const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
           point.setSelected(true);
@@ -236,12 +250,22 @@ export class DefaultLinkWidget extends React.Component {
         }
       }
     }));
+  }
 
-    // Render the circles
+  drawAdvancedLine() {
+    const { link } = this.props;
+    const { points } = link;
+
+    // render the line
+    const smooth = useSmooth; // && points.length > 2;
+    const paths = (smooth ? this.drawSmoothPaths : this.drawSimplePaths).bind(this)();
+
+    // Render the circles for points (except the first and the last)
     for (let i=1, l=points.length-1; i < l; i++) {
       paths.push(this.generatePoint(link, i));
     }
 
+    // render free point (if exists)
     if (link.targetNode === null) {
       paths.push(this.generatePoint(link, points.length - 1));
     }

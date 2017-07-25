@@ -7,6 +7,7 @@ const BaseLinkWidget = DefaultLinkWidget;
 export const ViewLinkWidget = BaseLinkWidget;
 
 export class ModelLinkWidget extends BaseLinkWidget {
+  constructor(props) { super(props); }
 
   render() {
     try {

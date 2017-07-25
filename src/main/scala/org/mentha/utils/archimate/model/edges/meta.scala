@@ -5,9 +5,12 @@ import org.mentha.utils.archimate.model._
 import scala.reflect.ClassTag
 
 /** */
-class RelationshipMeta[T <: Relationship](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
+abstract class RelationshipMeta[T <: Relationship](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
 
+  def key: Char = ???
   def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = true // TODO: implement me: use generator & matrices
+
+  override def toString: String = s"RelationshipMeta(${name})"
 
   private[model] val reflectConstructor = {
     import scala.reflect.runtime.{universe => ru}

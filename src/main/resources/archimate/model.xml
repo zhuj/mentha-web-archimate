@@ -5,19 +5,19 @@
 
     <!-- Motivation Elements (1) !-->
 
-    <element name="Stakeholder" layer="Motivation" parent="?External?ActiveStructureElement">
+    <element name="Stakeholder" layer="Motivation" key="msh" parent="?External?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757975"/>
         <info>A stakeholder is the role of an individual, team, or organization (or classes thereof) that represents their interests in the outcome of the architecture.</info>
         <text>This definition is based on the definition in the TOGAF framework. A stakeholder has one or more interests in, or concerns about, the organization and its Enterprise Architecture. In order to direct efforts to these interests and concerns, stakeholders change, set, and emphasize goals. Stakeholders may also influence each other. Examples of stakeholders are the CEO, the board of directors, shareholders, customers, business and application architects, but also legislative authorities. The name of a stakeholder should preferably be a noun.</text>
     </element>
 
-    <element name="Driver" layer="Motivation" parent="GenericElement">
+    <element name="Driver" layer="Motivation" key="mdr" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757976"/>
         <info>A driver represents an external or internal condition that motivates an organization to define its goals and implement the changes necessary to achieve them.</info>
         <text>Drivers may be internal, in which case they are usually associated with a stakeholder, and are often called “concerns”. Stakeholder concerns are defined in the TOGAF framework as ”the key interests that are crucially important to the stakeholders in a system, and determine the acceptability of the system. Concerns may pertain to any aspect of the function, development, or operation of the system, including considerations such as performance, reliability, security, distribution, and evolvability.” Examples of internal drivers are Customer satisfaction and Profitability. Drivers of change may also be external; e.g., economic changes or changing legislation. The name of a driver should preferably be a noun.</text>
     </element>
 
-    <element name="Assessment" layer="Motivation" parent="GenericElement">
+    <element name="Assessment" layer="Motivation" key="mas" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757977"/>
         <info>An assessment represents the result of an analysis of the state of affairs of the enterprise with respect to some driver.</info>
         <text>An assessment may reveal strengths, weaknesses, opportunities, or threats for some area of interest. These need to be addressed by adjusting existing goals or setting new ones, which may trigger changes to the Enterprise Architecture.</text>
@@ -26,14 +26,14 @@
 
     <!-- Motivation Elements (2) !-->
 
-    <element name="Goal" layer="Motivation" parent="GenericElement">
+    <element name="Goal" layer="Motivation" key="mgo" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757980"/>
         <info>A goal represents a high-level statement of intent, direction, or desired end state for an organization and its stakeholders.</info>
         <text>In principle, a goal can represent anything a stakeholder may desire, such as a state of affairs, or a produced value. Examples of goals are: to increase profit, to reduce waiting times at the helpdesk, or to introduce online portfolio management. Goals are typically used to measure success of an organization.</text>
         <text>Goals are generally expressed using qualitative words; e.g., “increase”, “improve”, or “easier”. Goals can also be decomposed; e.g., Increase profit can be decomposed into the goals Reduce cost and Increase sales. However, it is also very common to associate concrete outcomes with goals, which can be used to describe both the quantitative and time-related results that are essential to describe the desired state, and when it should be achieved.</text>
     </element>
 
-    <element name="Outcome" layer="Motivation" parent="GenericElement">
+    <element name="Outcome" layer="Motivation" key="moc" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757981"/>
         <info>An outcome represents an end result that has been achieved.</info>
         <text>Outcomes are high-level, business-oriented results produced by capabilities of an organization, and by inference by the core elements of its architecture that realize these capabilities. Outcomes are tangible, possibly quantitative, and time-related, and can be associated with assessments. An outcome may have a different value for different stakeholders.</text>
@@ -41,7 +41,7 @@
         <text>Outcome names should unambiguously identify end results that have been achieved in order to avoid confusion with actions or goals. At a minimum, outcome names should consist of a noun identifying the end result followed by a past-tense verb or adjective indicating that the result has been achieved. Examples include “First-place ranking achieved” and “Key supplier partnerships in place”. Outcome names can also be more specific; e.g., “2015 quarterly profits rose 10% year over year beginning in Q3”.</text>
     </element>
 
-    <element name="Principle" layer="Motivation" parent="GenericElement">
+    <element name="Principle" layer="Motivation" key="mpr" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757982"/>
         <info>A principle represents a qualitative statement of intent that should be met by the architecture.</info>
         <text>Principles are strongly related to goals and requirements. Similar to requirements, principles define intended properties of systems. However, in contrast to requirements, principles are broader in scope and more abstract than requirements. A principle defines a general property that applies to any system in a certain context. A requirement defines a property that applies to a specific system as described by an architecture.</text>
@@ -49,7 +49,7 @@
         <text>A principle is motivated by some goal or driver. For example, the aforementioned principle may be motivated by the goal to maintain a good reputation and/or the goal to avoid penalties. The principle provides a means to realize its motivating goal, which is generally formulated as a guideline. This guideline constrains the design of all systems in a given context by stating the general properties that are required from any system in this context to realize the goal. Principles are intended to be more stable than requirements in the sense that they do not change as quickly as requirements may do. Organizational values, best practices, and design knowledge may be reflected and made applicable in terms of principles.</text>
     </element>
 
-    <element name="Requirement" layer="Motivation" parent="GenericElement">
+    <element name="Requirement" layer="Motivation" key="mrq" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757983"/>
         <info>A requirement represents a statement of need that must be met by the architecture.</info>
         <text>In the end, a business goal must be realized by a plan or concrete change goal, which may or may not require a new system or changes to an existing system.</text>
@@ -59,7 +59,7 @@
         <text>For example, one may identify two alternative requirements to realize the goal to improve portfolio management: (1) By assigning a personal assistant to each customer, or (2) By introducing online portfolio management. The former requirement can be realized by a human actor and the latter by a software application. These requirements can be decomposed further to define the requirements on the human actor and the software application in more detail.</text>
     </element>
 
-    <element name="Constraint" layer="Motivation" parent="GenericElement">
+    <element name="Constraint" layer="Motivation" key="mcs" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757984"/>
         <info>A constraint represents a factor that prevents or obstructs the realization of goals.</info>
         <text>In contrast to a requirement, a constraint does not prescribe some intended functionality of the system to be realized, but imposes a restriction on the way it operates or may be realized. This may be a restriction on the implementation of the system (e.g., specific technology that is to be used), a restriction on the implementation process (e.g., time or budget constraints), or a restriction on the functioning of the system (e.g., legal constraints).</text>
@@ -67,7 +67,7 @@
 
     <!-- Motivation Elements (3) !-->
 
-    <element name="Meaning" layer="Motivation" parent="GenericElement">
+    <element name="Meaning" layer="Motivation" key="mmn" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757987"/>
         <info>Meaning represents the knowledge or expertise present in, or the interpretation given to, a core element in a particular context.</info>
         <text>A meaning represents the interpretation of an element of the architecture. In particular, this is used to describe the meaning of passive structure elements (for example, a document, message). It is a description that expresses the intent of that element; i.e., how it informs the external user.</text>
@@ -75,7 +75,7 @@
         <text>A meaning can be associated with any core element. To denote that a meaning is specific to a particular stakeholder, this stakeholder can also be associated to the meaning. The name of a meaning should preferably be a noun or noun phrase.</text>
     </element>
 
-    <element name="Value" layer="Motivation" parent="GenericElement">
+    <element name="Value" layer="Motivation" key="mvl" parent="GenericElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757988"/>
         <info>Value represents the relative worth, utility, or importance of a core element or an outcome.</info>
         <text>Value may apply to what a party gets by selling or making available some product or service, or it may apply to what a party gets by buying or obtaining access to it. Value is often expressed in terms of money, but it has long since been recognized that non-monetary value is also essential to business; for example, practical/functional value (including the right to use a service), and the value of information or knowledge. Though value can hold internally for some system or organizational unit, it is most typically applied to external appreciation of goods, services, information, knowledge, or money, normally as part of some sort of customer-provider relationship.</text>
@@ -84,7 +84,7 @@
 
     <!-- Strategy Elements / Structure Elements !-->
 
-    <element name="Resource" layer="Strategy" parent="StructureElement">
+    <element name="Resource" layer="Strategy" key="srs" parent="StructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap07.html#_Toc451757995"/>
         <info>A resource represents an asset owned or controlled by an individual or organization.</info>
         <text>Resources are a central concept in the field of strategic management, economics, computer science, portfolio management, and more. They are often considered, together with capabilities, to be sources of competitive advantage for organizations. Resources are analyzed in terms of strengths and weaknesses, and they are considered when implementing strategies. Due to resources being limited, they can often be a deciding factor for choosing which strategy, goal, and project to implement and in which order. Resources can be classified into tangible assets – financial assets (e.g., cash, securities, borrowing capacity), physical assets (e.g., plant, equipment, land, mineral reserves), intangible assets (technology; e.g., patents, copyrights, trade secrets; reputation; e.g., brand, relationships; culture), and human assets (skills/know-how, capacity for communication and collaboration, motivation).</text>
@@ -93,7 +93,7 @@
 
     <!-- Strategy Elements / Behavior Elements !-->
 
-    <element name="Capability" layer="Strategy" parent="BehaviorElement">
+    <element name="Capability" layer="Strategy" key="scb" parent="BehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap07.html#_Toc451757997"/>
         <info>A capability represents an ability that an active structure element, such as an organization, person, or system, possesses.</info>
         <text>In the field of business, strategic thinking and planning delivers strategies and high-level goals that are often not directly implementable in the architecture of an organization. These long-term or generic plans need to be specified and made actionable in a way that both business leaders and Enterprise Architects can relate to and at a relatively high abstraction level.</text>
@@ -103,7 +103,7 @@
         <text>Capabilities are often used for capability-based planning, to describe their evolution over time. To model such so-called capability increments, the specialization relationship can be used to denote that a certain capability increment is a specific version of that capability. Aggregating those increments and the core elements that realize them in plateaus can be used to model the evolution of the capabilities.</text>
     </element>
 
-    <element name="CourseOfAction" layer="Strategy" parent="BehaviorElement">
+    <element name="CourseOfAction" layer="Strategy" key="sca" parent="BehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap07.html#_Toc451757998"/>
         <info>A course of action is an approach or plan for configuring some capabilities and resources of the enterprise, undertaken to achieve a goal.</info>
         <text>A course of action represents what an enterprise has decided to do. Courses of action can be categorized as strategies and tactics. It is not possible to make a hard distinction between the two, but strategies tend to be long-term and fairly broad in scope, while tactics tend to be shorter-term and narrower in scope.</text>
@@ -111,14 +111,14 @@
 
     <!-- Business Layer / Active Structure Elements !-->
 
-    <element name="BusinessActor" layer="Business" parent="?Internal?ActiveStructureElement">
+    <element name="BusinessActor" layer="Business" key="bac" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758005"/>
         <info>A business actor is a business entity that is capable of performing behavior.</info>
         <text>A business actor is a business entity as opposed to a technical entity; i.e., it belongs to the Business Layer. Actors may, however, include entities outside the actual organization; e.g., customers and partners. A business actor can represent such business entities at different levels of detail, and may correspond to both an actor and an organizational unit in the TOGAF framework. Examples of business actors are humans, departments, and business units.</text>
         <text>A business actor may be assigned to one or more business roles. It can then perform the behavior to which these business roles are assigned. A business actor can be aggregated in a location. The name of a business actor should preferably be a noun. Business actors may be specific individuals or organizations; e.g., “John Smith” or “ABC Corporation”, or they may be generic; e.g., “Customer” or “Supplier”.</text>
     </element>
 
-    <element name="BusinessRole" layer="Business" parent="?Internal?ActiveStructureElement">
+    <element name="BusinessRole" layer="Business" key="bro" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758006"/>
         <info>A business role is the responsibility for performing specific behavior, to which an actor can be assigned, or the part an actor plays in a particular action or event.</info>
         <text>Business roles with certain responsibilities or skills are assigned to business processes or business functions. A business actor that is assigned to a business role is responsible that the corresponding behavior is carried out, either by performing it or by delegating and managing its performance. In addition to the relation of a business role with behavior, a business role is also useful in a (structural) organizational sense; for instance, in the division of labor within an organization.</text>
@@ -126,14 +126,14 @@
         <text>ArchiMate modelers may represent generic organizational entities that perform behavior as either business actors or business roles. For example, the business actor Supplier depicts an organizational entity, while the business role Supplier depicts a responsibility. Specific or generic business actors can be assigned to carry responsibilities depicted as business roles. For example, the specific business actor ABC Corporation or the generic business actor Business Partner can be assigned to the Supplier business role.</text>
     </element>
 
-    <element name="BusinessCollaboration" layer="Business" parent="Collaboration">
+    <element name="BusinessCollaboration" layer="Business" key="bcl" parent="Collaboration">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758007"/>
         <info>A business collaboration is an aggregate of two or more business internal active structure elements that work together to perform collective behavior.</info>
         <text>A business process or function may be interpreted as the internal behavior of a single business role. In some cases, behavior is the collective effort of more than one business role; in fact, a collaboration of two or more business roles results in collective behavior which may be more than simply the sum of the behavior of the separate roles. Business collaborations represent this collective effort. Business interactions are used to describe the internal behavior that takes place within business collaboration. A collaboration is a (possibly temporary) collection of business roles or actors within an organization, which perform collaborative behavior (interactions). Unlike a department, which may also group roles, a business collaboration need not have an official (permanent) status within the organization; it is specifically aimed at a specific interaction or set of interactions between roles. It is especially useful in modeling B2B interactions between different organizations such as provider networks, and also for describing social networks.</text>
         <text>A business collaboration may aggregate a number of business roles or actors, and may be assigned to one or more business interactions or other business internal behavior elements. A business interface or an application interface may serve a business collaboration, while a business collaboration may have business interfaces (through composition, and also through aggregation via derived relationships). The name of a business collaboration should preferably be a noun. It is also rather common to leave a business collaboration unnamed.</text>
     </element>
 
-    <element name="BusinessInterface" layer="Business" parent="ExternalActiveStructureElement">
+    <element name="BusinessInterface" layer="Business" key="bif" parent="ExternalActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758008"/>
         <info>A business interface is a point of access where a business service is made available to the environment.</info>
         <text>A business interface exposes the functionality of a business service to other business roles or actors. It is often referred to as a channel (telephone, Internet, local office, etc.). The same business service may be exposed through different interfaces.</text>
@@ -142,7 +142,7 @@
 
     <!-- Business Layer / Behavior Elements !-->
 
-    <element name="BusinessProcess" layer="Business" parent="Process">
+    <element name="BusinessProcess" layer="Business" key="bpr" parent="Process">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758011"/>
         <info>A business process represents a sequence of business behaviors that achieves a specific outcome such as a defined set of products or business services.</info>
         <text>A business process describes the internal behavior performed by a business role that is required to produce a set of products and services. For a consumer, the products and services are relevant and the required behavior is merely a black box, hence the designation “internal”.</text>
@@ -152,7 +152,7 @@
         <text>In an ArchiMate model, the existence of business processes is depicted. High-level business, end-to-end processes, macro flows, and workflows can all be expressed with the same business process element in the ArchiMate language. It does not, however, list the flow of activities in detail. This is typically done during business process modeling, where a business process can be expanded using a business process design language; e.g., BPMN.</text>
     </element>
 
-    <element name="BusinessFunction" layer="Business" parent="Function">
+    <element name="BusinessFunction" layer="Business" key="bfn" parent="Function">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758012"/>
         <info>A business function is a collection of business behavior based on a chosen set of criteria (typically required business resources and/or competences), closely aligned to an organization, but not necessarily explicitly governed by the organization.</info>
         <text>Just like a business process, a business function also describes internal behavior performed by a business role. However, while a business process groups behavior based on a sequence or flow of activities that is needed to realize a product or service, a business function typically groups behavior based on required business resources, skills, competences, knowledge, etc.</text>
@@ -160,14 +160,14 @@
         <text>A business function may be triggered by, or trigger, any other business behavior element (business event, business process, business function, or business interaction). A business function may access business objects. A business function may realize one or more business services and may be served by business, application, or technology services. A business role may be assigned to a business function. The name of a business function should clearly indicate a well-defined behavior. Examples are customer management, claims administration, member services, recycling, or payment processing.</text>
     </element>
 
-    <element name="BusinessInteraction" layer="Business" parent="Interaction">
+    <element name="BusinessInteraction" layer="Business" key="bia" parent="Interaction">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758013"/>
         <info>A business interaction is a unit of collective business behavior performed by (a collaboration of) two or more business roles.</info>
         <text>A business interaction is similar to a business process/function, but while a process/function may be performed by a single role, an interaction is performed by a collaboration of multiple roles. The roles in the collaboration share the responsibility for performing the interaction.</text>
         <text>A business interaction may be triggered by, or trigger, any other business behavior element (business event, business process, business function, or business interaction). A business interaction may access business objects. A business interaction may realize one or more business services and may use (internal) business services or application services. A business collaboration or an application collaboration may be assigned to a business interaction. The name of a business interaction should preferably be a verb in the simple present tense.</text>
     </element>
 
-    <element name="BusinessEvent" layer="Business" parent="Event">
+    <element name="BusinessEvent" layer="Business" key="bev" parent="Event">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758014"/>
         <info>A business event is a business behavior element that denotes an organizational state change. It may originate from and be resolved inside or outside the organization.</info>
         <text>Business processes and other business behavior may be triggered or interrupted by a business event. Also, business processes may raise events that trigger other business processes, functions, or interactions. Unlike business processes, functions, and interactions, a business event is instantaneous: it does not have duration. Events may originate from the environment of the organization (e.g., from a customer), but also internal events may occur generated by, for example, other processes within the organization.</text>
@@ -175,7 +175,7 @@
         <text>A business event may trigger or be triggered (raised) by a business process, business function, or business interaction. A business event may access a business object and may be composed of other business events. The name of a business event should preferably be a verb in the perfect tense; e.g., claim received.</text>
     </element>
 
-    <element name="BusinessService" layer="Business" parent="ExternalBehaviorElement">
+    <element name="BusinessService" layer="Business" key="bsv" parent="ExternalBehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758015"/>
         <info>A business service represents an explicitly defined exposed business behavior.</info>
         <text>A business service exposes the functionality of business roles or collaborations to their environment. This functionality is accessed through one or more business interfaces. A business service is realized by one or more business processes, business functions, or business interactions that are performed by the business roles or business collaborations, respectively. It may access business objects.</text>
@@ -185,7 +185,7 @@
 
     <!-- Business Layer / Passive Structure Elements !-->
 
-    <element name="BusinessObject" layer="Business" parent="PassiveStructureElement">
+    <element name="BusinessObject" layer="Business" key="bob" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758018"/>
         <info>A business object represents a concept used within a particular business domain.</info>
         <text>The ArchiMate language in general focuses on the modeling of types, not instances, since this is the most relevant at the Enterprise Architecture level of description. Hence a business object typically models an object type (cf. a UML class) of which multiple instances may exist in operations. Only occasionally, business objects represent actual instances of information produced and consumed by behavior elements such as business processes. This is in particular the case for singleton types; i.e., types that have only one instance.</text>
@@ -193,14 +193,14 @@
         <text>Business objects may be accessed (e.g., in the case of information objects, they may be created, read, written) by a business process, function, business interaction, business event, or business service. A business object may have association, specialization, aggregation, or composition relationships with other business objects. A business object may be realized by a representation or by a data object (or both). The name of a business object should preferably be a noun.</text>
     </element>
 
-    <element name="Contract" layer="Business" parent="PassiveStructureElement">
+    <element name="Contract" layer="Business" key="bco" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758019"/>
         <info>A contract represents a formal or informal specification of an agreement between a provider and a consumer that specifies the rights and obligations associated with a product and establishes functional and non-functional parameters for interaction.</info>
         <text>The contract element may be used to model a contract in the legal sense, but also a more informal agreement associated with a product. It may also be or include a Service-Level Agreement (SLA), describing an agreement about the functionality and quality of the services that are part of a product. A contract is a specialization of a business object.</text>
         <text>The relationships that apply to a business object also apply to a contract. In addition, a contract may have an aggregation relationship with a product. The name of a contract is preferably a noun.</text>
     </element>
 
-    <element name="Representation" layer="Business" parent="PassiveStructureElement">
+    <element name="Representation" layer="Business" key="bre" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758020"/>
         <info>A representation represents a perceptible form of the information carried by a business object.</info>
         <text>Representations (for example, messages or documents) are the perceptible carriers of information that are related to business objects. If relevant, representations can be classified in various ways; for example, in terms of medium (electronic, paper, audio, etc.) or format (HTML, ASCII, PDF, RTF, etc.). A single business object can have a number of different representations. Also, a single representation can realize one or more specific business objects.</text>
@@ -209,7 +209,7 @@
 
     <!-- Business Layer / Composite Elements !-->
 
-    <element name="Product" layer="Business" parent="CompositeElement">
+    <element name="Product" layer="Business" key="bpr" parent="CompositeElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758023"/>
         <info>A product represents a coherent collection of services and/or passive structure elements, accompanied by a contract/set of agreements, which is offered as a whole to (internal or external) customers.</info>
         <text>This definition covers both intangible, services-based, or information products that are common in information-intensive organizations, and tangible, physical products. A financial or information product consists of a collection of services, and a contract that specifies the characteristics, rights, and requirements associated with the product. “Buying” a product gives the customer the right to use the associated services.</text>
@@ -220,7 +220,7 @@
 
     <!-- Application Layer / Active Structure Elements !-->
 
-    <element name="ApplicationComponent" layer="Application" parent="InternalActiveStructureElement">
+    <element name="ApplicationComponent" layer="Application" key="aco" parent="InternalActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758029"/>
         <info>An application component represents an encapsulation of application functionality aligned to implementation structure, which is modular and replaceable. It encapsulates its behavior and data, exposes services, and makes them available through interfaces.</info>
         <text>An application component is a self-contained unit. As such, it is independently deployable, re-usable, and replaceable. An application component performs one or more application functions. It encapsulates its contents: its functionality is only accessible through a set of application interfaces. Cooperating application components are connected via application collaborations.</text>
@@ -228,14 +228,14 @@
         <text>The application component element is used to model entire applications (i.e., deployed and operational IT systems, as defined by the TOGAF framework) and individual parts of such applications, at all relevant levels of detail.</text>
     </element>
 
-    <element name="ApplicationCollaboration" layer="Application" parent="Collaboration">
+    <element name="ApplicationCollaboration" layer="Application" key="acl" parent="Collaboration">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758030"/>
         <info>An application collaboration represents an aggregate of two or more application components that work together to perform collective application behavior.</info>
         <text>An application collaboration specifies which components cooperate to perform some task. The collaborative behavior, including, for example, the communication pattern of these components, is modeled by an application interaction. An application collaboration typically models a logical or temporary collaboration of application components, and does not exist as a separate entity in the enterprise.</text>
         <text>Application collaboration is a specialization of component, and aggregates two or more (cooperating) application components. An application collaboration is an active structure element that may be assigned to one or more application interactions, business interactions, or other application or business internal behavior elements, which model the associated behavior. An application interface may serve an application collaboration, and an application collaboration may be composed of application interfaces. The name of an application collaboration should preferably be a noun.</text>
     </element>
 
-    <element name="ApplicationInterface" layer="Application" parent="ExternalActiveStructureElement">
+    <element name="ApplicationInterface" layer="Application" key="aif" parent="ExternalActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758031"/>
         <info>An application interface represents a point of access where application services are made available to a user, another application component, or a node.</info>
         <text>An application interface specifies how the functionality of a component can be accessed by other elements. An application interface exposes application services to the environment. The same application service may be exposed through different interfaces, and the same interface may expose multiple services.</text>
@@ -245,28 +245,28 @@
 
     <!-- Application Layer / Behavior Elements !-->
 
-    <element name="ApplicationFunction" layer="Application" parent="Function">
+    <element name="ApplicationFunction" layer="Application" key="afn" parent="Function">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758034"/>
         <info>An application function represents automated behavior that can be performed by an application component.</info>
         <text>An application function describes the internal behavior of an application component. If this behavior is exposed externally, this is done through one or more services. An application function abstracts from the way it is implemented. Only the necessary behavior is specified.</text>
         <text>An application function may realize one or more application services. Application services of other application functions and technology services may serve an application function. An application function may access data objects. An application component may be assigned to an application function (which means that the application component performs the application function). The name of an application function should preferably be a verb ending with “ing”; e.g., “accounting”.</text>
     </element>
 
-    <element name="ApplicationInteraction" layer="Application" parent="Interaction">
+    <element name="ApplicationInteraction" layer="Application" key="aia" parent="Interaction">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758035"/>
         <info>An application interaction represents a unit of collective application behavior performed by (a collaboration of) two or more application components.</info>
         <text>An application interaction describes the collective behavior that is performed by the components that participate in an application collaboration. This may, for example, include the communication pattern between these components. An application interaction can also specify the externally visible behavior needed to realize an application service. The details of the interaction between the application components involved in an application interaction can be expressed during the detailed application design using, for example, a UML interaction diagram.</text>
         <text>An application collaboration may be assigned to an application interaction. An application interaction may realize an application service. Application services and technology services may serve an application interaction. An application interaction may access data objects. The name of an application interaction should clearly identify a series of application behaviors; e.g., “Client profile creation” or “Update customer records”.</text>
     </element>
 
-    <element name="ApplicationProcess" layer="Application" parent="Process">
+    <element name="ApplicationProcess" layer="Application" key="apr" parent="Process">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758036"/>
         <info>An application process represents a sequence of application behaviors that achieves a specific outcome.</info>
         <text>An application process describes the internal behavior performed by an application component that is required to realize a set of services. For a (human or automated) consumer the services are relevant and the required behavior is merely a black box, hence the designation “internal”.</text>
         <text>An application process may realize application services. Other application services may serve (be used by) an application process. An application process may access data objects. An application component may be assigned to an application process (which means that this component performs the process). The name of an application process should clearly identify a series of application behaviors; e.g., “Claims adjudication process”, or “General ledger update job”.</text>
     </element>
 
-    <element name="ApplicationEvent" layer="Application" parent="Event">
+    <element name="ApplicationEvent" layer="Application" key="aev" parent="Event">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758037"/>
         <info>An application event is an application behavior element that denotes a state change.</info>
         <text>Application functions and other application behavior may be triggered or interrupted by an application event. Also, application behavior may raise events that trigger other application behavior. Unlike processes, functions, and interactions, an event is instantaneous; it does not have duration. Events may originate from the environment of the organization (e.g., from an external application), but also internal events may occur generated by, for example, other applications within the organization.</text>
@@ -274,7 +274,7 @@
         <text>An application event may trigger or be triggered (raised) by an application function, process, or interaction. An application event may access a data object and may be composed of other application events. The name of an application event should preferably be a verb in the perfect tense; e.g., “claim received”.</text>
     </element>
 
-    <element name="ApplicationService" layer="Application" parent="ExternalBehaviorElement">
+    <element name="ApplicationService" layer="Application" key="asv" parent="ExternalBehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758038"/>
         <info>An application service represents an explicitly defined exposed application behavior.</info>
         <text>An application service exposes the functionality of components to their environment. This functionality is accessed through one or more application interfaces. An application service is realized by one or more application functions that are performed by the component. It may require, use, and produce data objects.</text>
@@ -284,7 +284,7 @@
 
     <!-- Application Layer / Passive Structure Elements !-->
 
-    <element name="DataObject" layer="Application" parent="PassiveStructureElement">
+    <element name="DataObject" layer="Application" key="ado" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap09.html#_Toc451758041"/>
         <info>A data object represents data structured for automated processing.</info>
         <text>A data object should be a self-contained piece of information with a clear meaning to the business, not just to the application level. Typical examples of data objects are a customer record, a client database, or an insurance claim.</text>
@@ -295,7 +295,7 @@
 
     <!-- Technology Layer / Active Structure Elements !-->
 
-    <element name="Node" layer="Technology" parent="?Internal?ActiveStructureElement">
+    <element name="Node" layer="Technology" key="tnd" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758047"/>
         <info>A node represents a computational or physical resource that hosts, manipulates, or interacts with other computational or physical resources.</info>
         <text>Nodes are active structure elements that perform technology behavior and execute, store, and process technology objects such as artifacts (or materials, as outlined in Chapter 11). For instance, nodes are used to model application platforms, defined by the TOGAF framework as: “a collection of technology components of hardware and software that provide the services used to support applications”.</text>
@@ -304,7 +304,7 @@
         <text>Artifacts deployed on a node may either be drawn inside the node or connected to it with an assignment relationship.</text>
     </element>
 
-    <element name="Device" layer="Technology" parent="?Internal?ActiveStructureElement">
+    <element name="Device" layer="Technology" key="tdv" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758048"/>
         <info>A device is a physical IT resource upon which system software and artifacts may be stored or deployed for execution.</info>
         <text>A device is a specialization of a node that represents a physical IT resource with processing capability. It is typically used to model hardware systems such as mainframes, PCs, or routers. Usually, they are part of a node together with system software. Devices may be composite; i.e., consist of sub-devices.</text>
@@ -313,7 +313,7 @@
         <text>Different icons may be used to distinguish between different types of devices; e.g., mainframes and PCs.</text>
     </element>
 
-    <element name="SystemSoftware" layer="Technology" parent="?Internal?ActiveStructureElement">
+    <element name="SystemSoftware" layer="Technology" key="tss" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758049"/>
         <info>System software represents software that provides or contributes to an environment for storing, executing, and using software or data deployed within it.</info>
         <text>System software is a specialization of a node that is used to model the software environment in which artifacts run. This can be, for example, an operating system, a JEE application server, a database system, or a workflow engine. Also, system software can be used to represent, for example, communication middleware. Usually, system software is combined with a device representing the hardware environment to form a general node.</text>
@@ -321,14 +321,14 @@
         <text>The name of system software should preferably be a noun referring to the type of execution environment; e.g., “JEE server”. System software may be composed of other system software; e.g., an operating system containing a database.</text>
     </element>
 
-    <element name="TechnologyCollaboration" layer="Technology" parent="Collaboration">
+    <element name="TechnologyCollaboration" layer="Technology" key="tcl" parent="Collaboration">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758050"/>
         <info>A technology collaboration represents an aggregate of two or more nodes that work together to perform collective technology behavior.</info>
         <text>A technology collaboration specifies which nodes cooperate to perform some task. The collaborative behavior, including, for example, the communication pattern of these nodes, is modeled by a technology interaction. A technology collaboration typically models a logical or temporary collaboration of nodes, and does not exist as a separate entity in the enterprise.</text>
         <text>Technology collaboration is a specialization of node, and aggregates two or more (cooperating) nodes. A technology collaboration is an active structure element that may be assigned to one or more technology interactions or other technology internal behavior elements, which model the associated behavior. A technology interface may serve a technology collaboration, and a technology collaboration may be composed of technology interfaces. The name of a technology collaboration should preferably be a noun.</text>
     </element>
 
-    <element name="TechnologyInterface" layer="Technology" parent="ExternalActiveStructureElement">
+    <element name="TechnologyInterface" layer="Technology" key="tif" parent="ExternalActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758051"/>
         <info>A technology interface represents a point of access where technology services offered by a node can be accessed.</info>
         <text>A technology interface specifies how the technology services of a node can be accessed by other nodes. A technology interface exposes a technology service to the environment. The same service may be exposed through different interfaces.</text>
@@ -338,14 +338,14 @@
         <text>In previous versions of this standard, this element was called ‘infrastructure interface’. This usage is still permitted but deprecated, and will be removed from a future version of the standard.</text>
     </element>
 
-    <element name="Path" layer="Technology" parent="?Internal?ActiveStructureElement"> <!-- GenericElement ? !-->
+    <element name="Path" layer="Technology" key="tph" parent="?Internal?ActiveStructureElement"> <!-- GenericElement ? !-->
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758052"/>
         <info>A path represents a link between two or more nodes, through which these nodes can exchange data or material.</info>
         <text>A path is used to model the logical communication (or distribution) relations between nodes. It is realized by one or more networks, which represent the physical communication (or distribution) links. The properties (e.g., bandwidth, latency) of a path are usually aggregated from these underlying networks.</text>
         <text>A path connects two or more nodes. A path is realized by one or more networks. A path can aggregate nodes.</text>
     </element>
 
-    <element name="CommunicationNetwork" layer="Technology" parent="?Internal?ActiveStructureElement">
+    <element name="CommunicationNetwork" layer="Technology" key="tcn" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758053"/>
         <info>A communication network represents a set of structures and behaviors that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.</info>
         <text>A communication network represents the physical communication infrastructure. It represents ”a set of products, concepts, and services that enable the connection of computer systems or devices for the purpose of transmitting data and other forms (e.g., voice and video) between the systems”, as defined by the TOGAF framework.</text>
@@ -356,28 +356,28 @@
 
     <!-- Technology Layer / Behavior Elements !-->
 
-    <element name="TechnologyFunction" layer="Technology" parent="Function">
+    <element name="TechnologyFunction" layer="Technology" key="tfn" parent="Function">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758056"/>
         <info>A technology function represents a collection of technology behavior that can be performed by a node.</info>
         <text>A technology function describes the internal behavior of a node; for the user of a node that performs a technology function, this function is invisible. If its behavior is exposed externally, this is done through one or more technology services. A technology function abstracts from the way it is implemented. Only the necessary behavior is specified.</text>
         <text>A technology function may realize technology services. Technology services of other technology functions may serve technology functions. A technology function may access technology objects. A node may be assigned to a technology function (which means that the node performs the technology function). The name of a technology function should preferably be a verb ending with “ing”.</text>
     </element>
 
-    <element name="TechnologyProcess" layer="Technology" parent="Process">
+    <element name="TechnologyProcess" layer="Technology" key="tpr" parent="Process">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758057"/>
         <info>A technology process represents a sequence of technology behaviors that achieves a specific outcome.</info>
         <text>A technology process describes internal behavior of a node; for the user of that node, this process is invisible. If its behavior is exposed externally, this is done through one or more technology services. A technology process abstracts from the way it is implemented. Only the necessary behavior is specified. It can use technology objects as input and use or transform these to produce other technology objects as output.</text>
         <text>A technology process may realize technology services. Other technology services may serve (be used by) a technology process. A technology process may access technology objects. A node may be assigned to a technology process, which means that this node performs the process. The name of a technology process should clearly identify a series of technology behaviors; e.g., “System boot sequence” or “Replicate database”.</text>
     </element>
 
-    <element name="TechnologyInteraction" layer="Technology" parent="Interaction">
+    <element name="TechnologyInteraction" layer="Technology" key="tia" parent="Interaction">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758058"/>
         <info>A technology interaction represents a unit of collective technology behavior performed by (a collaboration of) two or more nodes.</info>
         <text>A technology interaction describes the collective behavior that is performed by the nodes that participate in a technology collaboration. This may, for example, include the communication pattern between these components. A technology interaction can also specify the externally visible behavior needed to realize a technology service. The details of the interaction between the nodes involved in a technology interaction can be expressed during the detailed design using, for example, a UML interaction diagram.</text>
         <text>A technology collaboration may be assigned to a technology interaction. A technology interaction may realize a technology service. Technology services may serve a technology interaction. A technology interaction may access artifacts. The name of a technology interaction should clearly identify a series of technology behaviors; e.g., “Client profile creation” or “Update customer records”.</text>
     </element>
 
-    <element name="TechnologyEvent" layer="Technology" parent="Event">
+    <element name="TechnologyEvent" layer="Technology" key="tev" parent="Event">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758059"/>
         <info>A technology event is a technology behavior element that denotes a state change.</info>
         <text>Technology functions and other technology behavior may be triggered or interrupted by a technology event. Also, technology functions may raise events that trigger other infrastructure behavior. Unlike processes, functions, and interactions, an event is instantaneous: it does not have duration. Events may originate from the environment of the organization, but also internal events may occur generated by, for example, other devices within the organization.</text>
@@ -385,7 +385,7 @@
         <text>A technology event may trigger or be triggered (raised) by a technology function, process, or interaction. A technology event may access a data object and may be composed of other technology events. The name of a technology event should preferably be a verb in the perfect tense; e.g., “message received”.</text>
     </element>
 
-    <element name="TechnologyService" layer="Technology" parent="ExternalBehaviorElement">
+    <element name="TechnologyService" layer="Technology" key="tsv" parent="ExternalBehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758060"/>
         <info>A technology service represents an explicitly defined exposed technology behavior.</info>
         <text>A technology service exposes the functionality of a node to its environment. This functionality is accessed through one or more technology interfaces. It may require, use, and produce artifacts.</text>
@@ -399,7 +399,7 @@
     <!-- Technology Layer / Passive Structure Elements !-->
 
     <!-- TechnologyObject - Abstract element
-    <element name="TechnologyObject" layer="Technology" parent="PassiveStructureElement">
+    <element name="TechnologyObject" layer="Technology" key="tob" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758063"/>
         <info>A technology object represents a passive element that is used or produced by technology behavior.</info>
         <text>Technology objects represent the “physical” objects manipulated by the infrastructure of an enterprise. Technology objects are abstract elements; i.e., they are not instantiated in models but serve as the generic type of the things manipulated by the Technology Layer. This may include both artifacts (e.g., files) and physical material.</text>
@@ -407,7 +407,7 @@
     </element>
     !-->
 
-    <element name="Artifact" layer="Technology" parent="PassiveStructureElement">
+    <element name="Artifact" layer="Technology" key="taf" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758064"/>
         <info>An artifact represents a piece of data that is used or produced in a software development process, or by deployment and operation of an IT system.</info>
         <text>An artifact represents a tangible element in the IT world. Artifact is a specialization of technology object. It is typically used to model (software) products such as source files, executables, scripts, database tables, messages, documents, specifications, and model files. An instance (copy) of an artifact can be deployed on a node. An artifact could be used to represent a physical data component that realizes a data object.</text>
@@ -418,7 +418,7 @@
 
     <!-- Physical Elements / Active Structure Elements !-->
 
-    <element name="Equipment" layer="Physical" parent="?Internal?ActiveStructureElement">
+    <element name="Equipment" layer="Physical" key="peq" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap11.html#_Toc451758070"/>
         <info>Equipment represents one or more physical machines, tools, or instruments that can create, use, store, move, or transform materials.</info>
         <text>Equipment comprises all active processing elements that carry out physical processes in which materials (which are a special kind of technology object) are used or transformed. Equipment is a specialization of the node element from the Technology Layer. Therefore, it is possible to model nodes that are formed by a combination of IT infrastructure (devices, system software) and physical infrastructure (equipment); e.g., an MRI scanner at a hospital, a production plant with its control systems, etc.</text>
@@ -427,7 +427,7 @@
         <text>A useful specialization of equipment is vehicle, for describing, for example, trucks, cars, trains, ships, and airplanes.</text>
     </element>
 
-    <element name="Facility" layer="Physical" parent="?External?ActiveStructureElement">
+    <element name="Facility" layer="Physical" key="pfa" parent="?External?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap11.html#_Toc451758071"/>
         <info>A facility represents a physical structure or environment.</info>
         <text>A facility is a specialization of a node. It represents a physical resource that has the capability of facilitating (e.g., housing or locating) the use of equipment. It is typically used to model factories, buildings, or outdoor constructions that have an important role in production or distribution processes. Examples of facilities include a factory, a laboratory, a warehouse, a shopping mall, a cave, or a spaceship. Facilities may be composite; i.e., consist of sub-facilities.</text>
@@ -435,7 +435,7 @@
         <text>The name of a facility should preferably be a noun referring to the type of facility; e.g., “Rotterdam harbor oil refinery”.</text>
     </element>
 
-    <element name="DistributionNetwork" layer="Physical" parent="?Internal?ActiveStructureElement">
+    <element name="DistributionNetwork" layer="Physical" key="pdn" parent="?Internal?ActiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap11.html#_Toc451758072"/>
         <info>A distribution network represents a physical network used to transport materials or energy.</info>
         <text>A distribution network represents the physical distribution or transportation infrastructure. It embodies the physical realization of the logical paths between nodes.</text>
@@ -444,7 +444,7 @@
 
     <!-- Physical Elements / Passive Structure Elements !-->
 
-    <element name="Material" layer="Physical" parent="PassiveStructureElement">
+    <element name="Material" layer="Physical" key="pma" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap11.html#_Toc451758075"/>
         <info>Material represents tangible physical matter or physical elements.</info>
         <text>Material represents tangible physical matter, with attributes such as size and weight. It is typically used to model raw materials and physical products, and also energy sources such as fuel. Material can be accessed by physical processes.</text>
@@ -453,7 +453,7 @@
 
     <!-- Implementation and Migration Elements !-->
 
-    <element name="WorkPackage" layer="Implementation" parent="BehaviorElement">
+    <element name="WorkPackage" layer="Implementation" key="iwp" parent="BehaviorElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap13.html#_Toc451758085"/>
         <info>A work package represents a series of actions identified and designed to achieve specific results within specified time and resource constraints.</info>
         <text>The central behavioral element is a work package. A work package is a behavior element that has a clearly defined start and end date, and realizes a well-defined set of goals or deliverables.</text>
@@ -461,14 +461,14 @@
         <text>Conceptually, a work package is similar to a business process, in that it consists of a set of causally-related tasks, aimed at producing a well-defined result. However, a work package is a unique, “one-off” process. Still, a work package can be described in a way very similar to the description of a process.</text>
     </element>
 
-    <element name="Deliverable" layer="Implementation" parent="PassiveStructureElement">
+    <element name="Deliverable" layer="Implementation" key="idl" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap13.html#_Toc451758086"/>
         <info>A deliverable represents a precisely-defined outcome of a work package.</info>
         <text>Work packages produce deliverables. These may be results of any kind; e.g., reports, papers, services, software, physical products, etc., or intangible results such as organizational change. A deliverable may also be the implementation of (a part of) an architecture.</text>
         <text>Often, deliverables are contractually specified and in turn formally reviewed, agreed, and signed off by the stakeholders as is, for example, prescribed by the TOGAF framework.</text>
     </element>
 
-    <element name="ImplementationEvent" layer="Implementation" parent="Event">
+    <element name="ImplementationEvent" layer="Implementation" key="iev" parent="Event">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap13.html#_Toc451758087"/>
         <info>An implementation event is a behavior element that denotes a state change related to implementation or migration.</info>
         <text>Work packages may be triggered or interrupted by an implementation event. Also, work packages may raise events that trigger other behavior. Unlike a work package, an event is instantaneous: it does not have duration.</text>
@@ -478,13 +478,13 @@
         <text>An implementation event may be associated with any core element; e.g., to indicate a lifecycle state change. The name of an implementation event should preferably be a verb in the perfect tense; e.g., “project initiation phase completed”.</text>
     </element>
 
-    <element name="Plateau" layer="Implementation" parent="CompositeElement">
+    <element name="Plateau" layer="Implementation" key="ipl" parent="CompositeElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap13.html#_Toc451758088"/>
         <info>A plateau represents a relatively stable state of the architecture that exists during a limited period of time.</info>
         <text>An important premise in the TOGAF framework is that the various architectures are described for different stages in time. In each of the Phases B, C, and D of the ADM, a Baseline Architecture and Target Architecture are created, describing the current situation and the desired future situation. In Phase E (Opportunities and Solutions), so-called Transition Architectures are defined, showing the enterprise at incremental states reflecting periods of transition between the Baseline and Target Architectures. Transition Architectures are used to allow for individual work packages and projects to be grouped into managed portfolios and programs, illustrating the business value at each stage. In order to support this, the plateau element is defined.</text>
     </element>
 
-    <element name="Gap" layer="Implementation" parent="PassiveStructureElement">
+    <element name="Gap" layer="Implementation" key="iga" parent="PassiveStructureElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap13.html#_Toc451758089"/>
         <info>A gap represents a statement of difference between two plateaus.</info>
         <text>The gap element is associated with two plateaus (e.g., Baseline and Target Architectures, or two subsequent Transition Architectures), and represents the differences between these plateaus.</text>
@@ -493,7 +493,7 @@
 
     <!-- Composite Elements !-->
 
-    <element name="Grouping" layer="Composition" parent="CompositeElement">
+    <element name="Grouping" layer="Composition" key="cgr" parent="CompositeElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap04.html#_Toc451757949"/>
         <info>The grouping element aggregates or composes concepts that belong together based on some common characteristic.</info>
         <text>The grouping element is used to aggregate or compose an arbitrary group of concepts, which can be elements and/or relationships of the same or of different types. An aggregation or composition relationship is used to link the grouping element to the grouped concepts.</text>
@@ -501,7 +501,7 @@
         <text>One useful way of employing grouping is for modeling Architecture and Solution Building Blocks (ABBs and SBBs), as described in the TOGAF framework. Another useful application of grouping is for modeling domains. For example, the TOGAF framework Glossary of Supplementary Definition (Section A.40) defines Information Domain as: “grouping of information (or data entities) by a set of criteria such as security classification, ownership, location, etc. In the context of security, Information Domains are defined as a set of users, their information objects, and a security policy”.</text>
     </element>
 
-    <element name="Location" layer="Composition" parent="CompositeElement">
+    <element name="Location" layer="Composition" key="clo" parent="CompositeElement">
         <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap04.html#_Toc451757950"/>
         <info>A location is a place or position where structure elements can be located or behavior can be performed.</info>
         <text>The location element is used to model the places where (active and passive) structure elements such as business actors, application components, and devices are located. This is modeled by means of an aggregation relationship from a location to structure element. A location can also aggregate a behavior element, to indicate where the behavior is performed. This element corresponds to the “Where” column of the Zachman framework.</text>

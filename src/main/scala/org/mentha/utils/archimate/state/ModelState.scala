@@ -1,6 +1,5 @@
 package org.mentha.utils.archimate.state
 
-import akka.serialization.Serializer
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.view._
 
@@ -548,8 +547,8 @@ object ModelState {
   }
 
   /** deserialize from string */
-  private[state] def fromJson(json: String): ModelState = new ModelState(
-    org.mentha.utils.archimate.model.json.fromJsonString(json)
+  private[state] def fromJson(id: Identifiable.ID, json: String): ModelState = new ModelState(
+    org.mentha.utils.archimate.model.json.fromJsonString(json) withId(id)
   )
 
   /** serialize to string */

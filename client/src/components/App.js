@@ -17,13 +17,16 @@ export class App extends React.Component {
     const { children } = this.props;
 
     // render
+    // className="container"
     return (
-      <div className="container">
+      <div className="container-fluid">
         <div>
-          <Menu/>
+        <div>
+          {/*<Menu/>*/}
         </div>
         <div>
           {children}
+        </div>
         </div>
       </div>
     );
