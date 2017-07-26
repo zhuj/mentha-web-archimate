@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import Markers from './edges/markers'
 import ViewDiagram from './ViewDiagram'
+import DragWrapper from './DragWrapper'
 
 class View extends React.Component {
 
@@ -18,6 +19,11 @@ class View extends React.Component {
       <div className="view" style={{display:'inline'}}>
         <Markers/>
         <ViewDiagram id={id}/>
+        <div>
+          <DragWrapper style={{display: 'inline-block'}}>
+            <div>qwe</div>
+          </DragWrapper>
+        </div>
       </div>
     )
   }

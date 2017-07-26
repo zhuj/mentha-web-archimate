@@ -39,9 +39,6 @@ const styleSheet = createStyleSheet('ModelPage', theme => ({
   content: theme.mixins.gutters({
     paddingTop: 80,
     paddingBottom: 16,
-    // flex: '1 1 100%',
-    // maxWidth: '100%',
-    // margin: '0 auto',
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -135,8 +132,13 @@ class ModelPage extends React.Component {
   renderCurrentView() {
     const { 'current-view': id } = this.state;
     if (!!id) {
-      const { model: { views: { [id]: view } } } = this.props;
-      if (!!view) {
+      const { model } = this.props;
+      if (!model) { return null; }
+
+      const { views } = model;
+      if (!views) { return null; }
+
+      if (!!views[id]) {
         return (
           <View id={id} key={id}/>
         )

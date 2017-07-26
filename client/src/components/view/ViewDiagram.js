@@ -19,6 +19,7 @@ import './diagram.sass.scss'
 
 const nodesTarget = {
   drop(props, monitor, component) {
+    console.log(monitor.getItem());
     // const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
     // const {left = 0, top = 0} = component.diagramEngine.canvas.getBoundingClientRect();
     // const diagramModel = component.diagramEngine.getDiagramModel();
@@ -99,7 +100,8 @@ class ViewDiagram extends DiagramWidget {
   }
 
   render() {
-    return (
+    const { connectDropTarget } = this.props;
+    return connectDropTarget(
       <div className='diagram-root'>
         <div className='parent-container'>
           <div className='diagram-drop-container'>
