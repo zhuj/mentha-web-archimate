@@ -1,8 +1,19 @@
 .diagram-root {
-	//width: 1400px;
-	height: 800px;
-	background: rgb(60,60,60);
-	display: flex;
+
+  color: black;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgb(60,60,60);
+  display: flex;
+
+  * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
 }
 
 .parent-container {

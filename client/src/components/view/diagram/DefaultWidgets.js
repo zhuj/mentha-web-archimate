@@ -102,9 +102,6 @@ export class DefaultLinkWidget extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      selected: false
-    };
   }
 
   generatePoint(link, index) {
@@ -122,9 +119,7 @@ export class DefaultLinkWidget extends React.Component {
       cx: point.x,
       cy: point.y,
       r: 15,
-      opacity: 0,
-      onMouseLeave: () => this.setState({ selected: false }),
-      onMouseEnter: () => this.setState({ selected: true }),
+      opacity: 0
     };
 
     return (
@@ -137,18 +132,16 @@ export class DefaultLinkWidget extends React.Component {
 
   generateLink(first, last, extraProps) {
     const {link} = this.props;
-    const {selected} = this.state;
+    const selected = link.isSelected();
     const uiPathProps = {
-      className: `p${((selected || link.isSelected()) ? ' selected' : '')}`,
+      className: `p${(selected ? ' selected' : '')}`,
       d: extraProps.d
     };
     const pathProps = {
       ... extraProps,
       className: 'link t',
       'data-linkid': link.id,
-      strokeOpacity: (selected ? 0.1 : 0),
-      onMouseLeave: () => this.setState({ selected: false }),
-      onMouseEnter: () => this.setState({ selected: true })
+      strokeOpacity: (selected ? 0.1 : 0)
     };
 
     const className = 'link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
@@ -161,8 +154,8 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   drawSmoothPaths() {
-    const { selected } = this.state;
     const { link, diagram } = this.props;
+    const selected  = link.isSelected();
     const { points } = link;
 
     let paths = [];
@@ -190,12 +183,9 @@ export class DefaultLinkWidget extends React.Component {
             <circle
               className="t"
               cx={x} cy={y} r={15} opacity={0}
-              onMouseLeave={() => this.setState({ selected: false })}
-              onMouseEnter={() => this.setState({ selected: true })}
               onMouseDown={(event) => {
                 // TODO: make it better
-                if (event.buttons !== 1) { return; } // only a single button
-                if (event.button !== 0) { return; } // only the left button
+                if (event.buttons !== 1) { return; } // only the left button
 
                 if (!event.shiftKey) {
                   const point = diagram.addPointIntoLink.bind(diagram)(event, link, i);
@@ -207,7 +197,6 @@ export class DefaultLinkWidget extends React.Component {
           </g>
         );
       }
-
     }
 
     path = path + ` L ${points[last].x.toFixed(0)} ${points[last].y.toFixed(0)}`;
@@ -240,8 +229,7 @@ export class DefaultLinkWidget extends React.Component {
       'data-index': index,
       onMouseDown: event => {
         // TODO: make it better
-        if (event.buttons !== 1) { return; } // only a single button
-        if (event.button !== 0) { return; } // only the left button
+        if (event.buttons !== 1) { return; } // only the left button
 
         if (!event.shiftKey) {
           const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
@@ -261,8 +249,10 @@ export class DefaultLinkWidget extends React.Component {
     const paths = (smooth ? this.drawSmoothPaths : this.drawSimplePaths).bind(this)();
 
     // Render the circles for points (except the first and the last)
-    for (let i=1, l=points.length-1; i < l; i++) {
-      paths.push(this.generatePoint(link, i));
+    if (link.isSelected()) {
+      for (let i = 1, l = points.length - 1; i < l; i++) {
+        paths.push(this.generatePoint(link, i));
+      }
     }
 
     // render free point (if exists)
