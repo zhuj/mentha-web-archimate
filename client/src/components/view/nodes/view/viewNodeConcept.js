@@ -132,3 +132,13 @@ export const viewNodeConceptWidget = (props) => {
   return null;
 };
 
+export const layerElements = {
+  'motivationLayer':['stakeholder', 'driver', 'assessment', 'goal', 'outcome', 'principle', 'requirement', 'constraint', 'meaning', 'value'],
+  'strategyLayer':['resource', 'capability', 'courseOfAction'],
+  'businessLayer':['businessActor', 'businessRole', 'businessCollaboration', 'businessInterface', 'businessProcess', 'businessFunction', 'businessInteraction', 'businessEvent', 'businessService', 'businessObject', 'contract', 'representation', 'product'],
+  'applicationLayer':['applicationComponent', 'applicationCollaboration', 'applicationInterface', 'applicationFunction', 'applicationInteraction', 'applicationProcess', 'applicationEvent', 'applicationService', 'dataObject'],
+  'technologyLayer':['node', 'device', 'systemSoftware', 'technologyCollaboration', 'technologyInterface', 'path', 'communicationNetwork', 'technologyFunction', 'technologyProcess', 'technologyInteraction', 'technologyEvent', 'technologyService', 'artifact'],
+  'physicalLayer':['equipment', 'facility', 'distributionNetwork', 'material'],
+  'implementationLayer':['workPackage', 'deliverable', 'implementationEvent', 'plateau', 'gap'],
+  'compositionLayer':['grouping', 'location'],
+};

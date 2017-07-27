@@ -1,5 +1,5 @@
 
-import { modelConnect, modelDisconnect, modelSendMessage } from '../middleware/model'
+import { modelConnect, modelDisconnect, modelSendMessage } from '../middleware/model/index'
 
 export const connectModel = (id) => (dispatch, getState) => {
     return dispatch( modelConnect(`model/${id}`) )
@@ -11,27 +11,6 @@ export const disconnectModel = () => (dispatch, getState) => {
 
 export const sendModelMessage = (payload) => (dispatch, getState) => {
     return dispatch( modelSendMessage(payload) )
-};
-
-export const updateViewNodePosAndSize = (viewId, voId, pos, size) => {
-  return sendModelMessage({
-    'mov-view-node': {
-      viewId: viewId,
-      id: voId,
-      pos: pos,
-      size: size
-    }
-  });
-};
-
-export const updateViewEdgePoints = (viewId, id, points) => {
-  return sendModelMessage({
-    'mov-view-edge': {
-      viewId: viewId,
-      id: id,
-      points: points
-    }
-  });
 };
 
 export const MODEL_CONNECTED = /*Symbol*/("MODEL_CONNECTED")

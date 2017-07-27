@@ -38,7 +38,7 @@ package object json {
   private[json] def edge(id: Identifiable.ID)(implicit model: Model): Relationship = model._concepts[Relationship](id)
   private[json] def node(id: Identifiable.ID)(implicit model: Model): NodeConcept = model._concepts[NodeConcept](id)
 
-  private[json] def viewConcept(id: Identifiable.ID)(implicit view: View): ViewObject with ViewConcept = view._objects[ViewObject with ViewConcept](id)
+  private[json] def viewConcept(id: Identifiable.ID)(implicit view: View): ViewObject with ViewConcept[_] = view._objects[ViewObject with ViewConcept[_]](id)
   private[json] def viewObject(id: Identifiable.ID)(implicit view: View): ViewObject = view._objects[ViewObject](id)
 
   private[json] def tp(o: Any): String = o match {
@@ -339,7 +339,7 @@ package object json {
     fillPoints(res, json)
   }
 
-  def readViewRelationship[T<:Relationship](source: ViewObject with ViewConcept, target: ViewObject with ViewConcept, concept: T, json: JsValue): ViewRelationship[T] = {
+  def readViewRelationship[T<:Relationship](source: ViewObject with ViewConcept[_], target: ViewObject with ViewConcept[_], concept: T, json: JsValue): ViewRelationship[T] = {
     fillViewRelationship(new ViewRelationship[T](source, target)(concept), json)
   }
 
@@ -442,11 +442,13 @@ package object json {
     case o: ViewObject => Json.obj(id(o.id) -> o)
   }
 
+  def fromJsonPair(json: JsonValue): Model =
+    fields(json).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
+
   def fromJsonString(json: String): Model =
-    fields(Json.parse(json)).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
+    fromJsonPair(Json.parse(json))
 
   def toJsonString(model: Model): String =
     toJsonPair(model).toString()
-  
 
 }

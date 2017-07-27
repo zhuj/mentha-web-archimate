@@ -8,20 +8,20 @@ import reactLS from 'react-localstorage'
 
 import _ from 'lodash'
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Button from 'material-ui/Button';
+import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
-import List, { ListItem, ListItemText } from 'material-ui/List';
+import List, { ListItem } from 'material-ui/List';
 
 import View from './view/View'
 
 import * as actions from '../actions'
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 const styleSheet = createStyleSheet('ModelPage', theme => ({
   modelPage: {
     width: '100%',
@@ -36,15 +36,17 @@ const styleSheet = createStyleSheet('ModelPage', theme => ({
   appBar: {
     transition: theme.transitions.create('width'),
   },
-  content: theme.mixins.gutters({
+  content: {
     paddingTop: 80,
     paddingBottom: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-  }),
+  },
   button: theme.mixins.gutters({
     borderRadius: 0,
     justifyContent: 'flex-start',
@@ -171,6 +173,7 @@ class ModelPage extends React.Component {
           <div className={classes.nav}>
             <Toolbar className={classes.toolbar}>
             </Toolbar>
+            <Divider/>
             { this.renderViewList() }
           </div>
         </Drawer>

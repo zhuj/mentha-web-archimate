@@ -5,7 +5,7 @@ import createSagaMiddleware from "redux-saga";
 import freeze from "redux-freeze";
 import thunk from 'redux-thunk'
 
-import { createModelMiddleware } from './middleware/model'
+import { createModelMiddleware } from './middleware/model/index'
 import { reducers } from "./reducers/index";
 import { sagas } from "./sagas/index";
 

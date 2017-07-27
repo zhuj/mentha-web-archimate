@@ -7,6 +7,7 @@ import reactLS from 'react-localstorage'
 import _ from 'lodash'
 
 import * as actions from '../../actions/index'
+import * as api from '../../actions/model.api'
 
 import { DiagramWidget } from './diagram/DiagramWidget'
 import * as models from './diagram/models'
@@ -16,33 +17,31 @@ import { viewEdgeWidget } from './edges/ViewEdgeWidget'
 
 import './diagram.sass.scss'
 
-
 const nodesTarget = {
   drop(props, monitor, component) {
-    console.log(monitor.getItem());
-    // const {x: pageX, y: pageY} = monitor.getSourceClientOffset();
-    // const {left = 0, top = 0} = component.diagramEngine.canvas.getBoundingClientRect();
-    // const diagramModel = component.diagramEngine.getDiagramModel();
-    // const {offsetX, offsetY} = diagramModel;
-    // const x = pageX - left - offsetX;
-    // const y = pageY - top - offsetY;
-    // const item = monitor.getItem();
+    const item = monitor.getItem();
 
-    // let node;
-    // if (item.type === 'output') {
-    //   node = new OutputNodeModel('Output Node');
-    // }
-    // if (item.type === 'input') {
-    //   node = new InputNodeModel('Input Node');
-    // }
-    // if (item.type === 'connection') {
-    //   node = new ConnectionNodeModel('Connection Node', item.color);
-    // }
+    const srcClientOffset = monitor.getSourceClientOffset();
+    const internal = component.getInternalMousePoint({
+      clientX: srcClientOffset.x,
+      clientY: srcClientOffset.y
+    });
 
-    // node.x = x;
-    // node.y = y;
-    // diagramModel.addNode(node);
-    // props.updateModel(diagramModel.serializeDiagram());
+    const diagramModel = component.getDiagramModel();
+
+    const conceptInfo = { _tp: item['tp'], name: '' };
+    const viewObject = {  _tp: 'viewNodeConcept', name: '', conceptInfo };
+
+    const W = 100, H = 40;
+    const node = diagramModel.addNode(
+      Object.assign(new models.NodeModel(models.generateId()), {
+        x:internal.x+W/2, y:internal.y+H/2, width: W, height: H,
+        zIndex: 900,
+        viewObject
+      })
+    );
+
+    console.log(node);
   }
 };
 
@@ -86,14 +85,24 @@ class ViewDiagram extends DiagramWidget {
   onChange(action) {
     // update the rest
     switch (action.type) {
-      case 'node-moved': {
-        let vo = action.model;
-        this.props.updateViewNodePosAndSize(this.props.id)(vo.id, vo, vo);
-        break;
-      }
-      case 'node-sized': {
-        let vo = action.model;
-        this.props.updateViewNodePosAndSize(this.props.id)(vo.id, vo, vo);
+      case 'node-sized':
+      case 'node-moved':
+      case 'items-sized':
+      case 'items-moved': {
+        const viewId = this.props.id;
+        this.props.sendModelCommands(
+          _.chain(action.items)
+            .map((vo) => {
+              if (vo instanceof models.NodeModel) {
+                return api.moveViewNode(viewId, vo.id, vo, vo);
+              }
+              if (vo instanceof models.LinkModel) {
+                return api.moveViewEdge(viewId, vo.id, _.slice(vo.points, 1, vo.points.length-1));
+              }
+            })
+            .filter((command) => command !== null)
+            .value()
+        );
         break;
       }
     }
@@ -164,12 +173,13 @@ const mapStateToProps = (state, ownProps) => {
     linkModel.setPoints([ sourceNode, ...edge.points, targetNode]);
   });
 
-  return { id, diagramModel  }
+  return { id, diagramModel };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateViewNodePosAndSize: (viewId) => (voId, pos, size) => dispatch(actions.updateViewNodePosAndSize(viewId, voId, { x:pos.x, y:pos.y }, { width: size.width, height: size.height })),
-  updateViewEdgePoints: (viewId) => (voId, points) => dispatch(actions.updateViewEdgePoints(viewId, voId, points))
+  sendModelCommands: (commands) => dispatch(actions.sendModelMessage(api.composite(commands)))
+  //updateViewNodePosAndSize: (viewId) => (voId, pos, size) => dispatch(actions.updateViewNodePosAndSize(viewId, voId, { x:pos.x, y:pos.y }, { width: size.width, height: size.height })),
+  //updateViewEdgePoints: (viewId) => (voId, points) => dispatch(actions.updateViewEdgePoints(viewId, voId, _.chain(points).slice(1, points.length-1).map(p=>({ x:p.x, y:p.y })).value()))
 });
 
 

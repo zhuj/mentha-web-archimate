@@ -28,7 +28,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   private[state] def query(request: ModelState.Query): ModelState.JsonObject = state.query(request)
   private[state] def prepare(command: ModelState.Command): ModelState.ChangeSet = state.prepare(command)
-  private[state] def commit(changeSet: ModelState.ChangeSet): ModelState.JsonObject = state.commit(changeSet)
+  private[state] def commit(changeSet: ModelState.ChangeSet): ModelState.Response = state.commit(changeSet)
 
   override def receiveRecover: Receive = {
     case RecoveryCompleted => saveSnapshot(ModelState.toJson(state))
@@ -44,8 +44,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
             execute(user, Left(changeSet.command), error)
             saveSnapshot(ModelState.toJson(state))
           }
-          case Success(json) => {
-            val response = ModelState.Responses.ModelChangeSet(modelId, changeSet, json)
+          case Success(response) => {
             dispatchAll(response)
             answerDirectly(response, user)
             if (!changeSet.simple) {
@@ -61,6 +60,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: String, request: Either[ModelState.Request, String], error: Throwable): Unit = {
+    log.error(error, error.getMessage)
     val fail = ModelState.Responses.ModelStateError(state.model.id, request, error)
     dispatchUser(fail, user)
     answerDirectly(fail, user)

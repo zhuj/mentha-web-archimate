@@ -24,11 +24,11 @@ object View {
     )
   }
 
-  implicit class NodeConceptToView[T <: NodeConcept](val concept: T) {
+  implicit class NodeConceptToView[+T <: NodeConcept](val concept: T) {
     @inline def attach(implicit view: View): ViewNodeConcept[T] = view.attach_node(concept)
   }
 
-  implicit class EdgeConceptToView[T <: Relationship](val concept: T) {
+  implicit class EdgeConceptToView[+T <: Relationship](val concept: T) {
     @inline def attach(implicit view: View): ViewRelationship[T] = view.attach_edge(concept)
   }
 
@@ -106,18 +106,18 @@ final class ViewConnection(val source: ViewObject, val target: ViewObject) exten
 }
 
 /** Archimate Concept in the View */
-sealed trait ViewConcept {
+sealed trait ViewConcept[+T <: Concept] {
   self: ViewObject =>
-  def concept: Concept
+  def concept: Concept with T
 }
 
 /** NodeConcept representation in the View */
-final class ViewNodeConcept[T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept {
+final class ViewNodeConcept[+T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
 
 }
 
 /** Relationship representation in the View */
-final class ViewRelationship[T <: Relationship](val source: ViewObject with ViewConcept, val target: ViewObject with ViewConcept)(val concept: T) extends ViewEdge with ViewConcept {
+final class ViewRelationship[+T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
   require(source.concept == concept.source)
   require(target.concept == concept.target)
 
@@ -142,20 +142,20 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
   def edges: Iterable[ViewEdge] = objects[ViewEdge]
 
   @transient private[model] val _locate_cache = new Cache()
-  @inline private[model] def locate[T <: ViewConcept with ViewObject](concept: Concept): Option[T] =
+  @inline private[model] def locate[X <: Concept, T <: ViewObject with ViewConcept[X]](concept: X): Option[T] =
     _locate_cache.cached(concept.id) {
       this._objects.values
-        .collectFirst { case v: ViewConcept if (v.concept == concept) => v.asInstanceOf[T] }
+        .collectFirst { case v: ViewConcept[_] if (v.concept == concept) => v.asInstanceOf[T] }
     }
 
-  private[model] def attach(concept: Concept): ViewObject with ViewConcept = concept match {
-    case n: NodeConcept => this.attach_node(n)
-    case r: Relationship => this.attach_edge(r)
+  private[model] def attach[X <: Concept](concept: X): ViewObject with ViewConcept[X] = concept match {
+    case n: NodeConcept => this.attach_node[NodeConcept](n).asInstanceOf[ViewObject with ViewConcept[X]]
+    case r: Relationship => this.attach_edge[Relationship](r).asInstanceOf[ViewObject with ViewConcept[X]]
     case _ => throw new IllegalStateException(concept.getClass.getName)
   }
 
   private[model] def attach_node[X <: NodeConcept](concept: X): ViewNodeConcept[X] = this
-    .locate[ViewNodeConcept[X]](concept)
+    .locate[X, ViewNodeConcept[X]](concept)
     .getOrElse {
       this.add {
         new ViewNodeConcept[X](concept)
@@ -163,7 +163,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
     }
 
   private[model] def attach_edge[X <: Relationship](concept: X): ViewRelationship[X] = this
-    .locate[ViewRelationship[X]](concept)
+    .locate[X, ViewRelationship[X]](concept)
     .getOrElse {
       this.add {
         new ViewRelationship[X](
