@@ -3,7 +3,7 @@ import { Router, Route, IndexRoute } from "react-router";
 import { history } from "./store.js";
 
 import AppFrame from "./components/AppFrame";
-import Home from "./components/Home";
+import HomePage from "./components/HomePage";
 import ModelPage from "./components/ModelPage";
 import NotFound from "./components/NotFound";
 
@@ -11,7 +11,7 @@ import NotFound from "./components/NotFound";
 const router = (
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
     <Route path="/" component={AppFrame}>
-      <IndexRoute component={Home}/>
+      <IndexRoute component={HomePage}/>
       <Route path="/model/:id" component={ModelPage} />
       <Route path="*" component={NotFound}/>
     </Route>

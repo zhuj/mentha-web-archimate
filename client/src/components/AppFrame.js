@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 
 import "../stylesheets/main.scss";
-import { withStyles, createStyleSheet } from 'material-ui/styles';
 
+import { withStyles, createStyleSheet } from 'material-ui/styles';
 const styleSheet = createStyleSheet('AppFrame', theme => ({
   '@global': {
     html: {
@@ -16,7 +16,7 @@ const styleSheet = createStyleSheet('AppFrame', theme => ({
       margin: 0,
       background: theme.palette.background.default,
       color: theme.palette.text.primary,
-      lineHeight: '1.2',
+      // lineHeight: '1.2',
       overflowX: 'hidden',
       // WebkitFontSmoothing: 'antialiased', // Antialiasing.
       // MozOsxFontSmoothing: 'grayscale', // Antialiasing.

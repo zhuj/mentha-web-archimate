@@ -110,8 +110,8 @@ object Convert {
           }
 
           for {
-            bn <- baseNode.collect { case x: ViewObject with ViewConcept => x }
-            nn <- Option(node).collect { case x: ViewObject with ViewConcept => x }
+            bn <- baseNode.collect { case x: ViewObject with ViewConcept[Concept] => x }
+            nn <- Option(node).collect { case x: ViewObject with ViewConcept[Concept] => x }
             rr <- model
               .concepts[CompositionRelationship]
               .collectFirst { case r if (r.source.id == bn.concept.id) && (r.target.id == nn.concept.id) => r }
@@ -160,8 +160,8 @@ object Convert {
 
         if (null != relId && relId.length > 0) {
           val relationship = model.concept[Relationship](connection \@ "relationship")
-          val source = view.get[ViewObject with ViewConcept](connection \@ "source")
-          val target = view.get[ViewObject with ViewConcept](connection \@ "target")
+          val source = view.get[ViewObject with ViewConcept[Concept]](connection \@ "source")
+          val target = view.get[ViewObject with ViewConcept[Concept]](connection \@ "target")
           view.add(connection \@ "id") { new ViewRelationship[Relationship](source, target)(relationship) } withPoints(points)
         } else {
           val source = view.get[ViewObject](connection \@ "source")

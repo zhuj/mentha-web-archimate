@@ -1,6 +1,7 @@
 package org.mentha.utils.archimate.state
 
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.json.JsonArray
 import org.mentha.utils.archimate.model.view._
 
 import scala.util._
@@ -9,6 +10,7 @@ object ModelState {
 
   import play.api.libs.json._
 
+  type JsonValue = json.JsonValue
   type JsonObject = json.JsonObject
   val JsonObject = json.JsonObject
 
@@ -92,21 +94,21 @@ object ModelState {
       case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
         val concept = model.concept[NodeConcept](conceptId)
         require(
-          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == concept) },
+          !view.objects[ViewNodeConcept[NodeConcept]].exists { vc => (vc.concept.id == concept.id) },
           s"Duplicate concept: ${conceptId}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
       }
       case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
         val concept = model.concept[Relationship](conceptId)
-        val source = view.get[ViewObject with ViewConcept](src)
-        val target = view.get[ViewObject with ViewConcept](dst)
+        val source = view.get[ViewObject with ViewConcept[Concept]](src)
+        val target = view.get[ViewObject with ViewConcept[Concept]](dst)
         require(
           !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
           s"Duplicate edge: ${src} -> ${dst}"
         )
         require(
-          !view.objects[ViewObject with ViewConcept].exists { vc => (vc.concept.id == concept) },
+          !view.objects[ViewRelationship[Relationship]].exists { vc => (vc.concept.id == concept.id) },
           s"Duplicate concept: ${conceptId}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
@@ -185,7 +187,7 @@ object ModelState {
   sealed trait ChangeSet {
     def simple: Boolean = false
     def command: Command
-    def commit(state: ModelState): Try[JsonObject]
+    def commit(state: ModelState): Try[Response]
   }
 
 
@@ -210,6 +212,8 @@ object ModelState {
 
   //
   object Commands {
+
+    case class SetModel(params: JsonObject) extends Command with Add[Model] {}
 
     sealed trait ConceptCommand extends Command {}
 
@@ -262,6 +266,8 @@ object ModelState {
 
     case class PlaceViewEdge(viewId: ID, id: ID, points: Option[Seq[Point]], params: JsonObject) extends PlaceViewObjectCommand {}
 
+    case class CompositeCommand(commands: Seq[Command]) extends Command {}
+
   }
 
   object ChangeSets {
@@ -308,7 +314,9 @@ object ModelState {
     sealed trait ModelChangeSet extends ChangeSet {
       def command: Command
       def commit(model: Model): Try[JsonObject]
-      override def commit(state: ModelState): Try[JsonObject] = commit(state.model)
+      override def commit(state: ModelState): Try[Response] = commit(state.model) map {
+        case diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
+      }
     }
 
     case class AddConcept(newId: ID, command: Commands.AddConceptCommand[_]) extends ModelChangeSet with Add[Concept] {
@@ -377,10 +385,9 @@ object ModelState {
 
       def commit(model: Model, view: View): Try[JsonObject]
 
-      override def commit(state: ModelState): Try[JsonObject] = commit(
-        state.model,
-        state.model.view(viewId)
-      )
+      override def commit(state: ModelState): Try[Response] = commit(state.model, state.model.view(viewId)) map {
+        case diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
+      }
     }
 
     case class AddViewObject(newId: ID, command: Commands.AddViewObjectCommand[_]) extends ViewChangeSet with Add[ViewObject] {
@@ -437,6 +444,28 @@ object ModelState {
       }
     }
 
+    case class SetModel(command: Commands.SetModel) extends ChangeSet {
+      override def commit(state: ModelState): Try[Response] = Try {
+        state.model = json.fromJsonPair(command.params)
+        Responses.ModelObjectJson(state.model.id, null, json.toJsonPair(state.model))
+      }
+    }
+
+    case class CompositeChangeSet(command: Commands.CompositeCommand, changes: Seq[ChangeSet]) extends ChangeSet {
+      override def commit(state: ModelState): Try[Response] = Try {
+        var diffJson = JsonObject.empty
+        for { cs <- changes } {
+          diffJson = cs.commit(state) match {
+            case Success(response) => response match {
+              case Responses.ModelChangeSet(_, _, diff) => diffJson.deepMerge(diff)
+              case _ => throw new IllegalStateException(s"Unexpected response: ${response}")
+            }
+            case Failure(err) => throw err
+          }
+        }
+        Responses.ModelChangeSet(state.model.id, this, diffJson)
+      }
+    }
   }
 
   object Responses {
@@ -491,15 +520,20 @@ object ModelState {
       )
     }
 
-
   }
 
   /** it translates given incomming message text to a request */
   def parseMessage(value: String): ModelState.Request = {
-    import play.api.libs.json._
-    val (cmd, js) = Json.parse(value) match {
-      case o : JsonObject if o.value.size == 0 => ("noop", o)
-      case o : JsonObject if o.value.size == 1 => o.fields.head match { case (cmd, jsv) => (cmd, jsv.as[JsonObject]) }
+    parseMessage(value = Json.parse(value))
+  }
+
+  /** it translates given incomming message text to a request */
+  private def parseMessage(value: JsonValue): ModelState.Request = {
+    val (cmd, js) = value match {
+      case o: JsonObject if o.value.size == 0 => ("noop", o)
+      case o: JsonObject if o.value.size == 1 => o.fields.head match {
+        case (cmd, jsv) => (cmd, jsv.as[JsonObject])
+      }
       case _ => throw new IllegalStateException(s"Unexpected command structure: ${value}.")
     }
 
@@ -509,6 +543,8 @@ object ModelState {
       case "get-concept" => Queries.GetConcept(id = (js \ "id").as[ID])
       case "get-view" => Queries.GetView(id = (js \ "id").as[ID])
       case "get-view-object" => Queries.GetViewObject(viewId = (js \ "viewId").as[ID], id = (js \ "id").as[ID])
+
+      case "set-model" => Commands.SetModel(params = js)
 
       case "add-element" => Commands.AddElement(tp = (js \ json.names.`tp`).as[Type], params = js)
       case "add-connector" => Commands.AddConnector(tp = (js \ json.names.`tp`).as[Type], rel = (js \ json.names.`rel`).as[Type], params = js)
@@ -530,15 +566,27 @@ object ModelState {
       case "mov-view-node" => Commands.PlaceViewNode(
         viewId = (js \ "viewId").as[ID],
         id = (js \ "id").as[ID],
-        position = (js \ "pos").validate[json.JsonObject].asOpt.map { json.readPoint },
-        size = (js \ "size").validate[json.JsonObject].asOpt.map { json.readSize },
+        position = (js \ "pos").validate[JsonObject].asOpt.map {
+          json.readPoint
+        },
+        size = (js \ "size").validate[JsonObject].asOpt.map {
+          json.readSize
+        },
         params = js)
 
       case "mov-view-edge" => Commands.PlaceViewEdge(
         viewId = (js \ "viewId").as[ID],
         id = (js \ "id").as[ID],
-        points = (js \ "points").validate[json.JsonArray].asOpt.map { json.readPoints },
+        points = (js \ "points").validate[JsonArray].asOpt.map {
+          json.readPoints
+        },
         params = js
+      )
+
+      case "composite" => Commands.CompositeCommand(
+        commands = js.fields.map {
+          case (_, v) => parseMessage(value = v).asInstanceOf[Command]
+        }
       )
 
       case "noop" => Noop()
@@ -558,7 +606,7 @@ object ModelState {
 
 }
 
-class ModelState(private[state] val model: Model = new Model) {
+class ModelState(private[state] var model: Model = new Model) {
 
   import ModelState._
 
@@ -574,6 +622,8 @@ class ModelState(private[state] val model: Model = new Model) {
     case c: Commands.ConceptCommand with ById[_] => concept(c.id).prepare(command)
     case c: Commands.ViewCommand with ById[_] => (model, view(c.id)).prepare(command)
     case c: Commands.ViewObjectCommand with ById[_] => viewObject(c.viewId, c.id).prepare(command)
+    case c: Commands.SetModel => ChangeSets.SetModel(c)
+    case c: Commands.CompositeCommand => ChangeSets.CompositeChangeSet(c, changes = c.commands.map { cmd => prepare(cmd) })
   }
 
   def query(query: ModelState.Query): ModelState.JsonObject = query match {
@@ -587,7 +637,7 @@ class ModelState(private[state] val model: Model = new Model) {
   private def view(viewId: ID): View = model.view(viewId)
   private def viewObject(viewId: ID, id: ID): ViewObject = view(viewId).get[ViewObject](id)
 
-  def commit(changeSet: ChangeSet): JsonObject = {
+  def commit(changeSet: ChangeSet): Response = {
     changeSet.commit(this).get
   }
 

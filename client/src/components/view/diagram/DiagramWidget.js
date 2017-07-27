@@ -34,7 +34,7 @@ class NodeWrapper extends React.Component {
     const selected = node.isSelected();
 
     const props = {
-      className: `node${(selected ? ' selected' : '')}`,
+      className: `x-node${(selected ? ' selected' : '')}`,
       style:{
         left: node.x - width/2,
         top: node.y - height/2,
@@ -82,7 +82,7 @@ class PortWrapper extends React.Component {
     const y = node.y - height / 2;
     return (
       <rect x={x} y={y} width={width} height={height}
-        className="port"
+        className="x-port"
         data-id={node.id}
         data-nodeid={node.id}
       />
@@ -238,7 +238,7 @@ export class DiagramWidget extends React.Component {
     let element;
 
     // Look for a point
-    element = target.closest('.point[data-index]');
+    element = target.closest('.x-point[data-index]');
     if (element) {
       const link = model.getLink(element.getAttribute('data-linkid'));
       const point = link.getPoint(element.getAttribute('data-index'));
@@ -252,7 +252,7 @@ export class DiagramWidget extends React.Component {
     }
 
     // Look for a link
-    element = target.closest('.link[data-linkid]');
+    element = target.closest('.x-link[data-linkid]');
     if (element) {
       const link = model.getLink(element.getAttribute('data-linkid'));
       return {
@@ -277,7 +277,7 @@ export class DiagramWidget extends React.Component {
         return [ 0, 0 ];
       })(element.classList);
 
-      const node = model.getNode(element.closest('.node[data-nodeid]').getAttribute('data-nodeid'));
+      const node = model.getNode(element.closest('.x-node[data-nodeid]').getAttribute('data-nodeid'));
       return {
         type: ELTP.NODE_RESIZE,
         kind: kind,
@@ -287,7 +287,7 @@ export class DiagramWidget extends React.Component {
     }
 
     // Look for a port
-    element = target.closest('.port[data-nodeid]');
+    element = target.closest('.x-port[data-nodeid]');
     if (element) {
       const node = model.getNode(element.getAttribute('data-nodeid'));
       return {
@@ -298,7 +298,7 @@ export class DiagramWidget extends React.Component {
     }
 
     // Look for a node
-    element = target.closest('.node[data-nodeid]');
+    element = target.closest('.x-node[data-nodeid]');
     if (element) {
       const node = model.getNode(element.getAttribute('data-nodeid'));
       return {
@@ -327,7 +327,6 @@ export class DiagramWidget extends React.Component {
     this.enableRepaintEntities([]);
     this.setState({ zoom, offset });
   }
-
 
   transformMouseDownAction(event) {
 
@@ -603,6 +602,7 @@ export class DiagramWidget extends React.Component {
         if (mouseElement.ref instanceof models.PortModel) {
 
           // Connect the link
+          diagramModel.setSelection(()=>false);
           link.setTargetNode(mouseElement.ref.parentNode);
 
           // Link was connected to a node, update the output
@@ -614,14 +614,7 @@ export class DiagramWidget extends React.Component {
       }
     }
 
-    const attachItems = ['items-selected', 'items-drag-selected', 'items-moved', 'items-sized', 'node-deselected', 'link-deselected'];
-    if (attachItems.indexOf(actionOutput.type) !== -1) {
-      actionOutput.items = _.filter(diagramModel.getSelectedItems(), item => !(item instanceof models.PointModel));
-    }
-    if (actionOutput.type === 'items-moved' || actionOutput.type === 'items-sized') {
-      delete actionOutput.model;
-    }
-
+    actionOutput.items = diagramModel.getSelectedItems(); // WAS: _.filter(diagramModel.getSelectedItems(), item => !(item instanceof models.PointModel));
     this.clearRepaintEntities();
 
     if (actionOutput.type !== 'unknown') {
@@ -645,12 +638,7 @@ export class DiagramWidget extends React.Component {
   }
 
   createDefaultLink(node) {
-    const link = new models.LinkModel();
-    link.id =  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-    return link;
+    return new models.LinkModel(models.generateId());
   }
 
   generateWidgetForNode(props) {
@@ -721,7 +709,6 @@ export class DiagramWidget extends React.Component {
   }
 
   renderLinkLayerWidget() {
-
     const { zoom, offset } = this.state;
     const style = {
       transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`,
@@ -752,7 +739,6 @@ export class DiagramWidget extends React.Component {
       width: '100%',
       height: '100%'
     };
-
 
     const style = {
       border: '1px solid black',

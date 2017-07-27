@@ -18,6 +18,11 @@ object clientRjdGenerator {
     // writeNodes()
     // writeNodesScss()
 
+    nodes
+      .allElements
+      .groupBy { m => m.layerObject }
+      .foreach { case (lo, ml) => println(s"'${lo.name}':['${ml.map { m => m.name }.mkString("', '")}'],")}
+
   }
 
   private def writeNodesScss(): Unit = {

@@ -113,7 +113,7 @@ export class DefaultLinkWidget extends React.Component {
       r: 5,
     };
     const circleProps = {
-      className: 'point t',
+      className: 'x-point t',
       'data-linkid': link.id,
       'data-index': index,
       cx: point.x,
@@ -123,7 +123,7 @@ export class DefaultLinkWidget extends React.Component {
     };
 
     return (
-      <g key={`point-${index}`} className="point">
+      <g key={`point-${index}`} className="x-point">
         <circle {...uiCircleProps}/>
         <circle {...circleProps}/>
       </g>
@@ -139,12 +139,12 @@ export class DefaultLinkWidget extends React.Component {
     };
     const pathProps = {
       ... extraProps,
-      className: 'link t',
+      className: 'x-link t',
       'data-linkid': link.id,
       strokeOpacity: (selected ? 0.1 : 0)
     };
 
-    const className = 'link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
+    const className = 'x-link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
     return (
       <g key={`link-${extraProps.id}`} className={className}>
         <path {...uiPathProps}/>
@@ -175,7 +175,7 @@ export class DefaultLinkWidget extends React.Component {
 
       if (selected) {
         paths.push(
-          <g key={`point-j-${i}`} className="point-j">
+          <g key={`point-j-${i}`} className="x-point-j">
             <circle
               className="p"
               cx={x} cy={y} r={3}
@@ -240,7 +240,7 @@ export class DefaultLinkWidget extends React.Component {
     }));
   }
 
-  drawAdvancedLine() {
+  drawLine() {
     const { link } = this.props;
     const { points } = link;
 
@@ -271,7 +271,7 @@ export class DefaultLinkWidget extends React.Component {
     const {link} = this.props;
     return (
       <g className={this.getClassName(link)}>
-        {this.drawAdvancedLine()}
+        {this.drawLine()}
       </g>
     );
   }

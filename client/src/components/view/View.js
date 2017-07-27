@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import Markers from './edges/markers'
 import ViewDiagram from './ViewDiagram'
+import Palette from './Palette'
 
 class View extends React.Component {
 
@@ -14,10 +15,15 @@ class View extends React.Component {
 
   render() {
     const { id } = this.props
+    const style = {
+      display: 'flex',
+      height: '100%'
+    };
     return (
-      <div className="view" style={{display:'inline'}}>
+      <div className="view" style={style}>
         <Markers/>
         <ViewDiagram id={id}/>
+        <Palette/>
       </div>
     )
   }

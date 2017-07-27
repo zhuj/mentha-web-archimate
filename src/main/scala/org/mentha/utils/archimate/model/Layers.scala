@@ -1,5 +1,7 @@
 package org.mentha.utils.archimate.model
 
+import org.apache.commons.lang3.StringUtils
+
 /**
   * http://pubs.opengroup.org/architecture/archimate3-doc/chap03.html
   * An abstraction of the ArchiMate framework at which an enterprise can be modeled.
@@ -89,6 +91,14 @@ sealed trait LayerObject {
     * @return
     */
   def letter: Char
+
+  /**
+    * @return
+    */
+  def name: String = StringUtils.uncapitalize(
+    StringUtils.substringBeforeLast(this.getClass.getSimpleName, "$")
+  )
+
 }
 
 
