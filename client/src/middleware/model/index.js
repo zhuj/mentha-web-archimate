@@ -1,3 +1,5 @@
+/* global window */
+
 import * as actions from '../../actions/index'
 
 const CALL_API = 'CallModelAPI';
@@ -6,7 +8,7 @@ export const modelConnect = (endpointUrl) => ({
     type: "WS_MODEL_CONNECT",
     [CALL_API]: {
         type: "CONNECT",
-        endpointUrl: "ws://127.0.0.1:8088/" + endpointUrl // TODO: obtain & use real address
+        endpointUrl: "ws://"+ window.location.hostname +":8088/" + endpointUrl // TODO: obtain & use real address
     }
 });
 

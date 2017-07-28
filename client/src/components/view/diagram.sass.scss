@@ -1,4 +1,7 @@
 .diagram-root {
+
+  touch-action: none;
+
   width: 100%;
   height: 100%;
 
@@ -146,7 +149,8 @@
         }
 
         &.t {
-          pointer-events: all;
+          // https://www.w3.org/TR/SVG/interact.html#PointerEventsProperty
+          pointer-events: painted;
           stroke-linecap: round;
           stroke-width: 20;
         }

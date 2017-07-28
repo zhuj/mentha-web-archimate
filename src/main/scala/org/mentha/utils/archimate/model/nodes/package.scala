@@ -52,6 +52,7 @@ package object nodes {
       impl.BusinessElements.businessService
     )
 
+  // A structure or behavior element in one of the core layers of the ArchiMate language.
   val coreElements: Seq[ElementMeta[_]] =
     impl.BusinessElements.businessElements ++
     impl.ApplicationElements.applicationElements ++

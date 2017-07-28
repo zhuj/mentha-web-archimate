@@ -214,6 +214,7 @@ export class DefaultLinkWidget extends React.Component {
 
   drawSimplePaths() {
     const { link, diagram } = this.props;
+    const selected  = link.isSelected();
     const { points } = link;
 
     const ds = [];
@@ -228,13 +229,17 @@ export class DefaultLinkWidget extends React.Component {
       'data-linkid': link.id,
       'data-index': index,
       onMouseDown: event => {
-        // TODO: make it better
-        if (event.buttons !== 1) { return; } // only the left button
+        if (selected) {
+          // TODO: make it better
+          if (event.buttons !== 1) {
+            return;
+          } // only the left button
 
-        if (!event.shiftKey) {
-          const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
-          point.setSelected(true);
-          this.forceUpdate();
+          if (!event.shiftKey) {
+            const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
+            point.setSelected(true);
+            this.forceUpdate();
+          }
         }
       }
     }));

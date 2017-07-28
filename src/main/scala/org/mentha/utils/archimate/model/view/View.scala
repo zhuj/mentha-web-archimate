@@ -8,8 +8,9 @@ case class Point(x: Double, y: Double)
 case class Size(width: Double, height: Double)
 
 object View {
+
   private[model] val defaultPosition = Point(0, 0)
-  private[model] val defaultSize = Size(100, 40)
+  private[model] val defaultSize = Size(120, 40)
 
   private[model] def middle(source: Point, target: Point): Point = Point(
     (source.x + target.x) / 2,
@@ -24,18 +25,18 @@ object View {
     )
   }
 
-  implicit class NodeConceptToView[+T <: NodeConcept](val concept: T) {
-    @inline def attach(implicit view: View): ViewNodeConcept[T] = view.attach_node(concept)
-  }
-
-  implicit class EdgeConceptToView[+T <: Relationship](val concept: T) {
-    @inline def attach(implicit view: View): ViewRelationship[T] = view.attach_edge(concept)
+  private[model] def size(source: Point, points: Seq[Point], target: Point): Size = {
+    Size(
+      Math.abs(source.x - target.x),
+      Math.abs(source.y - target.y)
+    )
   }
 
 }
 
 sealed abstract class ViewObject extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
   def position: Point
+  def size: Size
 }
 
 sealed abstract class ViewNode extends ViewObject {
@@ -81,6 +82,12 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
   }
 
   override def position: Point = View.middle(
+    source.position,
+    points,
+    target.position
+  )
+
+  override def size: Size = View.size(
     source.position,
     points,
     target.position

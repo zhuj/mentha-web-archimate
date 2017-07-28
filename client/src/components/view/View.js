@@ -22,8 +22,8 @@ class View extends React.Component {
     return (
       <div className="view" style={style}>
         <Markers/>
-        <ViewDiagram id={id}/>
         <Palette/>
+        <ViewDiagram id={id}/>
       </div>
     )
   }

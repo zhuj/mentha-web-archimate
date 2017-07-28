@@ -461,6 +461,9 @@
 .stakeholder {
   @extend .externalActiveStructureElement;
   @extend .motivationSvgBase;
+  > svg.border > path {
+    fill: #feccff; // archimate 2.1 coloring
+  }
   > .title {
     background: rgba(black, 0.1) url('/media/node-stakeholder.png') no-repeat top 2px right 2px !important;
     background-size: 25px !important;
@@ -470,6 +473,9 @@
 .driver {
   @extend .genericElement;
   @extend .motivationSvgBase;
+  > svg.border > path {
+    fill: #feccff; // archimate 2.1 coloring
+  }
   > .title {
     background: rgba(black, 0.1) url('/media/node-driver.png') no-repeat top 2px right 2px !important;
     background-size: 15px !important;
@@ -479,6 +485,9 @@
 .assessment {
   @extend .genericElement;
   @extend .motivationSvgBase;
+  > svg.border > path {
+    fill: #feccff; // archimate 2.1 coloring
+  }
   > .title {
     background: rgba(black, 0.1) url('/media/node-assessment.png') no-repeat top 2px right 2px !important;
     background-size: 15px !important;

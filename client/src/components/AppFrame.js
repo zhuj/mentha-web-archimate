@@ -1,6 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 
+// import injectTapEventPlugin from "react-tap-event-plugin";
+// injectTapEventPlugin();
+
 import "../stylesheets/main.scss";
 
 import { withStyles, createStyleSheet } from 'material-ui/styles';

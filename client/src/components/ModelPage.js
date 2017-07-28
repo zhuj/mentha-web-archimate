@@ -186,6 +186,7 @@ class ModelPage extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  // console.log(ownProps);
   const id = ownProps.params.id; // 'params' goes from router
   const model = state.model;
   return { id, model };

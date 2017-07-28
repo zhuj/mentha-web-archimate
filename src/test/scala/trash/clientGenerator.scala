@@ -1,3 +1,5 @@
+package trash
+
 import java.io.PrintWriter
 
 import org.apache.commons.io.FileUtils
@@ -6,8 +8,6 @@ import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.view._
-
-import scala.collection.mutable
 
 object clientGenerator {
 

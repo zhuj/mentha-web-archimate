@@ -40,7 +40,7 @@ object Main {
     }
     //#websocket-request-handling
 
-    val bindingFuture = Http().bindAndHandle(route, interface = "localhost", port = 8088)
+    val bindingFuture = Http().bindAndHandle(route, interface = "0.0.0.0", port = 8088)
 
     println(s"Server online at http://localhost:8088/model/{model}\nPress RETURN to stop...")
     scala.io.StdIn.readLine()

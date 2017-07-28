@@ -1,3 +1,5 @@
+package trash
+
 import java.io.PrintWriter
 
 import org.apache.commons.io.FileUtils
@@ -8,7 +10,6 @@ import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.view._
 
 import scala.collection.mutable
-import scala.util._
 
 object clientRjdGenerator {
 

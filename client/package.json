@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --inline --hot --history-api-fallback --host localhost --port 8080",
+    "start-public": "webpack-dev-server --inline --hot --history-api-fallback --host 0.0.0.0 --port 8080 --public 1.2.3.4",
     "build-dev": "webpack --config webpack.dev.config.js",
     "build-prod": "webpack -p --config webpack.prod.config.js",
     "test": "mocha --recursive --compilers js:babel-register --require babel-polyfill --require ignore-styles",
@@ -40,6 +41,7 @@
     "react-router-redux": "^4.0.8",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.0",
+    "react-tap-event-plugin": "^2.0.1",
     "material-ui": "^1.0.0-beta.2",
     "material-ui-icons":"^1.0.0-alpha.19",
     "redux": "^3.7.2",
@@ -78,7 +80,7 @@
     "redux-logger": "^3.0.6",
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
-    "webpack": "^1.14.0",
+    "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2",
     "whatwg-fetch": "^2.0.1"
   }
