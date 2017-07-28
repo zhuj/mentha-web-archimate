@@ -7,6 +7,10 @@ export const composite = (commands) => {
   };
 };
 
+export const addElement = (json) => ({ 'add-element' : json });
+export const addConnector = (json) => ({ 'add-connector' : json });
+export const addRelationship = (json) => ({ 'add-relationship' : json });
+
 export const moveViewNode = (viewId, voId, pos, size) => ({
   'mov-view-node': {
     viewId: viewId,
@@ -24,3 +28,11 @@ export const moveViewEdge = (viewId, voId, points) => ({
   }
 });
 
+export const addViewNodeConcept = (viewId, concept, pos, size) => ({
+  'add-view-node-concept': {
+    viewId: viewId,
+    concept: concept,
+    pos: { x:pos.x, y:pos.y },
+    size: { width: size.width, height: size.height }
+  }
+});

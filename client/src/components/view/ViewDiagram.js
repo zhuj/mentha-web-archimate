@@ -29,19 +29,27 @@ const nodesTarget = {
 
     const diagramModel = component.getDiagramModel();
 
+    const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
     const conceptInfo = { _tp: item['tp'], name: '' };
     const viewObject = {  _tp: 'viewNodeConcept', name: '', conceptInfo };
 
-    const W = 120, H = 40;
-    const node = diagramModel.addNode(
-      Object.assign(new models.NodeModel(models.generateId()), {
-        x:internal.x+W/2, y:internal.y+H/2, width: W, height: H,
-        zIndex: 999, // place above all the nodes
-        viewObject
-      })
+    const cmd = api.addViewNodeConcept(
+      component.props.id,
+      api.addElement(conceptInfo),
+      {x, y},
+      {width, height}
     );
+    console.log(cmd);
+    component.props.sendModelCommands([cmd]);
 
-    console.log(node);
+    // const node = diagramModel.addNode(
+    //   Object.assign(new models.NodeModel(models.generateId()), {
+    //     x: x, y: y, width: width, height: height,
+    //     zIndex: 999, // place above all the nodes
+    //     viewObject
+    //   })
+    // );
+    // console.log(node);
   }
 };
 
