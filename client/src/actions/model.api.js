@@ -36,3 +36,11 @@ export const addViewNodeConcept = (viewId, concept, pos, size) => ({
     size: { width: size.width, height: size.height }
   }
 });
+
+export const addViewNotes = (viewId, pos, size) => ({
+  'add-view-notes': {
+    viewId: viewId,
+    pos: { x:pos.x, y:pos.y },
+    size: { width: size.width, height: size.height }
+  }
+});

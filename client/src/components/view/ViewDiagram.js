@@ -19,7 +19,7 @@ import './diagram.sass.scss'
 
 const nodesTarget = {
   drop(props, monitor, component) {
-    const item = monitor.getItem();
+    const { tp, kind } = monitor.getItem();
 
     const srcClientOffset = monitor.getSourceClientOffset();
     const internal = component.getInternalMousePoint({
@@ -27,29 +27,48 @@ const nodesTarget = {
       clientY: srcClientOffset.y
     });
 
-    const diagramModel = component.getDiagramModel();
 
-    const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
-    const conceptInfo = { _tp: item['tp'], name: '' };
-    const viewObject = {  _tp: 'viewNodeConcept', name: '', conceptInfo };
+    // concept elements
+    if (kind === 'element') {
+      const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
+      return component.props.sendModelCommands([
+        api.addViewNodeConcept(
+          component.props.id,
+          api.addElement({ _tp: tp }),
+          {x, y},
+          {width, height}
+        )
+      ]);
+    }
 
-    const cmd = api.addViewNodeConcept(
-      component.props.id,
-      api.addElement(conceptInfo),
-      {x, y},
-      {width, height}
-    );
-    console.log(cmd);
-    component.props.sendModelCommands([cmd]);
+    // notes
+    if (kind === 'notes') {
+      const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
+      return component.props.sendModelCommands([
+        api.addViewNotes(
+          component.props.id,
+          {x, y},
+          {width, height}
+        )
+      ]);
+    }
 
-    // const node = diagramModel.addNode(
-    //   Object.assign(new models.NodeModel(models.generateId()), {
-    //     x: x, y: y, width: width, height: height,
-    //     zIndex: 999, // place above all the nodes
-    //     viewObject
-    //   })
-    // );
-    // console.log(node);
+    if (kind === 'connector') {
+      // lazy: TODO
+      const width = 10, height = 10, x = internal.x+width/2, y = internal.y+height/2;
+      const diagramModel = component.getDiagramModel();
+      const conceptInfo = { _tp: tp };
+      const viewObject = { _tp: 'viewNodeConcept', name: '', conceptInfo };
+      const node = diagramModel.addNode(
+        Object.assign(new models.NodeModel(models.generateId()), {
+          x: x, y: y, width: width, height: height,
+          zIndex: 999, // place above all the nodes
+          viewObject
+        })
+      );
+      console.log(node);
+    }
+
   }
 };
 
