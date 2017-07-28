@@ -11,6 +11,7 @@ object ModelState {
   import play.api.libs.json._
 
   type JsonValue = json.JsonValue
+  type JsonString = json.JsonString
   type JsonObject = json.JsonObject
   val JsonObject = json.JsonObject
 
@@ -112,6 +113,20 @@ object ModelState {
           s"Duplicate concept: ${conceptId}"
         )
         ChangeSets.AddViewObject(Identifiable.generateId(), c)
+      }
+      case c @ Commands.AddViewNodeConcept2(_, Left(cmd), _) => {
+        val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
+        ChangeSets.AddViewObject(Identifiable.generateId(), c.copy(concept = Right(cs)))
+      }
+      case c @ Commands.AddViewRelationship2(_, src, dst, Left(cmd), _) => {
+        val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
+        val source = view.get[ViewObject with ViewConcept[Concept]](src)
+        val target = view.get[ViewObject with ViewConcept[Concept]](dst)
+        require(
+          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
+          s"Duplicate edge: ${src} -> ${dst}"
+        )
+        ChangeSets.AddViewObject(Identifiable.generateId(), c.copy(concept = Right(cs)))
       }
     }
   }
@@ -256,6 +271,10 @@ object ModelState {
 
     case class AddViewRelationship(viewId: ID, src: ID, dst: ID, conceptId: ID, params: JsonObject) extends AddViewObjectCommand[ViewRelationship[_]] with ConnectionParams {}
 
+    case class AddViewNodeConcept2(viewId: ID, concept: Either[Commands.AddConceptCommand[_], ChangeSets.AddConcept], params: JsonObject) extends AddViewObjectCommand[ViewNodeConcept[_]] {}
+
+    case class AddViewRelationship2(viewId: ID, src: ID, dst: ID, concept: Either[Commands.AddConceptCommand[_], ChangeSets.AddConcept], params: JsonObject) extends AddViewObjectCommand[ViewRelationship[_]] with ConnectionParams {}
+
     case class DelViewObject(viewId: ID, id: ID) extends ViewObjectCommand with Del[ViewObject] {}
 
     case class ModViewObject(viewId: ID, id: ID, params: JsonObject) extends ViewObjectCommand with Mod[ViewObject] {}
@@ -315,7 +334,7 @@ object ModelState {
       def command: Command
       def commit(model: Model): Try[JsonObject]
       override def commit(state: ModelState): Try[Response] = commit(state.model) map {
-        case diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
+        diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
       }
     }
 
@@ -386,7 +405,7 @@ object ModelState {
       def commit(model: Model, view: View): Try[JsonObject]
 
       override def commit(state: ModelState): Try[Response] = commit(state.model, state.model.view(viewId)) map {
-        case diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
+        diffJson => Responses.ModelChangeSet(state.model.id, this, diffJson)
       }
     }
 
@@ -394,15 +413,27 @@ object ModelState {
       override def viewId: ID = command.viewId
       override def params: JsonObject = command.params
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
-        val vo = view.add[ViewObject](newId) {
-          command match {
-            case Commands.AddViewNotes(_, p) => json.readViewNotes(p)
-            case Commands.AddViewConnection(_, src, dst, params) => json.readViewConnection(view.get[ViewObject](src), view.get(dst), params)
-            case Commands.AddViewNodeConcept(_, conceptId, params) => json.readViewNodeConcept(model.concept(conceptId), params)
-            case Commands.AddViewRelationship(_, src, dst, conceptId, params) => json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params)
+        def add(vo: ViewObject) = toJsonDiff(model, view, view.add[ViewObject](newId) { vo }, OP_ADD)
+        command match {
+          case Commands.AddViewNotes(_, p) => add { json.readViewNotes(p) }
+          case Commands.AddViewConnection(_, src, dst, params) => add { json.readViewConnection(view.get[ViewObject](src), view.get(dst), params) }
+          case Commands.AddViewNodeConcept(_, conceptId, params) => add { json.readViewNodeConcept(model.concept(conceptId), params) }
+          case Commands.AddViewRelationship(_, src, dst, conceptId, params) => add { json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params) }
+
+          case Commands.AddViewNodeConcept2(_, Right(cs), params) => {
+            cs.commit(model) match {
+              case Success(diff) => add { json.readViewNodeConcept(model.concept(cs.newId), params) } deepMerge(diff)
+              case Failure(err) => throw err
+            }
           }
+          case Commands.AddViewRelationship2(_, src, dst, Right(cs), params) => {
+            cs.commit(model) match {
+              case Success(diff) => add { json.readViewRelationship(view.get(src), view.get(dst), model.concept(cs.newId), params) } deepMerge(diff)
+              case Failure(err) => throw err
+            }
+          }
+          case c => throw new IllegalStateException(s"Unexpected command: ${c}")
         }
-        toJsonDiff(model, view, vo, OP_ADD)
       }
     }
 
@@ -532,7 +563,7 @@ object ModelState {
     val (cmd, js) = value match {
       case o: JsonObject if o.value.size == 0 => ("noop", o)
       case o: JsonObject if o.value.size == 1 => o.fields.head match {
-        case (cmd, jsv) => (cmd, jsv.as[JsonObject])
+        case (c, jsv) => (c, jsv.as[JsonObject])
       }
       case _ => throw new IllegalStateException(s"Unexpected command structure: ${value}.")
     }
@@ -552,8 +583,32 @@ object ModelState {
       case "add-view" => Commands.AddView(viewpoint = (js \ json.names.`viewpoint`).as[Type], params = js)
       case "add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
       case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], params = js)
-      case "add-view-node-concept" => Commands.AddViewNodeConcept(viewId = (js \ "viewId").as[ID], conceptId = (js \ "concept").as[ID], params = js)
-      case "add-view-relationship" => Commands.AddViewRelationship(viewId = (js \ "viewId").as[ID], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], conceptId = (js \ "concept").as[ID], params = js)
+
+      case "add-view-node-concept" => {
+        val viewId = (js \ "viewId").as[ID]
+        (js \ "concept").get match {
+          case conceptId: JsonString => Commands.AddViewNodeConcept(viewId, conceptId.as[ID], params = js)
+          case commandJs: JsonObject => parseMessage(commandJs) match {
+            case c: Commands.AddConceptCommand[_] => Commands.AddViewNodeConcept2(viewId, Left(c), params = js)
+            case c => throw new IllegalStateException(s"Unexpected command: ${c}")
+          }
+          case c => throw new IllegalStateException(s"Unexpected argument: ${c}")
+        }
+      }
+
+      case "add-view-relationship" => {
+        val viewId = (js \ "viewId").as[ID]
+        val src = (js \ json.names.`src`).as[ID]
+        val dst = (js \ json.names.`dst`).as[ID]
+        (js \ "concept").get match {
+          case conceptId: JsonString => Commands.AddViewRelationship(viewId, src, dst, conceptId.as[ID], params = js)
+          case commandJs: JsonObject => parseMessage(commandJs) match {
+            case c: Commands.AddConceptCommand[_] => Commands.AddViewRelationship2(viewId, src, dst, Left(c), params = js)
+            case c => throw new IllegalStateException(s"Unexpected command: ${c}")
+          }
+          case c => throw new IllegalStateException(s"Unexpected argument: ${c}")
+        }
+      }
 
       case "del-concept" => Commands.DelConcept(id = (js \ "id").as[ID])
       case "del-view" => Commands.DelView(id = (js \ "id").as[ID])
@@ -572,7 +627,8 @@ object ModelState {
         size = (js \ "size").validate[JsonObject].asOpt.map {
           json.readSize
         },
-        params = js)
+        params = js
+      )
 
       case "mov-view-edge" => Commands.PlaceViewEdge(
         viewId = (js \ "viewId").as[ID],
@@ -619,6 +675,8 @@ class ModelState(private[state] var model: Model = new Model) {
     case Commands.AddViewConnection(viewId, _,_, _) => (model, view(viewId)).prepare(command)
     case Commands.AddViewNodeConcept(viewId, _,_) => (model, view(viewId)).prepare(command)
     case Commands.AddViewRelationship(viewId, _,_, _, _) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewNodeConcept2(viewId, _,_) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewRelationship2(viewId, _,_, _, _) => (model, view(viewId)).prepare(command)
     case c: Commands.ConceptCommand with ById[_] => concept(c.id).prepare(command)
     case c: Commands.ViewCommand with ById[_] => (model, view(c.id)).prepare(command)
     case c: Commands.ViewObjectCommand with ById[_] => viewObject(c.viewId, c.id).prepare(command)

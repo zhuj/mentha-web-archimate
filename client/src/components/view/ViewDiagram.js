@@ -29,19 +29,27 @@ const nodesTarget = {
 
     const diagramModel = component.getDiagramModel();
 
+    const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
     const conceptInfo = { _tp: item['tp'], name: '' };
     const viewObject = {  _tp: 'viewNodeConcept', name: '', conceptInfo };
 
-    const W = 100, H = 40;
-    const node = diagramModel.addNode(
-      Object.assign(new models.NodeModel(models.generateId()), {
-        x:internal.x+W/2, y:internal.y+H/2, width: W, height: H,
-        zIndex: 900,
-        viewObject
-      })
+    const cmd = api.addViewNodeConcept(
+      component.props.id,
+      api.addElement(conceptInfo),
+      {x, y},
+      {width, height}
     );
+    console.log(cmd);
+    component.props.sendModelCommands([cmd]);
 
-    console.log(node);
+    // const node = diagramModel.addNode(
+    //   Object.assign(new models.NodeModel(models.generateId()), {
+    //     x: x, y: y, width: width, height: height,
+    //     zIndex: 999, // place above all the nodes
+    //     viewObject
+    //   })
+    // );
+    // console.log(node);
   }
 };
 
@@ -170,7 +178,24 @@ const mapStateToProps = (state, ownProps) => {
     );
     linkModel.setSourceNode(sourceNode);
     linkModel.setTargetNode(targetNode);
-    linkModel.setPoints([ sourceNode, ...edge.points, targetNode]);
+    linkModel.setPoints([sourceNode, ...edge.points, targetNode]);
+  });
+
+  // loops
+  _.forEach(diagramModel.getNodes(), (node) => {
+    let d = 1;
+    _.forEach(node.getLinks(), (link) => {
+      if ((link.sourceNode === link.targetNode) && link.points.length <= 2) {
+        const { x, y, height } = link.sourceNode;
+        const deep = 1 + (0.25 * d++);
+        const points = [
+          { x: x - 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
+          { x: x,                       y: y + 0.95*height*deep },
+          { x: x + 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
+        ];
+        link.setPoints([link.sourceNode, ...points, link.targetNode]);
+      }
+    });
   });
 
   return { id, diagramModel };

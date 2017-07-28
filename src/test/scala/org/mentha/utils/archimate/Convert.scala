@@ -1,16 +1,15 @@
-package convert
+package org.mentha.utils.archimate
 
 import java.io.{File, StringReader}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.edges.{CompositionRelationship, RelationshipMeta}
-import org.mentha.utils.archimate.model.json
+import org.mentha.utils.archimate.model.{json, _}
 import org.mentha.utils.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
 import org.mentha.utils.archimate.model.view._
 
-import scala.util.{Success, Try}
+import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
 
 
@@ -27,7 +26,7 @@ object Convert {
   }
 
   def main(args: Array[String]): Unit = {
-    val name = "epp-price"
+    val name = args(0)
     val model = new Model
 
     val xmlFile = new File(s"src/test/${name}.archimate")

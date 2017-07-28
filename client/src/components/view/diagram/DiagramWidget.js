@@ -765,9 +765,12 @@ export class DiagramWidget extends React.Component {
         ref='canvas'
         className='diagrams-canvas'
         onWheel={this.onWheel.bind(this)}
-        onMouseMove={this.onMouseMove.bind(this)}
         onMouseDown={this.onMouseDown.bind(this)}
+        onMouseMove={this.onMouseMove.bind(this)}
         onMouseUp={this.onMouseUp.bind(this)}
+        // TODO: onTouchStart={(event)=>this.onMouseDown(...)}
+        // TODO: onTouchMove={(event)=>this.onMouseMove(...)}
+        // TODO: onTouchEnd={(event)=>this.onMouseUp(...)}
       >
         <div className="diagram-center">
         {this.renderNodeLayerWidget()}
