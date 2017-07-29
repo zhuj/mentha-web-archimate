@@ -85,7 +85,11 @@ class Palette extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return {};
+  const view = state.model.views[ownProps.id] || {};
+  return {
+    id: ownProps.id,
+    vp: view['viewPoint']
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({

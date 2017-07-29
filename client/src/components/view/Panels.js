@@ -6,7 +6,7 @@ export class LeftPanel extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { visible: true };
+    this.state = { visible: !!props.visible };
   }
 
   render() {
@@ -34,7 +34,7 @@ export class RightPanel extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { visible: true };
+    this.state = { visible: !!props.visible };
   }
 
   render() {

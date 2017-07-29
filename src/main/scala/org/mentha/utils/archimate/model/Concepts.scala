@@ -28,6 +28,11 @@ sealed abstract class Concept extends IdentifiedArchimateObject with VersionedAr
   */
 sealed abstract class EdgeConcept extends Concept with Edge[Concept] {
 
+    // TODO: XXX: make it work safer - scheme should not contain cycles on the edges level
+    override def isDeleted: Boolean = {
+      super.isDeleted || (source.isDeleted || target.isDeleted)
+    }
+
 }
 
 /**

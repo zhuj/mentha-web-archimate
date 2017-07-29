@@ -109,11 +109,31 @@ class ViewDiagram extends DiagramWidget {
   }
 
   /* @overide: DiagramWidget */
+  buildWindowListener() {
+    return event => {
+      const viewId = this.props.id;
+      const diagramModel = this.getDiagramModel();
+      // const ctrl = (event.metaKey || event.ctrlKey);
+
+      // Delete all selected
+      if ([8, 46].indexOf(event.keyCode) !== -1) {
+        const selectedItems = diagramModel.getSelectedItems();
+        if (selectedItems.length > 0) {
+          this.props.sendModelCommands(
+            _.chain(selectedItems)
+              .filter((vo) => (vo instanceof models.NodeModel) || (vo instanceof models.LinkModel))
+              .map((vo) => api.deleteViewObject(viewId, vo.id))
+              .value()
+          );
+        }
+      }
+    };
+  }
+
+  /* @overide: DiagramWidget */
   onChange(action) {
     // update the rest
     switch (action.type) {
-      case 'node-sized':
-      case 'node-moved':
       case 'items-sized':
       case 'items-moved': {
         const viewId = this.props.id;
@@ -132,48 +152,48 @@ class ViewDiagram extends DiagramWidget {
         );
         break;
       }
+      case 'items-selected-2': {
+        // TODO: make it editable
+        console.log(action);
+        break;
+      }
     }
+
+    if (action.type.indexOf("selected") >= 0) {
+      const viewId = this.props.id;
+      const selectedItems = action.items;
+      // TODO: check if state has been changed
+      this.props.selectViewObjects(viewId, selectedItems);
+    }
+
   }
 
   render() {
     const { connectDropTarget } = this.props;
     return connectDropTarget(
       <div className='diagram-root'>
-            { super.render() }
+        { super.render() }
       </div>
-/*
-      <div className='diagram-root'>
-        <div className='parent-container'>
-          <div className='diagram-drop-container'>
-            { super.render() }
-          </div>
-        </div>
-      </div>
-*/
     );
   }
 }
 
-const buildNodeZIndexMap = (view) => {
-  return _.chain(view.nodes)
-    .entries(view.nodes)
-    .sortBy((e) => {
-      const { width: w, height: h } = e[1].size;
-      return -(w*h);
-    })
-    .reduce((o, e, idx) => { o[e[0]] = idx; return o; }, {})
-    .value();
-};
 
-const mapStateToProps = (state, ownProps) => {
-  const id = ownProps.id;
-  const model = state.model;
+const createDiagramModel = (model, id) => {
+
   const view = model.views[id];
+  const zIndexMap = ((view) => {
+    return _.chain(view.nodes)
+      .entries(view.nodes)
+      .sortBy((e) => {
+        const { width: w, height: h } = e[1].size;
+        return -(w*h);
+      })
+      .reduce((o, e, idx) => { o[e[0]] = idx; return o; }, {})
+      .value();
+  })(view);
 
-  // sort nodes by z-index...
-  const zIndexMap = buildNodeZIndexMap(view);
-
-  const diagramModel = new models.DiagramModel(view.id);
+  const diagramModel = new models.DiagramModel(id);
 
   // nodes
   _.forEach(view.nodes, (node, id) => {
@@ -222,11 +242,18 @@ const mapStateToProps = (state, ownProps) => {
     });
   });
 
-  return { id, diagramModel };
+  return diagramModel;
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const id = ownProps.id;
+  const model = state.model;
+  return { id, diagramModel: createDiagramModel(model, id) };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  sendModelCommands: (commands) => dispatch(actions.sendModelMessage(api.composite(commands)))
+  sendModelCommands: (commands) => dispatch(actions.sendModelMessage(api.composite(commands))),
+  selectViewObjects: (viewId, selectedObjects) => dispatch(actions.selectViewObjects(viewId, selectedObjects)),
   //updateViewNodePosAndSize: (viewId) => (voId, pos, size) => dispatch(actions.updateViewNodePosAndSize(viewId, voId, { x:pos.x, y:pos.y }, { width: size.width, height: size.height })),
   //updateViewEdgePoints: (viewId) => (voId, points) => dispatch(actions.updateViewEdgePoints(viewId, voId, _.chain(points).slice(1, points.length-1).map(p=>({ x:p.x, y:p.y })).value()))
 });

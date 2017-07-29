@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export const generateId = () => (
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   })
 );
@@ -244,13 +244,21 @@ export class DiagramModel extends BaseEntity {
 
   acquireRuntimeState(prev) {
     _.forEach(this.getNodes(), (ref) => {
-      const node = prev.getNode(ref.id);
-      if (!!node) { ref.selected |= !!node.selected; }
+      const p_node = prev.getNode(ref.id);
+      if (!!p_node) { ref.selected |= !!p_node.selected; }
     });
     _.forEach(this.getLinks(), (ref) => {
-      const link = prev.getLink(ref.id);
-      if (!!link) {
-        ref.selected |= !!link.selected;
+      const p_link = prev.getLink(ref.id);
+      if (!!p_link) {
+        if (ref.points.length === p_link.points.length) {
+          const a = 0, b = ref.points.length - 1;
+          _.forEach(p_link.points, (p_point, idx) => {
+            if (a < idx && idx < b) {
+              ref.points[idx].selected = !!p_point.selected
+            }
+          });
+        }
+        ref.selected |= !!p_link.selected;
       }
     });
   }

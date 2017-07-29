@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { MODEL_NOOP_RECEIVED, MODEL_OBJECT_RECEIVED, MODEL_COMMIT_RECEIVED, MODEL_ERROR_RECEIVED } from "../actions"
+import * as actions from "../actions/index"
 
 const postProcessModel = (model) => ({
   ...model,
@@ -76,19 +76,32 @@ const applyError = (model, payload) => {
     return model;
 };
 
+const selectViewObjects = (model, viewId, selection) => applyCommit(
+  model, {
+    [`@views`]: {
+      [`@${viewId}`]: {
+        [`=selection`]: selection
+      }
+    }
+  }
+);
 
 const getInitialState = () => ({
   nodes: {},
   edges: {},
-  view: {}
+  views: {}
 });
 
 const reducer = (state = getInitialState(), action) => {
   switch (action.type) {
-    case MODEL_NOOP_RECEIVED: return applyNoop(state, action.payload);
-    case MODEL_OBJECT_RECEIVED: return applyObject(state, action.payload);
-    case MODEL_COMMIT_RECEIVED: return applyCommit(state, action.payload);
-    case MODEL_ERROR_RECEIVED: return applyError(state, action.payload);
+    // external
+    case actions.MODEL_NOOP_RECEIVED: return applyNoop(state, action.payload);
+    case actions.MODEL_OBJECT_RECEIVED: return applyObject(state, action.payload);
+    case actions.MODEL_COMMIT_RECEIVED: return applyCommit(state, action.payload);
+    case actions.MODEL_ERROR_RECEIVED: return applyError(state, action.payload);
+
+    // internal
+    case actions.VIEW_SELECT_OBJECTS: return selectViewObjects(state, action.viewId, action.selection);
   }
   return state;
 };

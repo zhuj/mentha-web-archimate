@@ -1,0 +1,10 @@
+.properties {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .json {
+    word-wrap: break-word;
+    font-family: monospace;
+  }
+}
