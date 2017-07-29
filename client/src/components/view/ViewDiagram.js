@@ -113,7 +113,13 @@ const updateDiagramModel = (view, diagramModel) => {
 };
 
 const diagramModelInState = (props, diagramModel) => {
-  return { diagramModel: updateDiagramModel(props.view, diagramModel) };
+  const timerName = `diagramModelInState-${props.id}`;
+  console.time(timerName);
+  try {
+    return {diagramModel: updateDiagramModel(props.view, diagramModel)};
+  } finally {
+    console.timeEnd(timerName);
+  }
 };
 
 
