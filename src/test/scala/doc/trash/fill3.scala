@@ -3,8 +3,10 @@ package doc.trash
 import java.io.File
 import java.util
 
+import doc.trash.fill2.publishModel
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import org.mentha.utils.archimate.MkModel
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes.ElementMeta
 import org.mentha.utils.archimate.model.nodes.impl._
@@ -12,7 +14,7 @@ import org.mentha.utils.archimate.model.view._
 
 import scala.xml.XML
 
-object fill3 {
+object fill3 extends MkModel {
 
   val random = new util.Random(0)
   val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
@@ -57,7 +59,7 @@ object fill3 {
     val WE = W + 40
     val HE = H + 50
 
-    val model = new Model
+    val model = new Model withId "ex-fill-3"
 
     def add(metas: Seq[ElementMeta[_]], name: String) = {
       val view = model.add { new View() withName(name) }
@@ -81,6 +83,6 @@ object fill3 {
     val jsonFile = new File(s"src/test/elements3.json")
     FileUtils.write(jsonFile, j, "UTF-8")
 
+    publishModel(model)
   }
-
 }

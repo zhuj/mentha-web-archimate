@@ -21,8 +21,8 @@ class MkModel {
     implicit val materializer = ActorMaterializer()
 
     val sink = Sink.foreach[Message] {
-        case message: TextMessage.Strict => println(message.text)
-        case message => println(message)
+        case message: TextMessage.Strict => println(">> RESPONSE: " + message.text)
+        case message => println(">> RESPONSE: " + message)
     }
 
     val source = Source.single[Message]( TextMessage(message) )
