@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export const generateId = () => (
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   })
 );
@@ -48,41 +48,41 @@ export class LinkModel extends BaseModel {
     super();
     this.id = id;
     this.linkType = linkType;
-    this.points = this.getDefaultPoints();
     this.sourceNode = null;
     this.targetNode = null;
+    this.points = [ new PointModel(this, 0, 0), new PointModel(this, 0, 0) ];
   }
 
   setSourceNode(node) {
-    if (!!this.sourceNode) {
-      this.sourceNode.unregisterLink(this);
-    }
-    if (!!(this.sourceNode = node)) {
-      node.registerLink(this);
-      this.getFirstPoint().updateLocation(node);
+    if (this.sourceNode !== node) {
+      if (!!this.sourceNode) {
+        this.sourceNode.unregisterLink(this);
+      }
+      if (!!(this.sourceNode = node)) {
+        node.registerLink(this);
+        this.getFirstPoint().updateLocation(node);
+      }
     }
   }
 
   setTargetNode(node) {
-    if (!!this.targetNode) {
-      this.targetNode.unregisterLink(this);
-    }
-    if (!!(this.targetNode = node)) {
-      node.registerLink(this);
-      this.getLastPoint().updateLocation(node);
+    if (this.targetNode !== node) {
+      if (!!this.targetNode) {
+        this.targetNode.unregisterLink(this);
+      }
+      if (!!(this.targetNode = node)) {
+        node.registerLink(this);
+        this.getLastPoint().updateLocation(node);
+      }
     }
   }
 
-  getDefaultPoints(points = []) {
-    return [
-      new PointModel(this, 0, 0),
-      ...points,
-      new PointModel(this, 0, 0),
+  setMiddlePoints(points) {
+    this.points = [
+      this.getFirstPoint(),
+      ... _.map(points, point => new PointModel(this, point.x, point.y)),
+      this.getLastPoint()
     ];
-  }
-
-  setPoints(points) {
-    this.points = _.map(points, point => new PointModel(this, point.x, point.y));
   }
 
   getFirstPoint() {
@@ -244,13 +244,22 @@ export class DiagramModel extends BaseEntity {
 
   acquireRuntimeState(prev) {
     _.forEach(this.getNodes(), (ref) => {
-      const node = prev.getNode(ref.id);
-      if (!!node) { ref.selected |= !!node.selected; }
+      const p_node = prev.getNode(ref.id);
+      if (!!p_node) { ref.selected |= !!p_node.selected; }
     });
     _.forEach(this.getLinks(), (ref) => {
-      const link = prev.getLink(ref.id);
-      if (!!link) {
-        ref.selected |= !!link.selected;
+      const p_link = prev.getLink(ref.id);
+      if (!!p_link) {
+        const l = ref.points.length;
+        if (l > 2 && (ref.points.length === p_link.points.length)) {
+          const a = 0, b = l - 1;
+          _.forEach(p_link.points, (p_point, idx) => {
+            if (a < idx && idx < b) {
+              ref.points[idx].selected = !!p_point.selected
+            }
+          });
+        }
+        ref.selected |= !!p_link.selected;
       }
     });
   }

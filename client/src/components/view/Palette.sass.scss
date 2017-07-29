@@ -1,0 +1,12 @@
+.palette {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .layer {
+    display: flex;
+    flex-flow: row wrap;
+    padding-bottom: 10px;
+  }
+
+}

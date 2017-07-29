@@ -7,15 +7,17 @@ import * as models from './diagram/models'
 import DragWrapper from './diagram/DragWrapper'
 
 import { layerElements, viewNodeConceptWidget } from './nodes/view/viewNodeConcept'
+import { ViewNotesWidget } from "./nodes/view/viewNotes"
 
-
-import './palette.sass.scss'
+import './Palette.sass.scss'
 
 class Palette extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      hover: null
+    };
   }
 
   componentWillMount() {
@@ -24,11 +26,21 @@ class Palette extends React.Component {
   componentWillReceiveProps(nextProps) {
   }
 
-  renderDragSource(element) {
+
+  renderConceptDragSource(tp, kind) {
+    const conceptInfo = { _tp: tp };
+    return this.renderDragSource(
+      tp,
+      kind,
+      { conceptInfo },
+      (node) => viewNodeConceptWidget({ node, conceptInfo })
+    );
+  }
+
+  renderDragSource(tp, kind, params, body) {
     const x = 0, y = 0, width = 35, height = 35;
-    const conceptInfo = { _tp: element, name: '' };
     const node = Object.assign(new models.NodeModel(), {
-      id: element, x, y, width, height, conceptInfo
+      id: `${kind}-${tp}`, x, y, width, height, ...params
     });
 
     const style = {
@@ -38,36 +50,46 @@ class Palette extends React.Component {
 
     return (
       <div
-        key={`palette-${element}`}
-        onMouseEnter={()=>this.setState({hover:element})}
+        key={`palette-${node.id}`}
+        onMouseEnter={()=>this.setState({hover:node.id})}
         onMouseOut={()=>this.setState({hover:null})}
       >
-      <DragWrapper key={`palette-drag-${element}`} tp={element}>
-        <div className="x-node p-node" style={style} title={element}>
-        { viewNodeConceptWidget({ node, conceptInfo }) }
-        </div>
-      </DragWrapper>
+        <DragWrapper key={`palette-drag-${node.id}`} tp={tp} kind={kind}>
+          <div className="x-node p-node" style={style} title={tp}>
+            { body(node) }
+          </div>
+        </DragWrapper>
       </div>
     );
   }
+
 
   render() {
     return (
       <div className="palette">
         {
           _.map(layerElements, (elements, layer) => (
-            <div key={`palette-${layer}`} className={`diagrams-canvas layer ${layer}`} style={{display:'flex'}}>
-              {  _.map(elements, (element) => this.renderDragSource(element)) }
+            <div key={`palette-${layer}`} className={`diagrams-canvas layer ${layer}`} style={{display: 'flex'}}>
+              {_.map(elements, (element) => this.renderConceptDragSource(element, 'element'))}
             </div>
           ))
         }
+        <div key={`palette-other`} className={`diagrams-canvas layer other`} style={{display: 'flex'}}>
+          {this.renderConceptDragSource('orJunction', 'connector')}
+          {this.renderConceptDragSource('andJunction', 'connector')}
+          {this.renderDragSource('viewNotes', 'notes', {viewObject: {}}, (node) => <ViewNotesWidget {...{node}}/>)}
+        </div>
       </div>
     )
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return {};
+  const view = state.model.views[ownProps.id] || {};
+  return {
+    id: ownProps.id,
+    vp: view['viewpoint']
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({

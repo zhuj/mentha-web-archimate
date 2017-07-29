@@ -1,7 +1,7 @@
 package org.mentha.utils.archimate.state
 
 import org.mentha.utils.archimate.model._
-import org.mentha.utils.archimate.model.json.JsonArray
+import org.mentha.utils.archimate.model.json._
 import org.mentha.utils.archimate.model.view._
 
 import scala.util._
@@ -9,11 +9,6 @@ import scala.util._
 object ModelState {
 
   import play.api.libs.json._
-
-  type JsonValue = json.JsonValue
-  type JsonString = json.JsonString
-  type JsonObject = json.JsonObject
-  val JsonObject = json.JsonObject
 
   type Type = String
   type ID = Identifiable.ID
@@ -457,7 +452,11 @@ object ModelState {
       override def id: ID = command.id
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
         val vo = view.get[ViewObject](id).markAsDeleted()
-        toJsonDiff(model, view, vo, OP_DEL)
+        var diffJson = JsonObject.empty
+        for { x <- view.backwardDependencies(vo) } {
+          diffJson = toJsonDiff(model, view, x, if (x.isDeleted) { OP_DEL } else { OP_SET }) deepMerge { diffJson }
+        }
+        diffJson
       }
     }
 
@@ -507,7 +506,7 @@ object ModelState {
       * @param changeSet the changeSet built from the incoming command
       * @param diffJson the model diff JSON
       */
-    case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, diffJson: ModelState.JsonObject) extends ModelState.Response {
+    case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, diffJson: JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "commit",
         "commit" -> diffJson
@@ -520,7 +519,7 @@ object ModelState {
       * @param request the original request
       * @param objectJson requested object json
       */
-    case class ModelObjectJson(modelId: String, request: ModelState.Query, objectJson: ModelState.JsonObject) extends ModelState.Response {
+    case class ModelObjectJson(modelId: String, request: ModelState.Query, objectJson: JsonObject) extends ModelState.Response {
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "object",
         "object" -> objectJson
@@ -651,7 +650,7 @@ object ModelState {
   }
 
   /** deserialize from string */
-  private[state] def fromJson(id: Identifiable.ID, json: String): ModelState = new ModelState(
+  private[state] def fromJson(id: ID, json: String): ModelState = new ModelState(
     org.mentha.utils.archimate.model.json.fromJsonString(json) withId(id)
   )
 
@@ -684,7 +683,7 @@ class ModelState(private[state] var model: Model = new Model) {
     case c: Commands.CompositeCommand => ChangeSets.CompositeChangeSet(c, changes = c.commands.map { cmd => prepare(cmd) })
   }
 
-  def query(query: ModelState.Query): ModelState.JsonObject = query match {
+  def query(query: ModelState.Query): JsonObject = query match {
     case Queries.GetModel(_) => json.toJsonPair(model)
     case Queries.GetConcept(id) => json.toJsonPair(concept(id))
     case Queries.GetView(id) => json.toJsonPair(view(id))

@@ -5,6 +5,8 @@ import * as actions from './actions'
 import * as models from './models'
 import { DefaultNodeWidget, DefaultLinkWidget } from './DefaultWidgets'
 
+import './DiagramWidget.sass.scss'
+
 class LinkWrapper extends React.Component {
   shouldComponentUpdate() {
     const { diagram, link } = this.props;
@@ -105,6 +107,7 @@ export class DiagramWidget extends React.Component {
     this.canvas = null;
     this.paintableWidgets = null;
     this.state = {
+      diagramModel: new models.DiagramModel(),
       action: null,
       actionType: 'unknown',
       windowListener: null,
@@ -119,7 +122,7 @@ export class DiagramWidget extends React.Component {
   }
 
   getDiagramModel() {
-    return this.props['diagramModel'];
+    return this.state['diagramModel'];
   }
 
   componentWillUnmount() {
@@ -139,54 +142,10 @@ export class DiagramWidget extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.clearRepaintEntities();
-    const nextDiagramModel = nextProps['diagramModel'];
-    const thisDiagramModel = this.getDiagramModel();
-    if (!!thisDiagramModel && !!thisDiagramModel && (nextDiagramModel.id === thisDiagramModel.id)) {
-      nextDiagramModel.acquireRuntimeState(thisDiagramModel);
-    }
   }
 
   buildWindowListener() {
-
-    return event => {
-      // XXX: const selectedItems = diagramEngine.getDiagramModel().getSelectedItems();
-      const ctrl = (event.metaKey || event.ctrlKey);
-
-      // XXX: // Select all
-      // XXX: if (event.keyCode === 65 && ctrl && selectAll) {
-      // XXX:  this.selectAll(true);
-      // XXX:  event.preventDefault();
-      // XXX:  event.stopPropagation();
-      // XXX: }
-
-      // XXX: // Deselect all
-      // XXX: if (event.keyCode === 68 && ctrl && deselectAll) {
-      // XXX:  this.selectAll(false);
-      // XXX:  event.preventDefault();
-      // XXX:  event.stopPropagation();
-      // XXX: }
-
-      // XXX: // Copy selected
-      // XXX: if (event.keyCode === 67 && ctrl && selectedItems.length && copy) {
-      // XXX:   this.copySelectedItems(selectedItems);
-      // XXX: }
-
-      // XXX: // Paste from clipboard
-      // XXX: if (event.keyCode === 86 && ctrl && this.state.clipboard && paste) {
-      // XXX:   this.pasteSelectedItems(selectedItems);
-      // XXX: }
-
-      // XXX: // Delete all selected
-      // XXX: if ([8, 46].indexOf(event.keyCode) !== -1 && selectedItems.length && deleteItems) {
-      // XXX:  selectedItems.forEach(element => {
-      // XXX:    element.remove();
-      // XXX:  });
-      // XXX:
-      // XXX:  this.onChange({ type: 'items-deleted', items: selectedItems });
-      // XXX:  this.forceUpdate();
-      // XXX: }
-
-    };
+    return event => {};
   }
 
   getOffset() {
@@ -455,9 +414,6 @@ export class DiagramWidget extends React.Component {
 
       // Determine actionType, do not override some mouse down
       let actionType = 'items-sized';
-      if (action.selectionData.length === 1 && action.selectionData[0].ref instanceof models.NodeModel) {
-        actionType = 'node-sized';
-      }
 
       // this.enableRepaintEntities(action.selectedItems);
       this.setState({ actionType });
@@ -481,9 +437,6 @@ export class DiagramWidget extends React.Component {
       // Determine actionType, do not override some mouse down
       const disallowed = ['link-created'];
       let actionType = disallowed.indexOf(currentActionType) === -1 ? 'items-moved' : currentActionType;
-      if (action.selectionData.length === 1 && action.selectionData[0].ref instanceof models.NodeModel) {
-        actionType = 'node-moved';
-      }
 
       // this.enableRepaintEntities(action.selectedItems);
       this.setState({ actionType });
@@ -532,8 +485,13 @@ export class DiagramWidget extends React.Component {
 
       if (mouseElement === null) {
 
+        const wasSelected = (diagramModel.getSelectedItems().length > 0);
         diagramModel.setSelection((m) => false);
-        actionOutput.type = 'canvas-click';
+        if (wasSelected) {
+          actionOutput.type = 'items-selected';
+        } else {
+          actionOutput.type = 'canvas-click';
+        }
 
       } else {
 
@@ -553,29 +511,14 @@ export class DiagramWidget extends React.Component {
           diagramModel.setSelection((m) => m === mouseElement.ref);
         }
 
-        // Get the selected items and filter out point mouseElement
-        const isLink = mouseElement.type === ELTP.LINK;
-        const isNode = mouseElement.type === ELTP.NODE;
-        const isPoint = mouseElement.type === ELTP.LINK_POINT;
-
-        const selected = diagramModel.getSelectedItems();
-
         // Determine action type
-        if (deselect && isLink) {
-          actionOutput.type = 'link-deselected';
-        } else if (deselect && isNode) {
-          actionOutput.type = 'node-deselected';
-        } else if (deselect && isPoint) {
-          actionOutput.type = 'point-deselected';
-        } else if ((selected.length === 1 || selected.length === 2 && _.filter(selected, item => !(item instanceof models.PointModel)).length === 1) && isLink) {
-          actionOutput.type = 'link-selected';
-        } else if (selected.length === 1 && isNode) {
-          actionOutput.type = 'node-selected';
-        } else if (selected.length === 1 && isPoint) {
-          actionOutput.type = 'point-selected';
+        const selected = diagramModel.getSelectedItems();
+        if (wasSelected && selected.length === 1) {
+          actionOutput.type = 'items-selected-2';
         } else {
           actionOutput.type = 'items-selected';
         }
+
       }
 
     } else if (action instanceof actions.ResizeItemAction) {
@@ -614,11 +557,12 @@ export class DiagramWidget extends React.Component {
       }
     }
 
-    actionOutput.items = diagramModel.getSelectedItems(); // WAS: _.filter(diagramModel.getSelectedItems(), item => !(item instanceof models.PointModel));
+    actionOutput.items = _.filter(diagramModel.getSelectedItems(), item => (item instanceof models.NodeModel) || (item instanceof models.LinkModel));
     this.clearRepaintEntities();
 
     if (actionOutput.type !== 'unknown') {
-      this.onChange(actionOutput);
+      try { this.onChange(actionOutput); }
+      catch(e) { console.error(e); }
     }
 
     this.setState({ action: null, actionType: 'unknown' });

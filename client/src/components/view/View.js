@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import Markers from './edges/markers'
 import ViewDiagram from './ViewDiagram'
 import Palette from './Palette'
+import Properties from './Properties'
+import { LeftPanel, RightPanel } from "./Panels"
 
 class View extends React.Component {
 
@@ -22,8 +24,13 @@ class View extends React.Component {
     return (
       <div className="view" style={style}>
         <Markers/>
-        <Palette/>
+        <LeftPanel visible={true}>
+          <Palette id={id}/>
+        </LeftPanel>
         <ViewDiagram id={id}/>
+        <RightPanel visible={false}>
+          <Properties id={id}/>
+        </RightPanel>
       </div>
     )
   }

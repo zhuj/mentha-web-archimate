@@ -1,7 +1,9 @@
 package org.mentha.utils.archimate.model.view
 
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.utils.Utils
 
+import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
 case class Point(x: Double, y: Double)
@@ -79,6 +81,11 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
   def withPoints(opt: Option[Seq[Point]]): this.type = {
     for { points <- opt } { withPoints(points) }
     this
+  }
+
+  // TODO: XXX: make it work safer - scheme should not contain cycles on the edges level
+  override def isDeleted: Boolean = {
+    super.isDeleted || (source.isDeleted || target.isDeleted)
   }
 
   override def position: Point = View.middle(
@@ -179,5 +186,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
         )(concept)
       }
     }
+
+  def backwardDependencies(vo: ViewObject): Set[ViewObject] = Utils.backwardDependencies(vo, this.edges)
 
 }

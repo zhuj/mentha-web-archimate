@@ -99,12 +99,13 @@ trait PropsArchimateObject extends ArchimateObject {
     withProperty(name, BigDecimal(value))
 
 
-  // TODO: def extension[E](implicit tp: ClassTag[E]): Option[E] = properties
-  // TODO: .value.get(tp.runtimeClass.getName)
-  // TODO: .map { v => v.as[E] }
-
-  // TODO: def withExtension[E](e: E)(implicit tp: ClassTag[E]): this.type =
-  // TODO: withProperty(tp.runtimeClass.getName, json.toJson(e))
+  // XXX: import scala.reflect.ClassTag
+  // XXX: def extension[E <: Product](implicit tp: ClassTag[E]): Option[E] = properties
+  // XXX:   .value.get(tp.runtimeClass.getName)
+  // XXX:   .map { v => v.as[E] }
+  // XXX:
+  // XXX: def withExtension[E <: Product](e: E)(implicit tp: ClassTag[E]): this.type =
+  // XXX:   withProperty(tp.runtimeClass.getName, json.toJson(e))
 
 }
 
@@ -118,7 +119,7 @@ trait Vertex {
 /**
   * Links two vertexes
   */
-trait Edge[V <: Vertex] {
+trait Edge[+V <: Vertex] {
   def source: V
   def target: V
 }

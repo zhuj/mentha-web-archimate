@@ -193,8 +193,7 @@ package object json {
     }
 
     override def writes(o: Element): JsValue = writeArchimateObject(
-      o,
-      "layer" -> o.meta.layerObject.letter.toString
+      o
     )
 
   }
