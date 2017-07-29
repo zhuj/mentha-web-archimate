@@ -34,6 +34,19 @@
       height: 100%;
     }
 
+    .title-edit {
+      margin: -5px;
+
+      > textarea {
+        font-size: 10px;
+        outline: none !important;
+        border: 0;
+        background: transparent;
+        width: 100%;
+        height: -webkit-fill-available;
+      }
+    }
+
   }
 
 }

@@ -113,7 +113,13 @@ const updateDiagramModel = (view, diagramModel) => {
 };
 
 const diagramModelInState = (props, diagramModel) => {
-  return { diagramModel: updateDiagramModel(props.view, diagramModel) };
+  const timerName = `diagramModelInState-${props.id}`;
+  console.time(timerName);
+  try {
+    return {diagramModel: updateDiagramModel(props.view, diagramModel)};
+  } finally {
+    console.timeEnd(timerName);
+  }
 };
 
 
@@ -244,11 +250,10 @@ class ViewDiagram extends DiagramWidget {
 
   /* @overide: DiagramWidget */
   onChange(action) {
-    // update the rest
+    const viewId = this.props.id;
     switch (action.type) {
       case 'items-sized':
       case 'items-moved': {
-        const viewId = this.props.id;
         this.props.sendModelCommands(
           _.chain(action.items)
             .map((vo) => {
@@ -266,16 +271,18 @@ class ViewDiagram extends DiagramWidget {
       }
       case 'items-selected-2': {
         // TODO: make it editable
-        console.log(action);
+        _.forEach(action.items, (item) => { item.setSelected(2); });
+        this.forceUpdate();
         break;
+      }
+      case 'title-changed': {
+        this.props.sendModelCommands(action.command(viewId));
       }
     }
 
     if (action.type.indexOf("selected") >= 0) {
-      const viewId = this.props.id;
-      const selectedItems = action.items;
       // TODO: check if state has been changed
-      this.props.selectViewObjects(viewId, selectedItems);
+      this.props.selectViewObjects(viewId, action.items);
     }
 
   }

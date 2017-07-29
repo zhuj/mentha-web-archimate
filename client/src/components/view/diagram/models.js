@@ -19,7 +19,7 @@ class BaseModel extends BaseEntity {
   }
 
   isSelected() {
-    return this.selected;
+    return !!this.selected;
   }
 
   setSelected(selected) {
@@ -240,28 +240,6 @@ export class DiagramModel extends BaseEntity {
       }
     });
     return result;
-  }
-
-  acquireRuntimeState(prev) {
-    _.forEach(this.getNodes(), (ref) => {
-      const p_node = prev.getNode(ref.id);
-      if (!!p_node) { ref.selected |= !!p_node.selected; }
-    });
-    _.forEach(this.getLinks(), (ref) => {
-      const p_link = prev.getLink(ref.id);
-      if (!!p_link) {
-        const l = ref.points.length;
-        if (l > 2 && (ref.points.length === p_link.points.length)) {
-          const a = 0, b = l - 1;
-          _.forEach(p_link.points, (p_point, idx) => {
-            if (a < idx && idx < b) {
-              ref.points[idx].selected = !!p_point.selected
-            }
-          });
-        }
-        ref.selected |= !!p_link.selected;
-      }
-    });
   }
 
 }

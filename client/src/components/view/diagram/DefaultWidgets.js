@@ -84,7 +84,7 @@ export class DefaultNodeWidget extends React.Component {
     return "basic-node " + node.nodeType;
   }
 
-  getName(node) {
+  getTitle(node) {
     return node.name;
   }
 
@@ -92,7 +92,7 @@ export class DefaultNodeWidget extends React.Component {
     return (
       <div className='title'>
         <div className='name'>
-          {this.getName(node)}
+          {this.getTitle(node)}
         </div>
       </div>
     )

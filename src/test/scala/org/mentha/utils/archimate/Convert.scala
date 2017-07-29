@@ -13,7 +13,7 @@ import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
 
 
-object Convert {
+object Convert extends MkModel {
 
   val allMeta: Seq[ConceptMeta[_]] = edges.allRelations ++ nodes.allNodes
   val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m.asInstanceOf[ConceptMeta[Concept]]) }.toMap
@@ -27,7 +27,7 @@ object Convert {
 
   def main(args: Array[String]): Unit = {
     val name = args(0)
-    val model = new Model
+    val model = new Model withId s"convert-${name}"
 
     val xmlFile = new File(s"src/test/${name}.archimate")
     val xmlContent = FileUtils.readFileToString(xmlFile, "UTF-8")
@@ -177,6 +177,8 @@ object Convert {
 
     val jsonFile = new File(s"src/test/${name}.json")
     FileUtils.write(jsonFile, str, "UTF-8")
+
+    publishModel(model)
   }
 
   private def getTp(el: Node) = {

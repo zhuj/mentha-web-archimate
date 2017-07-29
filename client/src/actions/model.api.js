@@ -12,6 +12,21 @@ export const addElement = (json) => ({ 'add-element' : json });
 export const addConnector = (json) => ({ 'add-connector' : json });
 export const addRelationship = (json) => ({ 'add-relationship' : json });
 
+export const modViewObject = (viewId, voId, payload) => ({
+  'mod-view-object': {
+    viewId: viewId,
+    id: voId,
+    ...payload
+  }
+});
+
+export const modConcept = (id, payload) => ({
+  'mod-concept': {
+    id: id,
+    ...payload
+  }
+});
+
 export const deleteViewObject = (viewId, voId) => ({
   'del-view-object': {
     viewId: viewId,
