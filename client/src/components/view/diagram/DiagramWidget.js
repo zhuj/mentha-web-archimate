@@ -107,6 +107,7 @@ export class DiagramWidget extends React.Component {
     this.canvas = null;
     this.paintableWidgets = null;
     this.state = {
+      diagramModel: new models.DiagramModel(),
       action: null,
       actionType: 'unknown',
       windowListener: null,
@@ -121,7 +122,7 @@ export class DiagramWidget extends React.Component {
   }
 
   getDiagramModel() {
-    return this.props['diagramModel'];
+    return this.state['diagramModel'];
   }
 
   componentWillUnmount() {
@@ -141,53 +142,10 @@ export class DiagramWidget extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.clearRepaintEntities();
-    const nextDiagramModel = nextProps['diagramModel'];
-    const thisDiagramModel = this.getDiagramModel();
-    if (!!thisDiagramModel && !!thisDiagramModel && (nextDiagramModel.id === thisDiagramModel.id)) {
-      nextDiagramModel.acquireRuntimeState(thisDiagramModel);
-    }
   }
 
   buildWindowListener() {
-    return event => {
-      // XXX: const selectedItems = diagramEngine.getDiagramModel().getSelectedItems();
-      const ctrl = (event.metaKey || event.ctrlKey);
-
-      // XXX: // Select all
-      // XXX: if (event.keyCode === 65 && ctrl && selectAll) {
-      // XXX:  this.selectAll(true);
-      // XXX:  event.preventDefault();
-      // XXX:  event.stopPropagation();
-      // XXX: }
-
-      // XXX: // Deselect all
-      // XXX: if (event.keyCode === 68 && ctrl && deselectAll) {
-      // XXX:  this.selectAll(false);
-      // XXX:  event.preventDefault();
-      // XXX:  event.stopPropagation();
-      // XXX: }
-
-      // XXX: // Copy selected
-      // XXX: if (event.keyCode === 67 && ctrl && selectedItems.length && copy) {
-      // XXX:   this.copySelectedItems(selectedItems);
-      // XXX: }
-
-      // XXX: // Paste from clipboard
-      // XXX: if (event.keyCode === 86 && ctrl && this.state.clipboard && paste) {
-      // XXX:   this.pasteSelectedItems(selectedItems);
-      // XXX: }
-
-      // XXX: // Delete all selected
-      // XXX: if ([8, 46].indexOf(event.keyCode) !== -1 && selectedItems.length && deleteItems) {
-      // XXX:  selectedItems.forEach(element => {
-      // XXX:    element.remove();
-      // XXX:  });
-      // XXX:
-      // XXX:  this.onChange({ type: 'items-deleted', items: selectedItems });
-      // XXX:  this.forceUpdate();
-      // XXX: }
-
-    };
+    return event => {};
   }
 
   getOffset() {

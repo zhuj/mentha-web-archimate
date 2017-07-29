@@ -2,13 +2,8 @@ import React from 'react'
 
 import { DefaultLinkWidget } from '../diagram/DefaultWidgets'
 
-const BaseLinkWidget = DefaultLinkWidget;
-
-export const ViewLinkWidget = BaseLinkWidget;
-
-export class ModelLinkWidget extends BaseLinkWidget {
+export class BaseLinkWidget extends DefaultLinkWidget {
   constructor(props) { super(props); }
-
   render() {
     try {
       const {link: {sourceNode: source, targetNode: target}} = this.props;
@@ -28,7 +23,10 @@ export class ModelLinkWidget extends BaseLinkWidget {
 
     return super.render();
   }
-
 }
 
-export const StructuralRelationshipsWidget  = ModelLinkWidget;
+export const ViewLinkWidget = BaseLinkWidget;
+
+export const ModelLinkWidget = BaseLinkWidget;
+
+export const StructuralRelationshipsWidget = ModelLinkWidget;

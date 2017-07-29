@@ -48,41 +48,41 @@ export class LinkModel extends BaseModel {
     super();
     this.id = id;
     this.linkType = linkType;
-    this.points = this.getDefaultPoints();
     this.sourceNode = null;
     this.targetNode = null;
+    this.points = [ new PointModel(this, 0, 0), new PointModel(this, 0, 0) ];
   }
 
   setSourceNode(node) {
-    if (!!this.sourceNode) {
-      this.sourceNode.unregisterLink(this);
-    }
-    if (!!(this.sourceNode = node)) {
-      node.registerLink(this);
-      this.getFirstPoint().updateLocation(node);
+    if (this.sourceNode !== node) {
+      if (!!this.sourceNode) {
+        this.sourceNode.unregisterLink(this);
+      }
+      if (!!(this.sourceNode = node)) {
+        node.registerLink(this);
+        this.getFirstPoint().updateLocation(node);
+      }
     }
   }
 
   setTargetNode(node) {
-    if (!!this.targetNode) {
-      this.targetNode.unregisterLink(this);
-    }
-    if (!!(this.targetNode = node)) {
-      node.registerLink(this);
-      this.getLastPoint().updateLocation(node);
+    if (this.targetNode !== node) {
+      if (!!this.targetNode) {
+        this.targetNode.unregisterLink(this);
+      }
+      if (!!(this.targetNode = node)) {
+        node.registerLink(this);
+        this.getLastPoint().updateLocation(node);
+      }
     }
   }
 
-  getDefaultPoints(points = []) {
-    return [
-      new PointModel(this, 0, 0),
-      ...points,
-      new PointModel(this, 0, 0),
+  setMiddlePoints(points) {
+    this.points = [
+      this.getFirstPoint(),
+      ... _.map(points, point => new PointModel(this, point.x, point.y)),
+      this.getLastPoint()
     ];
-  }
-
-  setPoints(points) {
-    this.points = _.map(points, point => new PointModel(this, point.x, point.y));
   }
 
   getFirstPoint() {
@@ -250,8 +250,9 @@ export class DiagramModel extends BaseEntity {
     _.forEach(this.getLinks(), (ref) => {
       const p_link = prev.getLink(ref.id);
       if (!!p_link) {
-        if (ref.points.length === p_link.points.length) {
-          const a = 0, b = ref.points.length - 1;
+        const l = ref.points.length;
+        if (l > 2 && (ref.points.length === p_link.points.length)) {
+          const a = 0, b = l - 1;
           _.forEach(p_link.points, (p_point, idx) => {
             if (a < idx && idx < b) {
               ref.points[idx].selected = !!p_point.selected

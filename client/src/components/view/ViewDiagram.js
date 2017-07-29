@@ -17,6 +17,106 @@ import { viewEdgeWidget } from './edges/ViewEdgeWidget'
 
 import './ViewDiagram.sass.scss'
 
+const updateDiagramModel = (view, diagramModel) => {
+
+  const zIndexMap = ((view) => {
+    return _.chain(view.nodes)
+      .entries(view.nodes)
+      .sortBy((e) => {
+        const { width: w, height: h } = e[1].size;
+        return -(w*h);
+      })
+      .reduce((o, e, idx) => { o[e[0]] = idx; return o; }, {})
+      .value();
+  })(view);
+
+  const sync = (obj, source, set) => {
+    _.forEach(source, (item, id) => {
+      obj[id] = set(id, item, obj[id]);
+    });
+    _.forEach(obj, (item, id) => {
+      if (!source[id]) {
+        delete obj[id];
+      }
+    })
+  };
+
+  // nodes
+  sync(
+    diagramModel.nodes,
+    view.nodes,
+    (id, node, prev) => {
+      if (!prev) { prev = new models.NodeModel(id); }
+      prev = Object.assign(prev, {
+        nodeType: node['_tp'],
+        x: node.pos.x,
+        y: node.pos.y,
+        width: node.size.width,
+        height: node.size.height,
+        zIndex: zIndexMap[id] || 0,
+        viewObject: node
+      });
+      return prev;
+    }
+  );
+
+  // edges
+  sync(
+    diagramModel.links,
+    view.edges,
+    (id, edge, prev) => {
+      if (!prev) { prev = new models.LinkModel(id); }
+      prev = Object.assign(prev, {
+        linkType: edge['_tp'],
+        viewObject: edge
+      });
+
+      const sourceNode = diagramModel.getNode(edge.src);
+      const targetNode = diagramModel.getNode(edge.dst);
+      prev.setSourceNode(sourceNode);
+      prev.setTargetNode(targetNode);
+
+      const l = edge.points.length;
+      if (l > 0) {
+        if (prev.points.length === l + 2) {
+          for (let i=0; i<l; i++) {
+            prev.points[1+i].updateLocation(edge.points[i]);
+          }
+        } else {
+          prev.setMiddlePoints(edge.points);
+        }
+      }
+      return prev;
+    }
+  );
+
+  // loops
+  /*if (true)*/ {
+    _.forEach(diagramModel.getNodes(), (node) => {
+      let d = 1;
+      _.forEach(node.getLinks(), (link) => {
+        if ((link.sourceNode === link.targetNode) && link.points.length <= 2) {
+          const { x, y, height } = link.sourceNode;
+          const deep = 1 + (0.25 * d++);
+          const points = [
+            { x: x - 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
+            { x: x,                       y: y + 0.95*height*deep },
+            { x: x + 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
+          ];
+          link.setPoints([link.sourceNode, ...points, link.targetNode]);
+        }
+      });
+    });
+  }
+
+  return diagramModel;
+};
+
+const diagramModelInState = (props, diagramModel) => {
+  return { diagramModel: updateDiagramModel(props.view, diagramModel) };
+};
+
+
 const nodesTarget = {
   drop(props, monitor, component) {
     const { tp, kind } = monitor.getItem();
@@ -68,7 +168,6 @@ const nodesTarget = {
       );
       console.log(node);
     }
-
   }
 };
 
@@ -79,6 +178,14 @@ const nodesTarget = {
 }))
 class ViewDiagram extends DiagramWidget {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      ...diagramModelInState(props, new models.DiagramModel(props.id))
+    };
+  }
+
   /* @override: react-localstorage */
   getLocalStorageKey() {
     const { id } = this.props;
@@ -88,6 +195,11 @@ class ViewDiagram extends DiagramWidget {
   /* @override: react-localstorage */
   getStateFilterKeys() {
     return ["zoom", "offset"];
+  }
+
+  componentWillReceiveProps(nextProps) {
+    super.componentWillReceiveProps(nextProps);
+    this.setState(diagramModelInState(nextProps, this.getDiagramModel()));
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -179,76 +291,10 @@ class ViewDiagram extends DiagramWidget {
 }
 
 
-const createDiagramModel = (model, id) => {
-
-  const view = model.views[id];
-  const zIndexMap = ((view) => {
-    return _.chain(view.nodes)
-      .entries(view.nodes)
-      .sortBy((e) => {
-        const { width: w, height: h } = e[1].size;
-        return -(w*h);
-      })
-      .reduce((o, e, idx) => { o[e[0]] = idx; return o; }, {})
-      .value();
-  })(view);
-
-  const diagramModel = new models.DiagramModel(id);
-
-  // nodes
-  _.forEach(view.nodes, (node, id) => {
-    diagramModel.addNode(
-      Object.assign(new models.NodeModel(id), {
-        nodeType: node['_tp'],
-        x: node.pos.x,
-        y: node.pos.y,
-        width: node.size.width,
-        height: node.size.height,
-        zIndex: zIndexMap[id] || 0,
-        viewObject: node
-      })
-    );
-  });
-
-  // edges
-  _.forEach(view.edges, (edge, id) => {
-    const sourceNode = diagramModel.getNode(edge.src);
-    const targetNode = diagramModel.getNode(edge.dst);
-    const linkModel = diagramModel.addLink(
-      Object.assign(new models.LinkModel(id), {
-        linkType: edge['_tp'],
-        viewObject: edge
-      })
-    );
-    linkModel.setSourceNode(sourceNode);
-    linkModel.setTargetNode(targetNode);
-    linkModel.setPoints([sourceNode, ...edge.points, targetNode]);
-  });
-
-  // loops
-  _.forEach(diagramModel.getNodes(), (node) => {
-    let d = 1;
-    _.forEach(node.getLinks(), (link) => {
-      if ((link.sourceNode === link.targetNode) && link.points.length <= 2) {
-        const { x, y, height } = link.sourceNode;
-        const deep = 1 + (0.25 * d++);
-        const points = [
-          { x: x - 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
-          { x: x,                       y: y + 0.95*height*deep },
-          { x: x + 0.45*height*deep**2, y: y + 0.75*height*deep**0.5 },
-        ];
-        link.setPoints([link.sourceNode, ...points, link.targetNode]);
-      }
-    });
-  });
-
-  return diagramModel;
-};
-
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
-  const model = state.model;
-  return { id, diagramModel: createDiagramModel(model, id) };
+  const model = state.model || {};
+  return { id, view: model.views[id], diagramModel: null };
 };
 
 const mapDispatchToProps = (dispatch) => ({

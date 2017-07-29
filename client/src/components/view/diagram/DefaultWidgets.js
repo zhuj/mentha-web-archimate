@@ -4,7 +4,10 @@ import _ from 'lodash'
 import { intersect, shape } from 'svg-intersections'
 
 export class DefaultNodeWidget extends React.Component {
-  constructor(props) { super(props); }
+  constructor(props) {
+    super(props);
+    this.updateLinkPoints(props.node);
+  }
 
   borderShape(node) {
     const width = node.width || 0;
@@ -37,18 +40,37 @@ export class DefaultNodeWidget extends React.Component {
   updateLinkPoints(node) {
     const border = this.borderShape(node);
     _.forEach(node.getLinks(), (link) => {
+
+      const { sourceNode, targetNode } = link;
       const simple = (link.getPoints().length <= 2);
-      if (link.sourceNode === node) {
+
+      if (sourceNode === node) {
+        const intersects = false /*simple && !!targetNode && (
+          (Math.abs(targetNode.x - node.x) < 0.5 * (targetNode.width + node.width)) &&
+          (Math.abs(targetNode.y - node.y) < 0.5 * (targetNode.height + node.height))
+        )*/;
         const firstPoint = link.getFirstPoint();
-        const targetPoint = (simple && !!link.targetNode) ? link.targetNode : link.getPoint(1 /* next to the first*/);
-        const point = this.borderPoint(node, border, targetPoint);
-        firstPoint.updateLocation(point);
+        if (intersects) {
+          firstPoint.updateLocation(node);
+        } else {
+          const targetPoint = (simple && !!targetNode) ? targetNode : link.getPoint(1 /* next to the first*/);
+          const point = this.borderPoint(node, border, targetPoint);
+          firstPoint.updateLocation(point);
+        }
       }
-      if (link.targetNode === node) {
+      if (targetNode === node) {
+        const intersects = false /*simple && !!sourceNode && (
+          (Math.abs(sourceNode.x - node.x) < 0.5 * (sourceNode.width + node.width)) &&
+          (Math.abs(sourceNode.y - node.y) < 0.5 * (sourceNode.height + node.height))
+        )*/;
         const lastPoint = link.getLastPoint();
-        const sourcePoint = (simple && !!link.sourceNode) ? link.sourceNode : link.getPoint(-2 /*one before the last*/);
-        const point = this.borderPoint(node, border, sourcePoint);
-        lastPoint.updateLocation(point);
+        if (intersects) {
+          lastPoint.updateLocation(node);
+        } else {
+          const sourcePoint = (simple && !!sourceNode) ? sourceNode : link.getPoint(-2 /*one before the last*/);
+          const point = this.borderPoint(node, border, sourcePoint);
+          lastPoint.updateLocation(point);
+        }
       }
     });
   }
@@ -57,11 +79,6 @@ export class DefaultNodeWidget extends React.Component {
     const { node } = nextProps;
     this.updateLinkPoints(node);
   }
-
-  // componentWillUpdate() {
-  //   const { node } = this.props;
-  //   this.updateLinkPoints(node);
-  // }
 
   getClassName(node) {
     return "basic-node " + node.nodeType;

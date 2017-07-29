@@ -88,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
   const view = state.model.views[ownProps.id] || {};
   return {
     id: ownProps.id,
-    vp: view['viewPoint']
+    vp: view['viewpoint']
   };
 };
 
