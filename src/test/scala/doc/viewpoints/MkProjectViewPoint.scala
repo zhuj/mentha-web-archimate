@@ -14,8 +14,8 @@ object MkProjectViewPoint extends MkModel {
   import org.mentha.utils.archimate.model.view._
   import org.mentha.utils.archimate.model.view.dsl._
 
-  import org.mentha.utils.archimate.model.edges._
   import org.mentha.utils.archimate.model.nodes.dsl.Implementation._
+  import org.mentha.utils.archimate.model.nodes.dsl.Business._
   import org.mentha.utils.archimate.model.nodes.dsl._
 
   def main(args: Array[String]): Unit = {
@@ -26,14 +26,14 @@ object MkProjectViewPoint extends MkModel {
 
     val wp = in(view) node { workPackage withName "Work Package" }
     val g = in(view) node { goal withName "Goal" } place(directions.Up, wp)
-    val d = in(view) node { deliverable withName "Deliverable" } place(directions.Left, wp)
-    val br = in(view) node { businessRole withName "Business Role" } place(directions.Right, wp)
-    val ba = in(view) node { businessActor withName "Business Actor" } place(directions.Right, br)
+    val d = in(view) node { deliverable withName "Deliverable" } place(directions.Right, wp)
+    val br = in(view) node { businessRole withName "Business Role" } place(directions.Left, wp)
+    val ba = in(view) node { businessActor withName "Business Actor" } place(directions.Left, br)
 
     in(view) edge { $(wp) `flows` "smth" `to` $(wp) } routeLoop(directions.Down, 1)
     in(view) edge { $(wp) `triggers` $(wp) } routeLoop(directions.Down, 2)
-    in(view) edge { $(wp) `associated with` $(br) }
-    in(view) edge { $(br) `associated with` $(ba) }
+    in(view) edge { $(br) `assigned-to` $(wp) }
+    in(view) edge { $(ba) `assigned-to` $(br) }
     in(view) edge { $(wp) `realizes` $(g) }
     in(view) edge { $(wp) `realizes` $(d) }
 

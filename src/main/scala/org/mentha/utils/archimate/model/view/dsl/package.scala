@@ -74,7 +74,7 @@ package object dsl {
       }
     }
 
-    def flex(levels: Int*): T = {
+    def flex(levels: Double*): T = {
       if (edge.source eq edge.target) {
         throw new IllegalStateException(s"Edge: ${edge} is a loop. Use the `routeLoop` method instead.")
       } else {
