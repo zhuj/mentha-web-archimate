@@ -9,14 +9,15 @@ import DragWrapper from './diagram/DragWrapper'
 import { layerElements, viewNodeConceptWidget } from './nodes/view/viewNodeConcept'
 import { ViewNotesWidget } from "./nodes/view/viewNotes"
 
-
-import './palette.sass.scss'
+import './Palette.sass.scss'
 
 class Palette extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      hover: null
+    };
   }
 
   componentWillMount() {
@@ -68,15 +69,15 @@ class Palette extends React.Component {
       <div className="palette">
         {
           _.map(layerElements, (elements, layer) => (
-            <div key={`palette-${layer}`} className={`diagrams-canvas layer ${layer}`} style={{display:'flex'}}>
-              {  _.map(elements, (element) => this.renderConceptDragSource(element, 'element')) }
+            <div key={`palette-${layer}`} className={`diagrams-canvas layer ${layer}`} style={{display: 'flex'}}>
+              {_.map(elements, (element) => this.renderConceptDragSource(element, 'element'))}
             </div>
           ))
         }
-        <div key={`palette-other`} className={`diagrams-canvas layer other`} style={{display:'flex'}}>
-          { this.renderConceptDragSource('orJunction', 'connector') }
-          { this.renderConceptDragSource('andJunction', 'connector') }
-          { this.renderDragSource('viewNotes', 'notes', { viewObject:{} }, (node) => <ViewNotesWidget {...{ node }}/>)}
+        <div key={`palette-other`} className={`diagrams-canvas layer other`} style={{display: 'flex'}}>
+          {this.renderConceptDragSource('orJunction', 'connector')}
+          {this.renderConceptDragSource('andJunction', 'connector')}
+          {this.renderDragSource('viewNotes', 'notes', {viewObject: {}}, (node) => <ViewNotesWidget {...{node}}/>)}
         </div>
       </div>
     )

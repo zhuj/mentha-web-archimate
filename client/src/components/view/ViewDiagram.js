@@ -15,7 +15,7 @@ import * as models from './diagram/models'
 import { viewNodeWidget } from './nodes/ViewNodeWidget'
 import { viewEdgeWidget } from './edges/ViewEdgeWidget'
 
-import './diagram.sass.scss'
+import './ViewDiagram.sass.scss'
 
 const nodesTarget = {
   drop(props, monitor, component) {
@@ -139,12 +139,17 @@ class ViewDiagram extends DiagramWidget {
     const { connectDropTarget } = this.props;
     return connectDropTarget(
       <div className='diagram-root'>
+            { super.render() }
+      </div>
+/*
+      <div className='diagram-root'>
         <div className='parent-container'>
           <div className='diagram-drop-container'>
             { super.render() }
           </div>
         </div>
       </div>
+*/
     );
   }
 }

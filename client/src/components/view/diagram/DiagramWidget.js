@@ -5,6 +5,8 @@ import * as actions from './actions'
 import * as models from './models'
 import { DefaultNodeWidget, DefaultLinkWidget } from './DefaultWidgets'
 
+import './DiagramWidget.sass.scss'
+
 class LinkWrapper extends React.Component {
   shouldComponentUpdate() {
     const { diagram, link } = this.props;
