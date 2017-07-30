@@ -4,6 +4,10 @@ import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes.impl._
 
 package object dsl {
+
+  /** @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757969 Derivation Rules ArchiMate® 3.0 Specification ]] */
+  class derived extends scala.annotation.Annotation { }
+
   def stakeholder(implicit model: Model): Stakeholder = model.add(new Stakeholder)
   def driver(implicit model: Model): Driver = model.add(new Driver)
   def assessment(implicit model: Model): Assessment = model.add(new Assessment)

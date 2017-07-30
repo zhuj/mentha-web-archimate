@@ -514,7 +514,7 @@
 
         <!-- Structural and Dependency Relationships !-->
         <key char="n" relationship="InfluenceRelationship" derivation-strength="1" verbs="influences-$what:String$-in"/>
-        <key char="a" relationship="AccessRelationship" derivation-strength="2" verbs="reads writes"/>
+        <key char="a" relationship="AccessRelationship" derivation-strength="2" verbs="reads writes accesses-$mode:AccessType$-of"/>
         <key char="v" relationship="ServingRelationship" derivation-strength="3" verbs="serves"/>
         <key char="r" relationship="RealizationRelationship" derivation-strength="4" verbs="realizes"/>
         <key char="i" relationship="AssignmentRelationship" derivation-strength="5" verbs="assigned-to"/>
