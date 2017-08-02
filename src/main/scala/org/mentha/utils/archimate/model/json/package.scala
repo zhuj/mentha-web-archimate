@@ -11,11 +11,9 @@ import scala.util.control.NonFatal
 package object json {
 
   import play.api.libs.json._
-  import play.api.libs.json.Reads
-  import play.api.libs.json.Writes
 
-  def toJson[T](o: T)(implicit tjs: OWrites[T]): JsonObject =
-    Json.toJsObject(o)
+  type JsonReader[A] = Reads[A]
+  type JsonWriter[A] = Writes[A]
 
   type JsonValue = play.api.libs.json.JsValue
 
@@ -33,6 +31,31 @@ package object json {
 
   type JsonArray = play.api.libs.json.JsArray
   val JsonArray = play.api.libs.json.JsArray
+
+  def toJson[T](o: T)(implicit tjs: JsonWriter[T]): JsonValue = Json.toJson(o)(tjs)
+
+  private[json] object hash {
+
+    @inline def _bool(b: JsonBoolean): Long = b.value.hashCode
+    @inline def _str(s: JsonString): Long = s.value.hashCode
+    @inline def _num(n: JsonNumber): Long = (n.value*1024).toLong
+
+    @inline def _add(h: Long, v: Long): Long = ((h<<5)-h) + v
+
+    def _obj(o: JsonObject): Long = o.fields.foldLeft(0l) { case (h, (k, v)) => _add(h, k.hashCode ^ hash(v)) }
+    def _arr(a: JsonArray): Long = a.value.foldLeft(0l) { case (h, v) => _add(h, hash(v)) }
+
+    def hash(v: JsonValue): Long = v match {
+      case o: JsonObject => _obj(o)
+      case a: JsonArray => _arr(a)
+      case s: JsonString => _str(s)
+      case n: JsonNumber => _num(n)
+      case b: JsonBoolean => _bool(b)
+      case play.api.libs.json.JsNull => 0l
+      case _ => throw new IllegalStateException(s"Unsupported type: ${v}")
+    }
+
+  }
 
   private[json] def concept(id: Identifiable.ID)(implicit model: Model): Concept = model._concepts[Concept](id)
   private[json] def edge(id: Identifiable.ID)(implicit model: Model): Relationship = model._concepts[Relationship](id)
@@ -444,8 +467,8 @@ package object json {
   def fromJsonPair(json: JsonValue): Model =
     fields(json).collectFirst { case (id, v) => v.as[Model].withId(id) }.get
 
-  def fromJsonString(json: String): Model =
-    fromJsonPair(Json.parse(json))
+  def fromJsonString(jsonString: String): Model =
+    fromJsonPair(Json.parse(jsonString))
 
   def toJsonString(model: Model): String =
     toJsonPair(model).toString()

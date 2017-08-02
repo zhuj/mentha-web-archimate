@@ -5,6 +5,7 @@ import java.io.PrintWriter
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.output.StringBuilderWriter
 import org.apache.commons.lang3.StringUtils
+import org.mentha.utils.archimate.model.edges.OtherRelationships
 
 import scala.collection.mutable
 import scala.xml.XML
@@ -20,7 +21,6 @@ object generator {
     def impl_stream(layer: String): StringBuilderWriter = {
 
       val stream = new StringBuilderWriter(4096)
-
       val writer = new PrintWriter(stream)
 
       writer.println("package org.mentha.utils.archimate.model.nodes.impl")
@@ -42,7 +42,6 @@ object generator {
     def dsl_stream(name: String): StringBuilderWriter = {
 
       val stream = new StringBuilderWriter(4096)
-
       val writer = new PrintWriter(stream)
 
       writer.println("package org.mentha.utils.archimate.model.nodes.dsl")
@@ -64,32 +63,33 @@ object generator {
     val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
 
     val keys = (xml \ "relations" \ "key")
-      .map { el => (el \ "@char").text.charAt(0) -> ( (el \ "@relationship").text, (el \ "@verbs" ).text ) }
+      .map { el => (el \@ "char").charAt(0) -> ( (el \@ "relationship"), (el \@ "verbs" ) ) }
       .toMap
 
-    val association: Char = 'o' // <key char="o" relationship="AssociationRelationship" />
+    val association: Char = OtherRelationships.association.key
     val rels = (xml \ "relations" \ "source")
       .flatMap {
         s => (s \ "target").map {
           t => (
-            (s \ "@concept").text,
-            (t \ "@concept").text,
-            (t \ "@relations").text.filterNot(_ == association).toSet.mkString("").sorted
+            (s \@ "concept"),
+            (t \@ "concept"),
+            (t \@ "relations" + t \@ "derived").filterNot(_ == association).toSet.mkString("").sorted,
+            (t \@ "derived").filterNot(_ == association).toSet
           )
         }
       }
       .filterNot {
-        case (_, _, r) => r.isEmpty
+        case (_, _, r, _) => r.isEmpty
       }
       .filterNot {
-        case (_, d, _) => d == "Junction"
+        case (_, d, _, _) => d == "Junction"
       }
 
     val relsMap = rels
-      .groupBy { case (src, _, _) => src }
+      .groupBy { case (src, _, _, _) => src }
 
     val elements = (xml \ "element")
-      .map { el => (el \ "@name").text -> ((el \ "@layer").text, (el \ "@parent").text, el) }
+      .map { el => (el \@ "name") -> ((el \@ "layer"), (el \@ "parent"), el) }
 
     val layers = elements
       .map { case (_, (layer, _, _)) => layer }
@@ -110,7 +110,7 @@ object generator {
         writer.println("/**")
         (el \ "info").foreach { info => writer.println(s" * ${info.text}") }
         (el \ "text").foreach { text => writer.println(s" * @note ${text.text}") }
-        (el \ "link").foreach { link => writer.println(s" * @see [[${(link \ "@src").text} ${name} ArchiMate® 3.0 Specification ]]") }
+        (el \ "link").foreach { link => writer.println(s" * @see [[${(link \@ "src")} ${name} ArchiMate® 3.0 Specification ]]") }
         writer.println(" */")
         writer.println(generated)
         writer.println(s"final class ${name} extends ${fixedParent} with ${layer}Element {")
@@ -137,7 +137,7 @@ object generator {
           writer.println(s"  case object ${variable} extends ElementMeta[${name}] {")
           writer.println(s"    override def newInstance(): ${name} = new ${name}")
           writer.println(s"    override def layerObject: LayerObject = ${layer}Layer")
-          writer.println(s"    override def key: String = ${"\""}${(el \ "@key").text}${"\""}")
+          writer.println(s"    override def key: String = ${"\""}${(el \@ "key")}${"\""}")
           writer.println(s"    override def name: String = ${"\""}${variable}${"\""}")
 
           writer.println(s"  }")
@@ -180,6 +180,11 @@ object generator {
 
       writer.println("package object dsl {")
 
+      writer.println()
+      writer.println("  /** @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757969 Derivation Rules ArchiMate® 3.0 Specification ]] */")
+      writer.println("  class derived extends scala.annotation.Annotation { }")
+      writer.println()
+
       for { (name, _) <- elements } {
         writer.println(s"  def ${StringUtils.uncapitalize(name)}(implicit model: Model): ${name} = model.add(new ${name})")
       }
@@ -205,24 +210,25 @@ object generator {
         writer.println(s"  implicit class Implicit${name}(src: ${name}) {")
 
         val localRels = relsMap(name)
-          .flatMap { case (_, dst, rs) => rs.map { r => (r, dst) } }
-          .flatMap { case (r, dst) => keys(r) match {
-            case (rname, verbs) => verbs.split("\\s+").map { verb => (verb, rname, dst) }
+          .flatMap { case (_, dst, rs, der) => rs.map { r => (r, dst, der.contains(r)) } }
+          .flatMap { case (r, dst, der) => keys(r) match {
+            case (rname, verbs) => verbs.split("\\s+").map { verb => (verb, rname, dst, der) }
           } }
-          .groupBy { case (verb, _, _) => verb }
+          .groupBy { case (verb, _, _, _) => verb }
 
         for { (verb, seq) <- localRels } {
 
           val constructor = verb.replaceAll("-\\$[^-]*\\$-", "-").replace('-', '_')
-          val parts = verb.split("-\\$[^-]*\\$-")
 
           def _process_parts(parts: List[String], params: List[String]): Unit = {
             val prefix = " " * (4 + 2 * params.size)
             parts match {
-              case part :: Nil => {
-                for { (_, rname, dst) <- seq } {
+              case lastPart :: Nil => {
+                for { (_, rname, dst, der) <- seq.sortBy { case (_,_,_,der) => der } } {
                   writer.print(prefix)
-                  writer.print(s"def `${part}`")
+                  if (der) { writer.print("@derived ") }
+                  writer.print(s"def `${lastPart}`")
+
                   writer.print(s"(dst: ${dst})(implicit model: Model): ${rname} = _${constructor}(src, dst)")
                   if (params.nonEmpty) {
                     writer.print("(")
@@ -233,21 +239,23 @@ object generator {
                   writer.println()
                 }
               }
-              case part :: tail => {
+              case middlePart :: tail => {
+                val pts = middlePart.split("-\\$[^:]*[:]", 2)
                 writer.print(prefix)
                 val param = "$"+params.size
-                writer.print(s"def `${part}`")
-                writer.println(s"(${param}: String)(implicit model: Model) = new {")
+                writer.print(s"def `${pts(0)}`")
+                writer.println(s"(${param}: ${pts(1)}) = new {")
                 _process_parts(tail, param :: params)
                 writer.print(prefix)
                 writer.println("}")
               }
               case _ => {
-
               }
             }
           }
 
+          //val parts = verb.split("-\\$[^-]*\\$-")
+          val parts = verb.split("\\$-")
           _process_parts(parts.toList, List())
           writer.println()
         }
@@ -274,11 +282,11 @@ object generator {
     {
       val rels = (xml \ "relations" \ "source").flatMap {
         s => (s \ "target").flatMap {
-          t => (t \ "@relations").text.toSeq
+          t => (t \@ "relations").toSeq
             .map { keys }
             .map { case (r, _) => (
-              (s \ "@concept").text,
-              (t \ "@concept").text,
+              (s \@ "concept"),
+              (t \@ "concept"),
               r
             ) }
         }

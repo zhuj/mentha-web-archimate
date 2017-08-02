@@ -135,6 +135,12 @@ package object dsl {
   }
 
   def in(view: View) = new {
+
+    // TODO: def apply[T <: NodeConcept: ClassTag](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
+    // TODO: def apply[T <: Relationship: ClassTag](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
+    // TODO: def apply(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
+    // TODO: def apply(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
+
     def node[T <: NodeConcept](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
     def edge[T <: Relationship](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
     def notes(text: String): ViewNotes = view.add { new ViewNotes withText(text) }

@@ -17,7 +17,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Stakeholder)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Grouping)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Stakeholder)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
@@ -33,7 +33,7 @@ object Motivation {
     def `specializes`(dst: Driver)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -57,7 +57,7 @@ object Motivation {
     def `specializes`(dst: Assessment)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -81,7 +81,7 @@ object Motivation {
     def `specializes`(dst: Goal)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -105,7 +105,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Outcome)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -132,7 +132,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Principle)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -145,9 +145,9 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
  }
   implicit class ImplicitRequirement(src: Requirement) {
@@ -163,7 +163,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Requirement)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -176,10 +176,10 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
  }
   implicit class ImplicitConstraint(src: Constraint) {
@@ -195,7 +195,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Requirement)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -208,10 +208,10 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
  }
   implicit class ImplicitMeaning(src: Meaning) {
@@ -224,7 +224,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Meaning)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -248,7 +248,7 @@ object Motivation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Value)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
+    def `influences`($0: String) = new {
       def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)

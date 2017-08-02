@@ -4,7 +4,7 @@ import akka.actor._
 import akka.persistence._
 import org.mentha.utils.archimate.model.Model
 
-import scala.util.{Failure, Success, Try}
+import scala.util._
 
 object StateActor {
 
@@ -13,40 +13,64 @@ object StateActor {
   case class SubscriberSend(request: ModelState.Request) extends Event {}
   case class SubscriberFail(request: String, error: Throwable) extends Event {}
 
+
+  /**
+    * The actor which dispatches incoming messages to all subscribers
+    */
+  private class StateDispatcherActor extends Actor with ActorLogging {
+    private def _name(actorRef: ActorRef): String = actorRef.path.name
+    private var subscribers: Map[String, ActorRef] = Map.empty
+
+    override def receive: Receive = akka.event.LoggingReceive {
+      case response: ModelState.Response => {
+        subscribers.values.foreach(_ ! response)
+      }
+      case user: ActorRef => {
+        val name = _name(user)
+        this.subscribers += (name -> user)
+        context.watch(user) // we want to be notified when the subscriber dies
+      }
+      case Terminated(user) => {
+        val name = _name(user)
+        this.subscribers -= name
+        // TODO: if (this.subscribers.isEmpty) { context.parent ! ??? } // notify the state actor it's able to die now!
+      }
+    }
+  }
+
 }
 
+/**
+  * Process commands, generates sets of changes and applies it to the model
+  * It uses StateDispatcherActor to deliver the model changes to the subscribers
+  * @param modelId
+  */
 class StateActor(val modelId: String) extends PersistentActor with ActorLogging {
 
-  private val snapshotInterval = 16
-  private var subscribers: Map[String, ActorRef] = Map.empty
+  private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
   override def recovery: Recovery = Recovery.create(SnapshotSelectionCriteria.Latest)
-  override def persistenceId: String = s"state-model-${modelId}"
+  override val persistenceId: String = s"state-model-${modelId}"
 
   private[state] var state: ModelState = new ModelState( new Model().withId(modelId) )
   private[state] def setState(state: ModelState): Unit = { this.state = state }
 
-  private[state] def query(request: ModelState.Query): ModelState.JsonObject = state.query(request)
-  private[state] def prepare(command: ModelState.Command): ModelState.ChangeSet = state.prepare(command)
-  private[state] def commit(changeSet: ModelState.ChangeSet): ModelState.Response = state.commit(changeSet)
+  private[state] def query(request: ModelState.Query): Try[ModelState.JsonObject] = Try { state.query(request) }
+  private[state] def prepare(command: ModelState.Command): Try[ModelState.ChangeSet] = Try { state.prepare(command) }
+  private[state] def commit(changeSet: ModelState.ChangeSet): Try[ModelState.Response] = changeSet.commit(state)
 
   override def receiveRecover: Receive = {
     case RecoveryCompleted => saveSnapshot(ModelState.toJson(state))
-    case SnapshotOffer(_, json: String) => setState(ModelState.fromJson(id = modelId, json = json))
+    case SnapshotOffer(_, json: String) => setState(ModelState.fromJson(id = modelId, jsonString = json))
     case e: ModelState.ChangeSet => commit(e)
   }
 
-  private[state] def execute(user: String, changeSet: ModelState.ChangeSet): Unit = {
+  private[state] def execute(user: ActorRef, changeSet: ModelState.ChangeSet): Unit = {
     persist(changeSet) {
       changeSet => {
-        Try { commit(changeSet) } match {
-          case Failure(error) => {
-            execute(user, Left(changeSet.command), error)
-            saveSnapshot(ModelState.toJson(state))
-          }
+        commit(changeSet) match {
           case Success(response) => {
-            dispatchAll(response)
-            answerDirectly(response, user)
+            dispatchAll(response, user)
             if (!changeSet.simple) {
               saveSnapshot(ModelState.toJson(state))
             }
@@ -54,79 +78,66 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
             // TODO:   saveSnapshot(ModelState.toJson(state))
             // TODO: }
           }
+          case Failure(error) => {
+            execute(user, Left(changeSet.command), error)
+            saveSnapshot(ModelState.toJson(state))
+          }
         }
       }
     }
   }
 
-  private[state] def execute(user: String, request: Either[ModelState.Request, String], error: Throwable): Unit = {
+  private[state] def execute(user: ActorRef, request: Either[ModelState.Request, String], error: Throwable): Unit = {
     log.error(error, error.getMessage)
     val fail = ModelState.Responses.ModelStateError(state.model.id, request, error)
     dispatchUser(fail, user)
-    answerDirectly(fail, user)
   }
 
-  private[state] def execute(user: String, command: ModelState.Command): Unit = {
-    Try { prepare(command) } match {
+  private[state] def execute(user: ActorRef, command: ModelState.Command): Unit = {
+    prepare(command) match {
       case Success(changeSet) => execute(user, changeSet)
       case Failure(error) => execute(user, Left(command), error)
     }
   }
 
-  private[state] def execute(user: String, request: ModelState.Query): Unit = {
-    Try { query(request) } match {
-      case Failure(error) => execute(user, Left(request), error)
+  private[state] def execute(user: ActorRef, request: ModelState.Query): Unit = {
+    query(request) match {
       case Success(json) => {
         val response = ModelState.Responses.ModelObjectJson(modelId, request, json)
         dispatchUser(response, user)
-        answerDirectly(response, user)
+      }
+      case Failure(error) => {
+        execute(user, Left(request), error)
       }
     }
   }
 
-  private[state] def execute(user: String, noop: ModelState.Noop): Unit = {
+  private[state] def execute(user: ActorRef, noop: ModelState.Noop): Unit = {
     val response = ModelState.Responses.ModelStateNoop(modelId)
     dispatchUser(response, user)
-    answerDirectly(response, user)
   }
 
-  private def dispatchAll(response: ModelState.Response): Unit = {
-    subscribers.values.foreach(_ ! response)
+  @inline private def dispatchAll(response: ModelState.Response, user: ActorRef): Unit = {
+    dispatcher ! response
   }
 
-  private def dispatchUser(response: ModelState.Response, user: String): Unit = {
-    subscribers.get(user).foreach(_ ! response)
+  @inline private def dispatchUser(response: ModelState.Response, user: ActorRef): Unit = {
+    user ! response
   }
-
-  private def answerDirectly(response: ModelState.Response, user: String) = {
-    subscribers.get(user) match {
-      case None => sender() ! response
-      case _ =>
-    }
-  }
-
-  private def _name(actorRef: ActorRef): String = actorRef.path.name
 
   override def receiveCommand: Receive = akka.event.LoggingReceive {
-    case Terminated(user) => {
-      val name = _name(user)
-      this.subscribers -= name
+    case StateActor.SubscriberSend(cmd) => cmd match {
+      case command: ModelState.Command => execute(sender(), command)
+      case query: ModelState.Query => execute(sender(), query)
+      case noop @ ModelState.Noop() => execute(sender(), noop)
     }
     case StateActor.SubscriberJoin() => {
       val user = sender()
-      val name = _name(user)
-      this.subscribers += (name -> user)
-      context.watch(user)
-      execute(name, ModelState.Queries.GetModel(id = state.model.id))
+      dispatcher ! user
+      execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
     case StateActor.SubscriberFail(request, error) => {
-      // TODO: move this case out ot the StateActor
-      execute(_name(sender()), Right(request), error)
-    }
-    case StateActor.SubscriberSend(cmd) => cmd match {
-      case query: ModelState.Query => execute(_name(sender()), query)
-      case command: ModelState.Command => execute(_name(sender()), command)
-      case noop @ ModelState.Noop() => execute(_name(sender()), noop)
+      execute(sender(), Right(request), error) // should never happen
     }
 
     case SaveSnapshotSuccess(_) =>
@@ -135,6 +146,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     case SaveSnapshotFailure(_, _) =>
     case DeleteSnapshotFailure(_, _) =>
     case DeleteSnapshotsFailure(_, _) =>
+
   }
 
 }

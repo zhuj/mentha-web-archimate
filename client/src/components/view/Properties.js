@@ -32,7 +32,7 @@ class Palette extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const view = state.model.views[ownProps.id] || {};
-  const selection = view['selection'] || [];
+  const selection = view['.selection'] || [];
 
   return {
     id: ownProps.id,

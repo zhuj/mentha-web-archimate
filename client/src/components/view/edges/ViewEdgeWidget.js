@@ -10,7 +10,7 @@ export const viewEdgeWidget = (props) => {
     return (<ViewPrototypeLinkWidget {...props}/>)
   } else {
     switch (viewObject['_tp']) {
-      case 'viewRelationship': return viewRelationshipWidget({ conceptInfo: viewObject.conceptInfo, ...props});
+      case 'viewRelationship': return viewRelationshipWidget({ conceptInfo: viewObject['.conceptInfo'], ...props});
       case 'viewConnection': return (<ViewConnectionWidget {...props}/>);
     }
   }

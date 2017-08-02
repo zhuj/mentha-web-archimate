@@ -17,75 +17,80 @@ object Implementation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: WorkPackage)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
+    def `accesses`($0: AccessType) = new {
+      def `of`(dst: Deliverable)(implicit model: Model): AccessRelationship = _accesses_of(src, dst)($0)(model)
+      def `of`(dst: Grouping)(implicit model: Model): AccessRelationship = _accesses_of(src, dst)($0)(model)
+    }
+
     def `triggers`(dst: Grouping)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: WorkPackage)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
 
-    def `flows`($0: String)(implicit model: Model) = new {
+    def `flows`($0: String) = new {
       def `to`(dst: Grouping)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: WorkPackage)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `influences`($0: String)(implicit model: Model) = new {
-      def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+    def `influences`($0: String) = new {
       def `in`(dst: Grouping)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `reads`(dst: Deliverable)(implicit model: Model): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping)(implicit model: Model): AccessRelationship = _reads(src, dst)(model)
 
-    def `realizes`(dst: ApplicationCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationComponent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: ApplicationService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessActor)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessRole)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: BusinessService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Capability)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: CommunicationNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Constraint)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: CourseOfAction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Deliverable)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Device)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: DistributionNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Equipment)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Facility)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Location)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Node)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Path)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Plateau)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Product)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Requirement)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Resource)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: SystemSoftware)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: TechnologyService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationComponent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: ApplicationService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessActor)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessRole)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: BusinessService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Capability)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: CommunicationNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Constraint)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: CourseOfAction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Device)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: DistributionNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Equipment)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Facility)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Node)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Path)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Plateau)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Requirement)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Resource)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: SystemSoftware)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyEvent)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyFunction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyInteraction)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: TechnologyService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
     def `writes`(dst: Deliverable)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
@@ -101,17 +106,17 @@ object Implementation {
     def `specializes`(dst: Deliverable)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
-      def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+    def `influences`($0: String) = new {
       def `in`(dst: Grouping)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `realizes`(dst: ApplicationCollaboration)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
@@ -143,15 +148,12 @@ object Implementation {
     def `realizes`(dst: DistributionNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Equipment)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Facility)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Location)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Material)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Node)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Path)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Plateau)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Product)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Representation)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
@@ -164,6 +166,9 @@ object Implementation {
     def `realizes`(dst: TechnologyInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: TechnologyProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: TechnologyService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
  }
   implicit class ImplicitImplementationEvent(src: ImplementationEvent) {
@@ -176,28 +181,33 @@ object Implementation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: ImplementationEvent)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
+    def `accesses`($0: AccessType) = new {
+      def `of`(dst: Deliverable)(implicit model: Model): AccessRelationship = _accesses_of(src, dst)($0)(model)
+      def `of`(dst: Grouping)(implicit model: Model): AccessRelationship = _accesses_of(src, dst)($0)(model)
+    }
+
     def `triggers`(dst: Grouping)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: ImplementationEvent)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Plateau)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: WorkPackage)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
 
-    def `flows`($0: String)(implicit model: Model) = new {
+    def `flows`($0: String) = new {
       def `to`(dst: Grouping)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: ImplementationEvent)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: WorkPackage)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `influences`($0: String)(implicit model: Model) = new {
-      def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+    def `influences`($0: String) = new {
       def `in`(dst: Grouping)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `reads`(dst: Deliverable)(implicit model: Model): AccessRelationship = _reads(src, dst)(model)
@@ -311,28 +321,32 @@ object Implementation {
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Plateau)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
+    def `accesses`($0: AccessType) = new {
+      def `of`(dst: Grouping)(implicit model: Model): AccessRelationship = _accesses_of(src, dst)($0)(model)
+    }
+
     def `triggers`(dst: Grouping)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: ImplementationEvent)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Plateau)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
-    def `triggers`(dst: WorkPackage)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
+    @derived def `triggers`(dst: WorkPackage)(implicit model: Model): TriggeringRelationship = _triggers(src, dst)(model)
 
-    def `flows`($0: String)(implicit model: Model) = new {
+    def `flows`($0: String) = new {
       def `to`(dst: Grouping)(implicit model: Model): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
     def `assigned-to`(dst: Grouping)(implicit model: Model): AssignmentRelationship = _assigned_to(src, dst)(model)
 
-    def `influences`($0: String)(implicit model: Model) = new {
-      def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+    def `influences`($0: String) = new {
       def `in`(dst: Constraint)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Assessment)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Driver)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Goal)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Meaning)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Outcome)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Principle)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      @derived def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `reads`(dst: Grouping)(implicit model: Model): AccessRelationship = _reads(src, dst)(model)
@@ -366,14 +380,11 @@ object Implementation {
     def `realizes`(dst: DistributionNetwork)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Equipment)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Facility)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Location)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Material)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Node)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Path)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
-    def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Product)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Representation)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
@@ -386,6 +397,9 @@ object Implementation {
     def `realizes`(dst: TechnologyInterface)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: TechnologyProcess)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: TechnologyService)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
+    @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 

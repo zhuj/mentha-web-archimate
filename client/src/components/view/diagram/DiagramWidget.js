@@ -118,7 +118,7 @@ export class DiagramWidget extends React.Component {
   }
 
   onChange(action) {
-
+    return false;
   }
 
   getDiagramModel() {

@@ -55,7 +55,7 @@ object MkEdges extends MkModel {
     // accessRelationship
     val o6l = in(view) node { businessProcess } place(directions.Down, o5l)
     val o6r = in(view) node { businessObject } place(directions.Right, o6l)
-    in(view) edge { _reads_and_writes($(o6l), $(o6r)) }
+    in(view) edge { $(o6l) `accesses` ReadWriteAccess `of` $(o6r) }
     in(view) connect ( o6r, in(view) notes "Access Relationship" doubleWidth() place(directions.Right, o6r) )
 
     // influenceRelationship

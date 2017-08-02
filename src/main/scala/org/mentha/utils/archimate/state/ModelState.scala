@@ -10,6 +10,7 @@ object ModelState {
 
   import play.api.libs.json._
 
+  type JsonObject = json.JsonObject
   type Type = String
   type ID = Identifiable.ID
 
@@ -476,7 +477,7 @@ object ModelState {
 
     case class SetModel(command: Commands.SetModel) extends ChangeSet {
       override def commit(state: ModelState): Try[Response] = Try {
-        state.model = json.fromJsonPair(command.params)
+        state.model = org.mentha.utils.archimate.model.json.fromJsonPair(command.params) withId(state.model.id)
         Responses.ModelObjectJson(state.model.id, null, json.toJsonPair(state.model))
       }
     }
@@ -650,13 +651,13 @@ object ModelState {
   }
 
   /** deserialize from string */
-  private[state] def fromJson(id: ID, json: String): ModelState = new ModelState(
-    org.mentha.utils.archimate.model.json.fromJsonString(json) withId(id)
+  private[state] def fromJson(id: ID, jsonString: String): ModelState = new ModelState(
+    json.fromJsonString(jsonString) withId(id)
   )
 
   /** serialize to string */
   private[state] def toJson(state: ModelState): String = {
-    org.mentha.utils.archimate.model.json.toJsonString(state.model)
+    json.toJsonString(state.model)
   }
 
 }
@@ -693,9 +694,5 @@ class ModelState(private[state] var model: Model = new Model) {
   private def concept(id: ID): Concept = model.concept[Concept](id)
   private def view(viewId: ID): View = model.view(viewId)
   private def viewObject(viewId: ID, id: ID): ViewObject = view(viewId).get[ViewObject](id)
-
-  def commit(changeSet: ChangeSet): Response = {
-    changeSet.commit(this).get
-  }
 
 }
