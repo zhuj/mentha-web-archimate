@@ -113,7 +113,7 @@ const updateDiagramModel = (view, diagramModel) => {
 };
 
 const diagramModelInState = (props, diagramModel) => {
-  const timerName = `diagramModelInState-${props.id}`;
+  const timerName = `view-diagram-update-model-${props.id}`;
   console.time(timerName);
   try {
     return {
@@ -242,7 +242,7 @@ class ViewDiagram extends DiagramWidget {
       // const ctrl = (event.metaKey || event.ctrlKey);
 
       // Delete all selected
-      if ([8, 46].indexOf(event.keyCode) !== -1) {
+      if (event.keyCode === 46) {
         const selectedItems = diagramModel.getSelectedItems();
         if (selectedItems.length > 0) {
           this.props.sendModelCommands(
@@ -295,12 +295,18 @@ class ViewDiagram extends DiagramWidget {
   }
 
   render() {
-    const { connectDropTarget } = this.props;
-    return connectDropTarget(
-      <div className='diagram-root'>
-        { super.render() }
-      </div>
-    );
+    // const timerName = `view-diagram-render-${this.props.id}`;
+    // console.time(timerName);
+    try {
+      const {connectDropTarget} = this.props;
+      return connectDropTarget(
+        <div className='diagram-root'>
+          {super.render()}
+        </div>
+      );
+    } finally {
+      // console.timeEnd(timerName);
+    }
   }
 }
 

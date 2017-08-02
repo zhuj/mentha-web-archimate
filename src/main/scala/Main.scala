@@ -1,3 +1,5 @@
+
+import com.typesafe.config.Config
 import org.mentha.utils.archimate.state._
 
 object Main {
@@ -10,8 +12,36 @@ object Main {
   import scala.concurrent._
   import scala.concurrent.duration._
 
-  import akka.http.scaladsl.Http
+  import akka.http.scaladsl._
   import akka.http.scaladsl.server.Directives._
+
+
+  def getSSLContext(config: Config) : HttpsConnectionContext = {
+
+    import java.nio.file._
+    import java.security._
+    import javax.net.ssl._
+
+    val ks: KeyStore = KeyStore.getInstance("JKS")
+
+    val keystorePath = config.getString("keystore.path")
+    val keystorePassword = config.getString("keystore.password").toCharArray
+
+    val keystore = Files.newInputStream(Paths.get(keystorePath))
+
+    require(keystore != null, "Keystore required!")
+    ks.load(keystore, keystorePassword)
+
+    val keyManagerFactory: KeyManagerFactory = KeyManagerFactory.getInstance("SunX509")
+    keyManagerFactory.init(ks, keystorePassword)
+
+    val tmf: TrustManagerFactory = TrustManagerFactory.getInstance("SunX509")
+    tmf.init(ks)
+
+    val sslContext: SSLContext = SSLContext.getInstance("TLS")
+    sslContext.init(keyManagerFactory.getKeyManagers, tmf.getTrustManagers, new SecureRandom)
+    ConnectionContext.https(sslContext)
+  }
 
   def main(args: Array[String]): Unit = {
 
@@ -29,23 +59,27 @@ object Main {
     //#websocket-request-handling
     val route = path("model" / Remaining) { id =>
         handleWebSocketMessages {
-          val actorRef = Await.result(
-            storageActor
-              .ask(StorageActor.Request(id))
-              .map { case StorageActor.Response(ref) => ref },
-            timeout.duration
+          UserActor.newUser(
+            modelId = id,
+            stateActor = Await.result(
+              storageActor
+                .ask(StorageActor.Request(id))
+                .map { case StorageActor.Response(ref) => ref },
+              timeout.duration
+            )
           )
-          UserActor.newUser(stateActor = actorRef)
         }
     }
     //#websocket-request-handling
 
-    val bindingFuture = Http().bindAndHandle(route, interface = "0.0.0.0", port = 8088)
+    val http = Http()
+    // TODO: http.setDefaultServerHttpContext(getSSLContext(system.settings.config))
+
+    val bindingFuture = http.bindAndHandle(route, interface = "0.0.0.0", port = 8088)
 
     println(s"Server online at http://localhost:8088/model/{model}\nPress RETURN to stop...")
     scala.io.StdIn.readLine()
 
-    import system.dispatcher // for the future transformations
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done

@@ -8,16 +8,19 @@ import akka.stream.scaladsl._
 
 import scala.util._
 
+/**
+  *
+  */
 object UserActor {
   case class Connected(outgoing: ActorRef)
   case class IncomingMessage(text: String)
   case class OutgoingMessage(text: String)
 
   //#websocket-flow
-  def newUser(stateActor: ActorRef)(implicit system: ActorSystem): Flow[ws.Message, ws.Message, NotUsed] = {
+  def newUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem): Flow[ws.Message, ws.Message, NotUsed] = {
 
     // new connection - new user actor
-    val userActor = system.actorOf(Props(new UserActor(stateActor)))
+    val userActor = system.actorOf(Props(new UserActor(modelId, stateActor)))
 
     // new actor (it will send incoming messages to the userActor)
     // also it will kill the userActor on complete of the input stream
@@ -27,7 +30,7 @@ object UserActor {
     import scala.concurrent.duration._
     val in = Flow[ws.Message]
       .collect { case ws.TextMessage.Strict(text) => UserActor.IncomingMessage(text) }
-      .keepAlive( 30 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
+      .keepAlive( 45 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
       .to { actorRefSink }
 
     // jet another actor (it will subscribe to the userActor answers)
@@ -42,7 +45,11 @@ object UserActor {
 
 }
 
-class UserActor(stateActor: ActorRef) extends Actor {
+/**
+  * It parses the incoming message (text) to a request, then sends it to the StateActor
+  * @param stateActor
+  */
+class UserActor(modelId: String, stateActor: ActorRef) extends Actor {
 
   def receive: Receive = {
     case UserActor.Connected(outgoing) => context.become(connected(outgoing))
@@ -55,11 +62,16 @@ class UserActor(stateActor: ActorRef) extends Actor {
     // then return the new receive handler
     {
       case UserActor.IncomingMessage(text) => {
-        val msg = Try { ModelState.parseMessage(text) } match {
-          case Success(request) => StateActor.SubscriberSend(request)
-          case Failure(error) => StateActor.SubscriberFail(text, error)
+        Try { ModelState.parseMessage(text) } match {
+          case Success(request) => stateActor ! StateActor.SubscriberSend(request)
+          case Failure(error) => if (true) {
+            outgoing ! UserActor.OutgoingMessage(
+              ModelState.Responses.ModelStateError(modelId, Right(text), error).toJson.toString
+            )
+          } else {
+            stateActor ! StateActor.SubscriberFail(text, error)
+          }
         }
-        stateActor ! msg
       }
 
       case response: ModelState.Response => {

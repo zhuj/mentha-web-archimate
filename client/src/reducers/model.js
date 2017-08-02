@@ -66,7 +66,7 @@ const postProcessModel = (model) => ({
       return edge;
     })
   })),
-  ['.hash-local']: hash(model)
+  // TODO: ['.hash-local']: hash(model)
 });
 
 const applyNoop = (model, payload) => {

@@ -60,6 +60,14 @@ trait PathBasedArchimateObject extends ArchimateObject {
 
 }
 
+
+/**
+  *
+  */
+trait ArchimateObjectExtension extends Product {
+
+}
+
 /**
   *
   */
@@ -98,14 +106,13 @@ trait PropsArchimateObject extends ArchimateObject {
   def withProperty(name: String, value: Double): this.type =
     withProperty(name, BigDecimal(value))
 
+   import scala.reflect.ClassTag
+   def extension[E <: ArchimateObjectExtension](implicit tp: ClassTag[E], fjs: json.JsonReader[E]): Option[E] = properties
+     .value.get(tp.runtimeClass.getName)
+     .map { v => v.as[E](fjs) }
 
-  // XXX: import scala.reflect.ClassTag
-  // XXX: def extension[E <: Product](implicit tp: ClassTag[E]): Option[E] = properties
-  // XXX:   .value.get(tp.runtimeClass.getName)
-  // XXX:   .map { v => v.as[E] }
-  // XXX:
-  // XXX: def withExtension[E <: Product](e: E)(implicit tp: ClassTag[E]): this.type =
-  // XXX:   withProperty(tp.runtimeClass.getName, json.toJson(e))
+   def withExtension[E <: ArchimateObjectExtension](e: E)(implicit tp: ClassTag[E], tjs: json.JsonWriter[E]): this.type =
+      withProperty(tp.runtimeClass.getName, json.toJson(e)(tjs))
 
 }
 

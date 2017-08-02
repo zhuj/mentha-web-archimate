@@ -4,6 +4,7 @@ import akka.actor._
 import akka.util._
 import akka.pattern.ask
 
+
 object StorageActor {
 
   case class Request(id: String)
@@ -11,8 +12,12 @@ object StorageActor {
 
 }
 
+/**
+  * It creates StateActor on demand
+  */
 class StorageActor extends Actor with ActorLogging {
 
+  import scala.util._
   import scala.concurrent._
   import scala.concurrent.duration._
 
@@ -22,18 +27,20 @@ class StorageActor extends Actor with ActorLogging {
   override def receive: Receive = akka.event.LoggingReceive {
     case StorageActor.Request(id) => {
       implicit val executionContext: ExecutionContext = context.dispatcher
+      val origin = sender()
       val actorName = s"stateActor-${id}"
-      val actorRef = Await.result(
-        context
-          .actorSelection(self.path / actorName)
-          .ask(Identify(""))
-          .map { case ActorIdentity(_, refOpt) => refOpt },
-        timeoutDuration
-      ) match {
-        case Some(ref) => ref
-        case None => context.actorOf(Props(new StateActor(id)), name = actorName)
-      }
-      sender() ! StorageActor.Response(actorRef)
+      context
+        .actorSelection(self.path / actorName)
+        .ask(Identify(""))
+        .map { case ActorIdentity(_, refOpt) => refOpt }
+        .map {
+          case Some(ref) => ref
+          case None => context.actorOf(Props(new StateActor(id)), name = actorName)
+        }
+        .andThen {
+          case Success(ref) => origin ! StorageActor.Response(ref)
+          case Failure(f) => log.error(f, f.getMessage)
+        }
     }
   }
 
