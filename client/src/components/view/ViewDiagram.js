@@ -15,6 +15,8 @@ import * as models from './diagram/models'
 import { viewNodeWidget } from './nodes/ViewNodeWidget'
 import { viewEdgeWidget } from './edges/ViewEdgeWidget'
 
+import NewLinkMenu from './NewLinkMenu'
+
 import './ViewDiagram.sass.scss'
 
 const updateDiagramModel = (view, diagramModel) => {
@@ -256,9 +258,25 @@ class ViewDiagram extends DiagramWidget {
     };
   }
 
+  removeNewLinks() {
+    this.setState({ ['new-link']: null });
+
+    // TODO: remove the link manually from model instead
+    // this.props.selectViewObjects(this.props.id, []); // just refresh the model from the redux state
+  }
+
   /* @overide: DiagramWidget */
   onChange(action) {
     const viewId = this.props.id;
+
+    // <TEMPORARY>
+    if (!!this.state['new-link']) {
+      console.log(action);
+      this.removeNewLinks();
+      return;
+    }
+    // </TEMPORARY>
+
     switch (action.type) {
       case 'items-sized':
       case 'items-moved': {
@@ -275,15 +293,27 @@ class ViewDiagram extends DiagramWidget {
             .filter((command) => command !== null)
             .value()
         );
-        break;
+        return;
       }
       case 'items-selected-2': {
         _.forEach(action.items, (item) => { item.setSelected(2); });
         this.forceUpdate();
-        break;
+        return;
       }
       case 'title-changed': {
         this.props.sendModelCommands(action.command(viewId));
+        return;
+      }
+      case 'link-created': {
+        // it's a free links, remove/ignore it...
+        this.removeNewLinks();
+        return;
+      }
+      case 'link-connected': {
+        this.setState({
+          ['new-link']: { link: action.linkModel, ...this.getRelativeMousePoint(action.event) }
+        });
+        return;
       }
     }
 
@@ -291,7 +321,49 @@ class ViewDiagram extends DiagramWidget {
       // TODO: check if state has been changed
       this.props.selectViewObjects(viewId, action.items);
     }
+  }
 
+
+  renderNewLinkMenu() {
+    const { ['new-link']: newLinkData } = this.state;
+    if (!newLinkData) { return null; }
+
+    const { link, x: relX, y: relY } = newLinkData;
+    const width = 0;
+    const height = 0;
+
+    const { sourceNode, targetNode } = link;
+
+    return (
+      <div key='link-menu'
+           className='link-menu'
+           style={{
+             marginLeft:relX - width/2,
+             marginTop:relY - height/2
+           }}>
+        <NewLinkMenu
+          linkModel={link}
+          select={(tp)=>{
+            try {
+              this.props.sendModelCommands([
+                api.addViewRelationship(
+                  this.props.id,
+                  api.addRelationship({
+                    _tp: tp,
+                    src: sourceNode.viewObject.concept,
+                    dst: targetNode.viewObject.concept,
+                  }),
+                  sourceNode.id,
+                  targetNode.id
+                )
+              ]);
+            } finally {
+              this.removeNewLinks();
+            }
+          }}
+        />
+      </div>
+    )
   }
 
   render() {
@@ -301,6 +373,7 @@ class ViewDiagram extends DiagramWidget {
       const {connectDropTarget} = this.props;
       return connectDropTarget(
         <div className='diagram-root'>
+          {this.renderNewLinkMenu()}
           {super.render()}
         </div>
       );
@@ -324,8 +397,6 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => ({
   sendModelCommands: (commands) => dispatch(actions.sendModelMessage(api.composite(commands))),
   selectViewObjects: (viewId, selectedObjects) => dispatch(actions.selectViewObjects(viewId, selectedObjects)),
-  //updateViewNodePosAndSize: (viewId) => (voId, pos, size) => dispatch(actions.updateViewNodePosAndSize(viewId, voId, { x:pos.x, y:pos.y }, { width: size.width, height: size.height })),
-  //updateViewEdgePoints: (viewId) => (voId, points) => dispatch(actions.updateViewEdgePoints(viewId, voId, _.chain(points).slice(1, points.length-1).map(p=>({ x:p.x, y:p.y })).value()))
 });
 
 

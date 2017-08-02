@@ -338,7 +338,7 @@ export class DiagramWidget extends React.Component {
         return this.state;
       }
 
-      const internalMouse = this.getInternalMousePoint(event);
+      const internalMouse = this.getInternalMousePoint(clientXY);
       diagramModel.setSelection(() => false);
 
       const link = this.createDefaultLink(mouseElement.ref);
@@ -477,7 +477,7 @@ export class DiagramWidget extends React.Component {
     const diagramModel = this.getDiagramModel();
 
     const { action } = this.state;
-    const actionOutput = { type: this.state['actionType'] };
+    const actionOutput = { type: this.state['actionType'], event: event };
 
     if (action instanceof actions.MouseDownAction) {
 
@@ -536,10 +536,11 @@ export class DiagramWidget extends React.Component {
       // Check if we going to connect a link to something
       if (action.linkLastPointSelection) {
         const link = action.selectedItems[0].link;
+        actionOutput.linkModel = link;
 
         // Check if a point was created
         if (mouseElement.element.tagName === 'circle' && actionOutput.type !== 'link-created') {
-          actionOutput.type = 'point-created';
+          actionOutput.type = 'link-created';
         }
 
         if (mouseElement.ref instanceof models.PortModel) {
@@ -550,9 +551,7 @@ export class DiagramWidget extends React.Component {
 
           // Link was connected to a node, update the output
           actionOutput.type = 'link-connected';
-          delete actionOutput.model;
-          actionOutput.linkModel = link;
-          actionOutput.nodeModel = mouseElement.ref.node;
+          actionOutput.nodeModel = mouseElement.ref.parentNode;
         }
       }
     }
@@ -702,6 +701,9 @@ export class DiagramWidget extends React.Component {
     );
   }
 
+  renderPrefixLayer() {
+    return null;
+  }
 
   render() {
     return (
@@ -717,9 +719,10 @@ export class DiagramWidget extends React.Component {
         // TODO: onTouchEnd={(event)=>this.onMouseUp(...)}
       >
         <div className="diagram-center">
-        {this.renderNodeLayerWidget()}
-        {this.renderLinkLayerWidget()}
-        {this.renderSelector()}
+          {this.renderPrefixLayer()}
+          {this.renderNodeLayerWidget()}
+          {this.renderLinkLayerWidget()}
+          {this.renderSelector()}
         </div>
       </div>
     );

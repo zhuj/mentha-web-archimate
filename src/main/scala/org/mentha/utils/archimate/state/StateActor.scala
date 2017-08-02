@@ -133,7 +133,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     }
     case StateActor.SubscriberJoin() => {
       val user = sender()
-      dispatcher ! user
+      dispatcher.forward(user)
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
     case StateActor.SubscriberFail(request, error) => {
