@@ -57,11 +57,11 @@ const postProcessModel = (model) => ({
   ...model,
   views: _.mapValues(model.views, (view) => ({
     ...view,
-    nodes: _.mapValues(view.nodes, (node) => {
+    nodes: _.mapValues(view.nodes, (node, id) => {
       if (!!node.concept) { return { ...node, ['.conceptInfo']: model.nodes[node.concept] }; }
       return node;
     }),
-    edges: _.mapValues(view.edges, (edge) => {
+    edges: _.mapValues(view.edges, (edge, id) => {
       if (!!edge.concept) { return {...edge, ['.conceptInfo']: model.edges[edge.concept]}; }
       return edge;
     })

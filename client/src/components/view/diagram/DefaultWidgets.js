@@ -262,8 +262,7 @@ export class DefaultLinkWidget extends React.Component {
     }));
   }
 
-  drawLine() {
-    const { link } = this.props;
+  drawLine(link) {
     const { points } = link;
 
     // render the line
@@ -290,10 +289,10 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   render() {
-    const {link} = this.props;
+    const { link } = this.props;
     return (
       <g className={this.getClassName(link)}>
-        {this.drawLine()}
+        {this.drawLine(link)}
       </g>
     );
   }

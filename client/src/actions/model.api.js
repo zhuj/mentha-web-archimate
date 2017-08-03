@@ -60,6 +60,15 @@ export const addViewNodeConcept = (viewId, concept, pos, size) => ({
   }
 });
 
+export const addViewRelationship = (viewId, concept, src, dst) => ({
+  'add-view-relationship': {
+    viewId: viewId,
+    concept: concept,
+    src, dst
+  }
+});
+
+
 export const addViewNotes = (viewId, pos, size) => ({
   'add-view-notes': {
     viewId: viewId,
