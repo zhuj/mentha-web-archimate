@@ -323,6 +323,36 @@ class ViewDiagram extends DiagramWidget {
     }
   }
 
+  onSelectNewLinkType(link, tp) {
+    const { id: viewId } = this.props;
+    const { sourceNode, targetNode } = link;
+    try {
+      if (tp === 'viewConnection') {
+        this.props.sendModelCommands([
+          api.addViewConnection(
+            viewId,
+            sourceNode.id,
+            targetNode.id
+          )
+        ]);
+      } else {
+        this.props.sendModelCommands([
+          api.addViewRelationship(
+            viewId,
+            api.addRelationship({
+              _tp: tp,
+              src: sourceNode.viewObject.concept,
+              dst: targetNode.viewObject.concept,
+            }),
+            sourceNode.id,
+            targetNode.id
+          )
+        ]);
+      }
+    } finally {
+      this.removeNewLinks();
+    }
+  }
 
   renderNewLinkMenu() {
     const { ['new-link']: newLinkData } = this.state;
@@ -331,8 +361,6 @@ class ViewDiagram extends DiagramWidget {
     const { link, x: relX, y: relY } = newLinkData;
     const width = 0;
     const height = 0;
-
-    const { sourceNode, targetNode } = link;
 
     return (
       <div key='link-menu'
@@ -343,24 +371,7 @@ class ViewDiagram extends DiagramWidget {
            }}>
         <NewLinkMenu
           linkModel={link}
-          select={(tp)=>{
-            try {
-              this.props.sendModelCommands([
-                api.addViewRelationship(
-                  this.props.id,
-                  api.addRelationship({
-                    _tp: tp,
-                    src: sourceNode.viewObject.concept,
-                    dst: targetNode.viewObject.concept,
-                  }),
-                  sourceNode.id,
-                  targetNode.id
-                )
-              ]);
-            } finally {
-              this.removeNewLinks();
-            }
-          }}
+          select={(tp)=>{this.onSelectNewLinkType(link, tp)}}
         />
       </div>
     )

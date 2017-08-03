@@ -7,7 +7,7 @@ import akka.pattern.ask
 
 object StorageActor {
 
-  case class Request(id: String)
+  case class Request(modelId: String)
   case class Response(stateActorRef: ActorRef)
 
 }
@@ -25,17 +25,17 @@ class StorageActor extends Actor with ActorLogging {
   private implicit val timeout = Timeout(timeoutDuration)
 
   override def receive: Receive = akka.event.LoggingReceive {
-    case StorageActor.Request(id) => {
+    case StorageActor.Request(modelId) => {
       implicit val executionContext: ExecutionContext = context.dispatcher
       val origin = sender()
-      val actorName = s"stateActor-${id}"
+      val actorName = s"stateActor-${modelId}"
       context
         .actorSelection(self.path / actorName)
         .ask(Identify(""))
         .map { case ActorIdentity(_, refOpt) => refOpt }
         .map {
           case Some(ref) => ref
-          case None => context.actorOf(Props(new StateActor(id)), name = actorName)
+          case None => context.actorOf(Props(new StateActor(modelId)), name = actorName)
         }
         .andThen {
           case Success(ref) => origin ! StorageActor.Response(ref)

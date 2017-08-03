@@ -12,9 +12,34 @@ import scala.xml.XML
 
 object generator {
 
-  val generated = {
+  private val generated = {
     "@javax.annotation.Generated(Array(\""+this.getClass.getName+"\"))"
   }
+
+  private val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
+
+  private val keys = (xml \ "relations" \ "key")
+    .map { el => (el \@ "char").charAt(0) -> ( (el \@ "relationship"), (el \@ "verbs" ) ) }
+    .toMap
+
+  private val association: Char = OtherRelationships.association.key
+  private val rels = (xml \ "relations" \ "source")
+    .flatMap {
+      s => (s \ "target").map {
+        t => (
+          (s \@ "concept"),
+          (t \@ "concept"),
+          (t \@ "relations" + t \@ "derived").filterNot(_ == association).toSet.mkString("").sorted,
+          (t \@ "derived").filterNot(_ == association).toSet
+        )
+      }
+    }
+    .filterNot {
+      case (_, _, r, _) => r.isEmpty
+    }
+    .filterNot {
+      case (_, d, _, _) => d == "Junction"
+    }
 
   def elements(): Unit = {
 
@@ -60,31 +85,6 @@ object generator {
       stream
     }
 
-    val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
-
-    val keys = (xml \ "relations" \ "key")
-      .map { el => (el \@ "char").charAt(0) -> ( (el \@ "relationship"), (el \@ "verbs" ) ) }
-      .toMap
-
-    val association: Char = OtherRelationships.association.key
-    val rels = (xml \ "relations" \ "source")
-      .flatMap {
-        s => (s \ "target").map {
-          t => (
-            (s \@ "concept"),
-            (t \@ "concept"),
-            (t \@ "relations" + t \@ "derived").filterNot(_ == association).toSet.mkString("").sorted,
-            (t \@ "derived").filterNot(_ == association).toSet
-          )
-        }
-      }
-      .filterNot {
-        case (_, _, r, _) => r.isEmpty
-      }
-      .filterNot {
-        case (_, d, _, _) => d == "Junction"
-      }
-
     val relsMap = rels
       .groupBy { case (src, _, _, _) => src }
 
@@ -94,7 +94,6 @@ object generator {
     val layers = elements
       .map { case (_, (layer, _, _)) => layer }
       .toSet
-
 
     // element classes
     {
@@ -178,6 +177,7 @@ object generator {
       writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
       writer.println()
 
+      writer.println("// "+generated)
       writer.println("package object dsl {")
 
       writer.println()
@@ -292,12 +292,71 @@ object generator {
         }
       }
 
-
     }
   }
 
+  def relationships(): Unit = {
+
+    val relsMap = rels
+      .filter { case (src, dst, _, _) => (src != "Junction") && (dst != "Junction") }
+      .groupBy { case (src, _, _, _) => src }
+
+    // possible relationships
+    {
+      val stream = new StringBuilderWriter(4096)
+      val writer = new PrintWriter(stream)
+
+      writer.println("package org.mentha.utils.archimate.model.edges.validator")
+      writer.println()
+
+      writer.println("import org.mentha.utils.archimate.model._")
+      writer.println("import org.mentha.utils.archimate.model.edges._")
+      writer.println("import org.mentha.utils.archimate.model.nodes._")
+      writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
+      writer.println()
+
+      writer.println("// "+generated)
+      writer.println("package object impl extends Validation {")
+      writer.println()
+
+      writer.println("  import MotivationElements._")
+      writer.println("  import StrategyElements._")
+      writer.println("  import BusinessElements._")
+      writer.println("  import ApplicationElements._")
+      writer.println("  import TechnologyElements._")
+      writer.println("  import PhysicalElements._")
+      writer.println("  import ImplementationElements._")
+      writer.println("  import CompositionElements._")
+      writer.println()
+
+      writer.println("  val data: Map[(Meta, Meta), (String, String)] = (")
+      for { (src, items) <- relsMap } {
+        writer.println(s"    in(${StringUtils.uncapitalize(src)}) { source => ")
+        for { (_, dst, r1, r2 ) <- items } {
+          writer.println("      source.register("+StringUtils.uncapitalize(dst)+", \""+r1.sorted+"\", \""+r2.mkString("").sorted+"\")")
+        }
+        writer.println(s"    } ++ ")
+      }
+      writer.println("    Nil")
+      writer.println("  ).toMap")
+
+      writer.println()
+      writer.println("}")
+
+      FileUtils.write(
+        new java.io.File("src/main/scala/org/mentha/utils/archimate/model/edges/validator/impl/package.scala"),
+        stream.toString,
+        "UTF-8"
+      )
+    }
+
+  }
+
+
+
   def main(args: Array[String]): Unit = {
     elements()
+    relationships()
   }
 
 }
