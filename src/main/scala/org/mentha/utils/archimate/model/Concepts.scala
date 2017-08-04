@@ -18,8 +18,8 @@ object Concepts {
   */
 sealed abstract class Concept extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
   def meta: ConceptMeta[_]
-  private[model] def checkIncomingRelationship(incoming: Relationship): Boolean = incoming.meta.isLinkPossible(incoming.source.meta, this.meta)
-  private[model] def checkOutgoingRelationship(outgoing: Relationship): Boolean = outgoing.meta.isLinkPossible(this.meta, outgoing.target.meta)
+  private[model] def checkIncomingRelationship(incoming: Relationship): Boolean = true
+  private[model] def checkOutgoingRelationship(outgoing: Relationship): Boolean = true
 }
 
 /**
@@ -69,6 +69,7 @@ abstract class RelationshipConnector extends NodeConcept {
   * @param target
   */
 abstract class Relationship(val source: Concept, val target: Concept) extends EdgeConcept {
+  require(meta.isLinkPossible(source.meta, target.meta), s"Link ${source.meta.name} -> ${target.meta.name} with type ${meta.name} is not possible.")
   require(target.checkIncomingRelationship(this))
   require(source.checkOutgoingRelationship(this))
 

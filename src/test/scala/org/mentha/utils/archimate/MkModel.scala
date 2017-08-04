@@ -20,6 +20,8 @@ class MkModel {
     implicit val executionContext = system.dispatcher
     implicit val materializer = ActorMaterializer()
 
+    Thread.sleep(250)
+
     val sink = Sink.foreach[Message] {
         case message: TextMessage.Strict => println(">> RESPONSE: " + message.text)
         case message => println(">> RESPONSE: " + message)
@@ -30,7 +32,13 @@ class MkModel {
     val (upgradeResponse, closed) = Http().singleWebSocketRequest(WebSocketRequest(s"ws://127.0.0.1:8088/model/${id}"), flow)
     val connected = upgradeResponse.map { _ => Done }
 
-    connected.onComplete(_ => system.terminate())
+    Thread.sleep(250)
+
+    connected.onComplete(_ => {
+      Thread.sleep(500)
+      system.terminate()
+    })
+
     closed.foreach(_ => println("closed"))
   }
 
