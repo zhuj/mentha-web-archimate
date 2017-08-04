@@ -41,6 +41,8 @@ dependencies {
     compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
 
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
+
     compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
 
     //compile "com.typesafe.play:play_${scalaLibVersion}:${playVersion}"

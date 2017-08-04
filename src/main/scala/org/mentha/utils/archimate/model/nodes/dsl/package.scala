@@ -3,6 +3,7 @@ package org.mentha.utils.archimate.model.nodes
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes.impl._
 
+// @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 package object dsl {
 
   /** @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757969 Derivation Rules ArchiMate® 3.0 Specification ]] */

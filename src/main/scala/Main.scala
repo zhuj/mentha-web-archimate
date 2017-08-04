@@ -1,4 +1,5 @@
 
+import akka.http.scaladsl.server.Route
 import com.typesafe.config.Config
 import org.mentha.utils.archimate.state._
 
@@ -52,14 +53,15 @@ object Main {
   // TODO: https://www.playframework.com/documentation/2.6.x/ScalaWebSockets
   // TODO: https://github.com/playframework/play-scala-websocket-example
 
+
   //#websocket-request-handling
-  private  val route = path("model" / Remaining) { id =>
+  private def modelWebSocket(modelId: String): Route = {
     handleWebSocketMessages {
       UserActor.newUser(
-        modelId = id,
+        modelId = modelId,
         stateActor = Await.result(
           storageActor
-            .ask(StorageActor.Request(id))
+            .ask(StorageActor.Request(modelId))
             .map { case StorageActor.Response(ref) => ref },
           timeout.duration
         )
@@ -67,6 +69,8 @@ object Main {
     }
   }
   //#websocket-request-handling
+
+  private val route = path("model" / Remaining) { modelWebSocket }
 
   private val binding = Await.result(
     {

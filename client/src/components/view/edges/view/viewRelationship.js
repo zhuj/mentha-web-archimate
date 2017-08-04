@@ -31,16 +31,16 @@ export const viewRelationshipWidget = (props) => {
   return null;
 };
 
-export const relationships = [
-  'compositionRelationship',
-  'aggregationRelationship',
-  'assignmentRelationship',
-  'realizationRelationship',
-  'servingRelationship',
-  'accessRelationship',
-  'influenceRelationship',
-  'triggeringRelationship',
-  'flowRelationship',
-  'specializationRelationship',
-  'associationRelationship'
-];
+export const relationships = {
+  ['c']:'compositionRelationship',
+  ['g']:'aggregationRelationship',
+  ['i']:'assignmentRelationship',
+  ['r']:'realizationRelationship',
+  ['v']:'servingRelationship',
+  ['a']:'accessRelationship',
+  ['n']:'influenceRelationship',
+  ['t']:'triggeringRelationship',
+  ['f']:'flowRelationship',
+  ['s']:'specializationRelationship',
+  ['o']:'associationRelationship'
+};
