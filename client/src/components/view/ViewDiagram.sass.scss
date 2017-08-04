@@ -57,8 +57,9 @@
   div.link-menu {
     pointer-events: all;
     position: absolute;
+    transform: translate(-50%, -50%);
     z-index: 1300; // interface z-index
-    border: 1px solid black;
+    //border: 1px solid black;
     //background-color: white;
   }
 

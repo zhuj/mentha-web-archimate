@@ -262,7 +262,7 @@ class ViewDiagram extends DiagramWidget {
     this.setState({ ['new-link']: null });
 
     // TODO: remove the link manually from model instead
-    // this.props.selectViewObjects(this.props.id, []); // just refresh the model from the redux state
+    this.props.selectViewObjects(this.props.id, []); // just refresh the model from the redux state
   }
 
   /* @overide: DiagramWidget */

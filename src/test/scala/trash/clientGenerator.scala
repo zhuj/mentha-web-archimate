@@ -29,7 +29,7 @@ object clientGenerator {
     import play.api.libs.json._
 
     val json = Json.toJsObject(
-      impl.data.map { case ((s,d), x) => s"${s}-${d}" -> x }
+      impl.data.map { case ((s,d), (x, _)) => s"${s}-${d}" -> x }
     )
 
     writer.println("export const constraints = (")
