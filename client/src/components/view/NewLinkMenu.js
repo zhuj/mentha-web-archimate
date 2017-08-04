@@ -77,12 +77,8 @@ class NewLinkMenu extends React.Component {
       }
 
       const srcTp = srcCnt['_tp'], dstTp = dstCnt['_tp'];
-      const s = constraints[`${srcTp}-${dstTp}`];
-      if (!s) {
-        return null;
-      }
-
-      const rels = _.map(s[0].split(''), (c) => relationships[c]);
+      const s = 'o' + (constraints[`${srcTp}-${dstTp}`] || '');
+      const rels = _.map(s.split(''), (c) => relationships[c]);
       return [
         ... _.map(rels, (rel) => this.renderRelationItem(rel, rel.replace('Relationship', ''))),
         <Divider key="divider"/>
