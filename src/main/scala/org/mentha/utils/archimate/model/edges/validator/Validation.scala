@@ -1,9 +1,10 @@
 package org.mentha.utils.archimate.model.edges.validator
 
-import org.mentha.utils.archimate.model.Element
-import org.mentha.utils.archimate.model.nodes.ElementMeta
+import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.nodes._
 
-class Validation {
+abstract class Validation {
 
   type Meta = String //ElementMeta[_ <: Element]
   type RecordKey = (Meta, Meta)
@@ -22,5 +23,30 @@ class Validation {
     block(registry)
     registry.result
   }
+
+  def data: Map[RecordKey, RecordValue]
+
+  def validate(src: ElementMeta[_], dst: ElementMeta[_], rel: RelationshipMeta[_]): Boolean = {
+    (rel == OtherRelationships.association) || {
+      data.get((src.name, dst.name)).exists { case (all, _) => all.contains(rel.key.toString) }
+    }
+  }
+
+  def validate(src: ConceptMeta[_], dst: ConceptMeta[_], rel: RelationshipMeta[_]): Boolean = {
+    (rel == OtherRelationships.association) || {
+      if (src.isInstanceOf[ElementMeta[_]] && dst.isInstanceOf[ElementMeta[_]]) {
+        validate(
+          src.asInstanceOf[ElementMeta[_]],
+          dst.asInstanceOf[ElementMeta[_]],
+          rel
+        )
+      } else if (src.isInstanceOf[RelationshipConnectorMeta[_]] || dst.isInstanceOf[RelationshipConnectorMeta[_]]) {
+        true
+      } else {
+        false
+      }
+    }
+  }
+
 
 }

@@ -8,7 +8,9 @@ import scala.reflect.ClassTag
 abstract class RelationshipMeta[T <: Relationship](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
 
   def key: Char = ???
-  def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = true // TODO: implement me: use generator & matrices
+  def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = {
+    validator.impl.validate(sourceMeta, targetMeta, this)
+  }
 
   override def toString: String = s"RelationshipMeta(${name})"
 
