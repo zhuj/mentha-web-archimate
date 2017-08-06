@@ -9,7 +9,7 @@ abstract class RelationshipMeta[T <: Relationship](implicit override val classTa
 
   def key: Char = ???
   def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = {
-    validator.impl.validate(sourceMeta, targetMeta, this)
+    validator.validate(sourceMeta, targetMeta, this)
   }
 
   override def toString: String = s"RelationshipMeta(${name})"
