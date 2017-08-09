@@ -15,8 +15,8 @@ import scala.xml.{Node, NodeSeq, XML}
 
 object Convert extends MkModel {
 
-  val allMeta: Seq[ConceptMeta[_]] = edges.allRelations ++ nodes.allNodes
-  val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m.asInstanceOf[ConceptMeta[Concept]]) }.toMap
+  val allMeta: Seq[ConceptMeta[Concept]] = edges.allRelations ++ nodes.allNodes
+  val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m) }.toMap
 
   val tpTransformation: PartialFunction[String, String] = {
     case "usedByRelationship" => "servingRelationship"

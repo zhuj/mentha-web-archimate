@@ -3,14 +3,15 @@ package org.mentha.utils.archimate.model
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.hash.Hash
 import org.mentha.utils.archimate.model.view._
-import play.api.libs.json.Json.JsValueWrapper
 
 import scala.util.control.NonFatal
 
 package object json {
 
   import play.api.libs.json._
+  import play.api.libs.json.Json.JsValueWrapper
 
   type JsonReader[A] = Reads[A]
   type JsonWriter[A] = Writes[A]
@@ -34,25 +35,23 @@ package object json {
 
   def toJson[T](o: T)(implicit tjs: JsonWriter[T]): JsonValue = Json.toJson(o)(tjs)
 
-  private[json] object hash {
+  private[json] object hash extends Hash {
 
-    @inline def _bool(b: JsonBoolean): Long = b.value.hashCode
-    @inline def _str(s: JsonString): Long = s.value.hashCode
-    @inline def _num(n: JsonNumber): Long = (n.value*1024).toLong
+    @inline def _bool(b: JsonBoolean): Int = _bool(b.value)
+    @inline def _str(s: JsonString): Int = _str(s.value)
+    @inline def _num(n: JsonNumber): Int = _num(n.value)
 
-    @inline def _add(h: Long, v: Long): Long = ((h<<5)-h) + v
+    def _obj(o: JsonObject): Int = _obj(o.fields:_*)
+    def _arr(a: JsonArray): Int = _arr(a.value)
 
-    def _obj(o: JsonObject): Long = o.fields.foldLeft(0l) { case (h, (k, v)) => _add(h, k.hashCode ^ hash(v)) }
-    def _arr(a: JsonArray): Long = a.value.foldLeft(0l) { case (h, v) => _add(h, hash(v)) }
-
-    def hash(v: JsonValue): Long = v match {
+    override def hash(v: Any): Int = v match {
       case o: JsonObject => _obj(o)
       case a: JsonArray => _arr(a)
       case s: JsonString => _str(s)
       case n: JsonNumber => _num(n)
       case b: JsonBoolean => _bool(b)
-      case play.api.libs.json.JsNull => 0l
-      case _ => throw new IllegalStateException(s"Unsupported type: ${v}")
+      case play.api.libs.json.JsNull => 0
+      case _ => super.hash(v)
     }
 
   }
@@ -278,9 +277,9 @@ package object json {
   }
 
   def fillRelationship(rel: Relationship, json: JsValue): Relationship = fillArchimateObject(rel, json) match {
-    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess(_) }; a
-    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence(_) }; i
-    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows(_) }; f
+    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess }; a
+    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence }; i
+    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows }; f
     case r => r
   }
 

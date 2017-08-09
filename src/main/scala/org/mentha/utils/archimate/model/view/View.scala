@@ -3,7 +3,6 @@ package org.mentha.utils.archimate.model.view
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.utils.Utils
 
-import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
 case class Point(x: Double, y: Double)

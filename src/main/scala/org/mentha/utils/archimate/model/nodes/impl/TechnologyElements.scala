@@ -248,6 +248,6 @@ object TechnologyElements {
     override def name: String = "artifact"
   }
 
-  val technologyElements: Seq[ElementMeta[_]] = Seq(node, device, systemSoftware, technologyCollaboration, technologyInterface, path, communicationNetwork, technologyFunction, technologyProcess, technologyInteraction, technologyEvent, technologyService, artifact)
+  val technologyElements: Seq[ElementMeta[Element]] = Seq(node, device, systemSoftware, technologyCollaboration, technologyInterface, path, communicationNetwork, technologyFunction, technologyProcess, technologyInteraction, technologyEvent, technologyService, artifact)
 
 }

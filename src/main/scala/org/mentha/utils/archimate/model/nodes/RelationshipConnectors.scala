@@ -9,13 +9,13 @@ import org.mentha.utils.archimate.model.edges.RelationshipMeta
 object RelationshipConnectors {
 
   case object andJunction extends RelationshipConnectorMeta[AndJunction] {
-    override def newInstance(relationship: RelationshipMeta[_]): AndJunction = new AndJunction(relationship)
+    override def newInstance(relationship: RelationshipMeta[Relationship]): AndJunction = new AndJunction(relationship)
   }
   case object orJunction extends RelationshipConnectorMeta[OrJunction] {
-    override def newInstance(relationship: RelationshipMeta[_]): OrJunction = new OrJunction(relationship)
+    override def newInstance(relationship: RelationshipMeta[Relationship]): OrJunction = new OrJunction(relationship)
   }
 
-  val relationshipConnectors: Seq[RelationshipConnectorMeta[_]] = Seq(andJunction, orJunction)
+  val relationshipConnectors: Seq[RelationshipConnectorMeta[RelationshipConnector]] = Seq(andJunction, orJunction)
 
 }
 
@@ -28,7 +28,7 @@ object RelationshipConnectors {
   * @note Junctions used on triggering relationships are similar to gateways in BPMN and forks and joins in UML activity diagrams. They can be used to model high-level process flow. A label may be added to outgoing triggering relationships of a junction to indicate a choice, condition, or guard that applies to that relationship. Such a label is only an informal indication. No formal, operational semantics has been defined for these relationships, because implementation-level languages such as BPMN and UML differ in their execution semantics and the ArchiMate language does not want to unduly constrain mappings to such languages.
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757967 Junction ArchiMate® 3.0 Specification ]]
   */
-abstract class Junction(val relationship: RelationshipMeta[_]) extends RelationshipConnector {
+abstract class Junction(val relationship: RelationshipMeta[Relationship]) extends RelationshipConnector {
 
   override private[model] def checkIncomingRelationship(incoming: Relationship) =
     relationship.runtimeClass.isInstance(incoming)
@@ -39,11 +39,11 @@ abstract class Junction(val relationship: RelationshipMeta[_]) extends Relations
 }
 
 /** @inheritdoc */
-final class AndJunction(relationship: RelationshipMeta[_]) extends Junction(relationship) {
+final class AndJunction(relationship: RelationshipMeta[Relationship]) extends Junction(relationship) {
   @inline override def meta: RelationshipConnectorMeta[AndJunction] = RelationshipConnectors.andJunction
 }
 
 /** @inheritdoc */
-final class OrJunction(relationship: RelationshipMeta[_]) extends Junction(relationship) {
+final class OrJunction(relationship: RelationshipMeta[Relationship]) extends Junction(relationship) {
   @inline override def meta: RelationshipConnectorMeta[OrJunction] = RelationshipConnectors.orJunction
 }

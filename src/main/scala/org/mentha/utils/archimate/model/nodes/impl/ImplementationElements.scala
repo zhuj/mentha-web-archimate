@@ -99,6 +99,6 @@ object ImplementationElements {
     override def name: String = "gap"
   }
 
-  val implementationElements: Seq[ElementMeta[_]] = Seq(workPackage, deliverable, implementationEvent, plateau, gap)
+  val implementationElements: Seq[ElementMeta[Element]] = Seq(workPackage, deliverable, implementationEvent, plateau, gap)
 
 }

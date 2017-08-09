@@ -1,6 +1,5 @@
 package org.mentha.utils.archimate.model
 
-
 /**
   *
   */

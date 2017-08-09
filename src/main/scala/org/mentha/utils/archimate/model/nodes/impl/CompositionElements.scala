@@ -45,6 +45,6 @@ object CompositionElements {
     override def name: String = "location"
   }
 
-  val compositionElements: Seq[ElementMeta[_]] = Seq(grouping, location)
+  val compositionElements: Seq[ElementMeta[Element]] = Seq(grouping, location)
 
 }

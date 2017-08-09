@@ -148,7 +148,7 @@ object generator {
         for {(layer, stream) <- streams} {
           val writer = new PrintWriter(stream)
           writer.println()
-          writer.println(s"  val ${StringUtils.uncapitalize(layer)}Elements: Seq[ElementMeta[_]] = Seq(${ variables.collect { case (l, v) if layer == l => v }.mkString(", ") })")
+          writer.println(s"  val ${StringUtils.uncapitalize(layer)}Elements: Seq[ElementMeta[Element]] = Seq(${ variables.collect { case (l, v) if layer == l => v }.mkString(", ") })")
           writer.println()
           writer.println("}")
           writer.flush()
@@ -341,8 +341,8 @@ object generator {
       writer.println("  import CompositionElements._")
       writer.println()
 
-      writer.println("  type EMeta = ElementMeta[_ <: Element]")
-      writer.println("  type RMeta = RelationshipMeta[_ <: Relationship]")
+      writer.println("  type EMeta = validator.EMeta")
+      writer.println("  type RMeta = validator.RMeta")
       writer.println("  type RSet = Set[RMeta]")
       writer.println()
 

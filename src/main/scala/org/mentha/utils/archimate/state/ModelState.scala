@@ -40,7 +40,7 @@ object ModelState {
         val rMeta = edges.mapRelations.getOrElse(tp, throw new IllegalStateException(s"Unexpected relationship type: ${tp}"))
         val src = model.concept[Concept](srcId)
         val dst = model.concept[Concept](dstId)
-        require(rMeta.isLinkPossible(src.meta, dst.meta)) // TODO: implement me
+        require(rMeta.isLinkPossible(src.meta, dst.meta), s"Relationship ${rMeta.name} is not possible between ${src.meta.name} and ${dst.meta.name}")
         ChangeSets.AddConcept(Identifiable.generateId(), c)
       }
       case c @ Commands.AddView(_, params) => {

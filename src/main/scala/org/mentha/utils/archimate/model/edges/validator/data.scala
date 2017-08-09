@@ -22,8 +22,8 @@ object data {
   import ImplementationElements._
   import CompositionElements._
 
-  type EMeta = ElementMeta[_ <: Element]
-  type RMeta = RelationshipMeta[_ <: Relationship]
+  type EMeta = validator.EMeta
+  type RMeta = validator.RMeta
   type RSet = Set[RMeta]
 
   private val s = specialization

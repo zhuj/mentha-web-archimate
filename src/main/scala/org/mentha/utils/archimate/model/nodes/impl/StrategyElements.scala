@@ -64,6 +64,6 @@ object StrategyElements {
     override def name: String = "courseOfAction"
   }
 
-  val strategyElements: Seq[ElementMeta[_]] = Seq(resource, capability, courseOfAction)
+  val strategyElements: Seq[ElementMeta[Element]] = Seq(resource, capability, courseOfAction)
 
 }
