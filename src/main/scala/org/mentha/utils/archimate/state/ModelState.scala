@@ -28,12 +28,12 @@ object ModelState {
     val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.AddElement(tp, _) => {
         val eMeta = nodes.mapElements.getOrElse(tp, throw new IllegalStateException(s"Unexpected element type: ${tp}"))
-        ChangeSets.AddConcept(Identifiable.generateId(), c)
+        ChangeSets.AddConcept(Identifiable.generateId(eMeta.runtimeClass), c)
       }
       case c @ Commands.AddConnector(tp, rtp, _) => {
         val cMeta = nodes.mapRelationshipConnectors.getOrElse(tp, throw new IllegalStateException( s"Unexpected relationship connector type: ${tp}"))
         val rMeta = edges.mapRelations.getOrElse(rtp, throw new IllegalStateException( s"Unexpected relationship type: ${tp}"))
-        ChangeSets.AddConcept(Identifiable.generateId(), c)
+        ChangeSets.AddConcept(Identifiable.generateId(cMeta.runtimeClass), c)
       }
       case c @ Commands.AddRelationship(tp, srcId, dstId, _) => {
         // TODO: move this to ModelValidator
@@ -41,14 +41,14 @@ object ModelState {
         val src = model.concept[Concept](srcId)
         val dst = model.concept[Concept](dstId)
         require(rMeta.isLinkPossible(src.meta, dst.meta), s"Relationship ${rMeta.name} is not possible between ${src.meta.name} and ${dst.meta.name}")
-        ChangeSets.AddConcept(Identifiable.generateId(), c)
+        ChangeSets.AddConcept(Identifiable.generateId(rMeta.runtimeClass), c)
       }
       case c @ Commands.AddView(_, params) => {
         // TODO: move this to ModelValidator
         withPathAndName(params) {
           case (path, name) => require(model.findView(path, name).isEmpty, s"Duplicate view name: ${name}.")
         }
-         ChangeSets.AddView(Identifiable.generateId(), c)
+         ChangeSets.AddView(Identifiable.generateId(classOf[View]), c)
       }
       case c @ Commands.ModView(id, params) => {
         // TODO: move this to ModelValidator
@@ -77,7 +77,7 @@ object ModelState {
     val (model, view) = data
     val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.AddViewNotes(_, _) => {
-        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNotes]), c)
       }
       case c @ Commands.AddViewConnection(_, src, dst, _) => {
         val source = view.get[ViewObject](src)
@@ -86,7 +86,7 @@ object ModelState {
           !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
           s"Duplicate edge: ${src} -> ${dst}"
         )
-        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewConnection]), c)
       }
       case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
         val concept = model.concept[NodeConcept](conceptId)
@@ -94,7 +94,7 @@ object ModelState {
           !view.objects[ViewNodeConcept[NodeConcept]].exists { vc => (vc.concept.id == concept.id) },
           s"Duplicate concept: ${conceptId}"
         )
-        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNodeConcept[_]]), c)
       }
       case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
         val concept = model.concept[Relationship](conceptId)
@@ -108,11 +108,11 @@ object ModelState {
           !view.objects[ViewRelationship[Relationship]].exists { vc => (vc.concept.id == concept.id) },
           s"Duplicate concept: ${conceptId}"
         )
-        ChangeSets.AddViewObject(Identifiable.generateId(), c)
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c)
       }
       case c @ Commands.AddViewNodeConcept2(_, Left(cmd), _) => {
         val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
-        ChangeSets.AddViewObject(Identifiable.generateId(), c.copy(concept = Right(cs)))
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNodeConcept[_]]), c.copy(concept = Right(cs)))
       }
       case c @ Commands.AddViewRelationship2(_, src, dst, Left(cmd), _) => {
         val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
@@ -122,7 +122,7 @@ object ModelState {
           !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
           s"Duplicate edge: ${src} -> ${dst}"
         )
-        ChangeSets.AddViewObject(Identifiable.generateId(), c.copy(concept = Right(cs)))
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c.copy(concept = Right(cs)))
       }
     }
   }

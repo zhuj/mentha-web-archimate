@@ -31,11 +31,11 @@ class StorageActor extends Actor with ActorLogging {
       val actorName = s"stateActor-${modelId}"
       context
         .actorSelection(self.path / actorName)
-        .ask(Identify(""))
+        .ask { Identify(java.lang.Long.toUnsignedString(System.currentTimeMillis(),32)) }
         .map { case ActorIdentity(_, refOpt) => refOpt }
         .map {
-          case Some(ref) => ref
-          case None => context.actorOf(Props(new StateActor(modelId)), name = actorName)
+          case Some(ref: ActorRef) => ref
+          case None => context.actorOf(props(modelId), name = actorName)
         }
         .andThen {
           case Success(ref) => origin ! StorageActor.Response(ref)
@@ -44,4 +44,7 @@ class StorageActor extends Actor with ActorLogging {
     }
   }
 
+  private def props(modelId: String) = {
+    Props(new StateActor(modelId))
+  }
 }

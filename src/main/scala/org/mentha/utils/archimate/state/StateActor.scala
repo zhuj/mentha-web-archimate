@@ -2,14 +2,14 @@ package org.mentha.utils.archimate.state
 
 import akka.actor._
 import akka.persistence._
-import org.mentha.utils.archimate.model.Model
+import org.mentha.utils.archimate.model._
 
 import scala.util._
 
 object StateActor {
 
   sealed trait Event {}
-  case class SubscriberJoin() extends Event {}
+  case object SubscriberJoin extends Event {}
   case class SubscriberSend(request: ModelState.Request) extends Event {}
   case class SubscriberFail(request: String, error: Throwable) extends Event {}
 
@@ -17,7 +17,7 @@ object StateActor {
   /**
     * The actor which dispatches incoming messages to all subscribers
     */
-  private class StateDispatcherActor extends Actor with ActorLogging {
+  private[state] class StateDispatcherActor extends Actor with ActorLogging {
     private def _name(actorRef: ActorRef): String = actorRef.path.name
     private var subscribers: Map[String, ActorRef] = Map.empty
 
@@ -33,7 +33,7 @@ object StateActor {
       case Terminated(user) => {
         val name = _name(user)
         this.subscribers -= name
-        // TODO: if (this.subscribers.isEmpty) { context.parent ! ??? } // notify the state actor it's able to die now!
+        if (this.subscribers.isEmpty) { context.parent ! PoisonPill } // nobody is there - kill the state actor TODO: check if it works
       }
     }
   }
@@ -131,13 +131,13 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       case query: ModelState.Query => execute(sender(), query)
       case noop @ ModelState.Noop() => execute(sender(), noop)
     }
-    case StateActor.SubscriberJoin() => {
+    case StateActor.SubscriberJoin => {
       val user = sender()
       dispatcher.forward(user)
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
     case StateActor.SubscriberFail(request, error) => {
-      execute(sender(), Right(request), error) // should never happen
+      execute(sender(), Right(request), error) // should never happen (it's handled by the UserActor)
     }
 
     case SaveSnapshotSuccess(_) =>

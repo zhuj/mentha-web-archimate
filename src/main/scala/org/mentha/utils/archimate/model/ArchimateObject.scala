@@ -106,12 +106,12 @@ trait PropsArchimateObject extends ArchimateObject {
     withProperty(name, BigDecimal(value))
 
    import scala.reflect.ClassTag
-   def extension[E <: ArchimateObjectExtension](implicit tp: ClassTag[E], fjs: json.JsonReader[E]): Option[E] = properties
-     .value.get(tp.runtimeClass.getName)
+   def extension[E <: ArchimateObjectExtension: ClassTag](implicit fjs: json.JsonReader[E]): Option[E] = properties
+     .value.get(implicitly[ClassTag[E]].runtimeClass.getName)
      .map { v => v.as[E](fjs) }
 
-   def withExtension[E <: ArchimateObjectExtension](e: E)(implicit tp: ClassTag[E], tjs: json.JsonWriter[E]): this.type =
-      withProperty(tp.runtimeClass.getName, json.toJson(e)(tjs))
+   def withExtension[E <: ArchimateObjectExtension: ClassTag](e: E)(implicit tjs: json.JsonWriter[E]): this.type =
+      withProperty(implicitly[ClassTag[E]].runtimeClass.getName, json.toJson(e)(tjs))
 
 }
 

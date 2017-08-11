@@ -9,11 +9,10 @@ sourceCompatibility = 1.8
 
 ext {
     scalaLibVersion = "2.12"
-    scalaVersion = "${scalaLibVersion}.2"
+    scalaVersion = "${scalaLibVersion}.3"
     zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
     slf4j = "1.7.13"
-    //orientDbVersion = "3.0.0m1"
-    akkaVersion = "2.5.3"
+    akkaVersion = "2.5.4"
     akkaHttpVersion = "10.0.9"
     playVersion = "2.6.2"
 }

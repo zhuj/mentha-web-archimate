@@ -4,11 +4,11 @@ package object dsl {
 
   import org.mentha.utils.archimate.model._
 
-  implicit class NodeConceptToView[+T <: NodeConcept](val concept: T) {
+  implicit class NodeConceptToView[T <: NodeConcept](val concept: T) {
     @inline def attach(implicit view: View): ViewNodeConcept[T] = view.attach_node(concept)
   }
 
-  implicit class EdgeConceptToView[+T <: Relationship](val concept: T) {
+  implicit class EdgeConceptToView[T <: Relationship](val concept: T) {
     @inline def attach(implicit view: View): ViewRelationship[T] = view.attach_edge(concept)
   }
 

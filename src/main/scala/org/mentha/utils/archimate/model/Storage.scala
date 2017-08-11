@@ -2,7 +2,6 @@ package org.mentha.utils.archimate.model
 
 import java.util.NoSuchElementException
 
-import org.mentha.utils.archimate.model.Identifiable.ID
 import org.mentha.utils.uuid.FastTimeBasedIdGenerator
 
 import scala.collection.mutable
@@ -41,8 +40,24 @@ object Identifiable {
 
   val EMPTY_ID: ID = ""
 
-  def generateId(): ID = FastTimeBasedIdGenerator
-    .generateId(0l)
+  @inline def ensureId[T <: Identifiable](entity: T, id: => Identifiable.ID): T = {
+    if (entity.id == EMPTY_ID) { entity.withId(id) }
+    else entity
+  }
+
+  @inline private def typeIdentifier(klass: Class[_]): Short = {
+    (klass.getName.hashCode & 0x7ff).toShort
+  }
+
+  @inline def generateId(klass: Class[_]): ID = FastTimeBasedIdGenerator
+    .generateId(typeIdentifier(klass))
+
+  @inline def validateId(identifiable: Identifiable): Unit = {
+    require(
+      FastTimeBasedIdGenerator.validateId(typeIdentifier(identifiable.getClass), identifiable.id),
+      s"id=${identifiable.id} : ${FastTimeBasedIdGenerator.getCheckSum(identifiable.id)} != ${FastTimeBasedIdGenerator.getCheckSum(typeIdentifier(identifiable.getClass))}"
+    )
+  }
 
 }
 
@@ -56,7 +71,7 @@ trait Storage[T <: Identifiable] {
       throw new NoSuchElementException(s"No ${cls.getSimpleName} found with id=${id}.")
     }
 
-  def store[X <: T](entity: X): X = store(entity, Identifiable.generateId())
+  def store[X <: T](entity: X): X = store(entity, Identifiable.generateId(entity.getClass))
   def store[X <: T](entity: X, id: => Identifiable.ID): X
   def values: Iterable[T]
   def select[X <: T](implicit tp: ClassTag[X]): Iterable[X]
@@ -80,10 +95,11 @@ class StorageImpl[T <: Identifiable](val entityName: String)(implicit et: ClassT
 
   override def classTag: ClassTag[T] = et
 
-  override def get[X <: T](id: ID)(implicit tp: ClassTag[X]): Option[X] = _map.get(id).map { _.asInstanceOf[X] }
+  override def get[X <: T](id: Identifiable.ID)(implicit tp: ClassTag[X]): Option[X] = _map.get(id).map { _.asInstanceOf[X] }
 
   override def store[X <: T](entity: X, id: => Identifiable.ID): X = {
-    if (entity._id.isEmpty) { entity._id = id }
+    Identifiable.ensureId(entity, id)
+    // TODO: Identifiable.validateId(entity)
     _map.put(entity.id, entity) match {
       case None => entity
       case Some(prev) if (prev eq entity) => entity

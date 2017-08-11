@@ -21,8 +21,8 @@ object ConceptMeta {
 abstract class ConceptMeta[+T <: Concept: ClassTag] {
   private[model] val log = LoggerFactory.getLogger(classOf[ConceptMeta[_]])
   private[model] val classTag: ClassTag[T @uncheckedVariance] = implicitly[ClassTag[T]]
-  private[model] val runtimeClass: Class[T @uncheckedVariance] = classTag.runtimeClass.asInstanceOf[Class[T]]
 
+  val runtimeClass: Class[T @uncheckedVariance] = classTag.runtimeClass.asInstanceOf[Class[T]]
   def name: String = StringUtils.uncapitalize(runtimeClass.getSimpleName)
 
   override def toString: String = s"ConceptMeta(${name})"
