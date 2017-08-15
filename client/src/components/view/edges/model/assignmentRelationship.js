@@ -6,6 +6,6 @@ import { StructuralRelationshipsWidget } from '../BaseLinkWidget'
 export const TYPE='assignmentRelationship';
 
 export class AssignmentRelationshipWidget extends StructuralRelationshipsWidget {
-  getClassName(link) { return TYPE; }
+  getBaseClassName(link) { return TYPE; }
 }
 

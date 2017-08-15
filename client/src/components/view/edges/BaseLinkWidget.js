@@ -27,6 +27,16 @@ export class BaseLinkWidget extends DefaultLinkWidget {
 
 export const ViewLinkWidget = BaseLinkWidget;
 
-export const ModelLinkWidget = BaseLinkWidget;
+export class ModelLinkWidget extends BaseLinkWidget {
+  constructor(props) { super(props); }
+  getBaseClassName(link) { return super.getClassName(); }
+  getClassName(link) {
+    if (!!this.props.conceptInfo['invalid']) {
+      return this.getBaseClassName(link) + " invalid";
+    } else {
+      return this.getBaseClassName(link);
+    }
+  }
+}
 
 export const StructuralRelationshipsWidget = ModelLinkWidget;

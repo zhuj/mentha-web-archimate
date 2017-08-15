@@ -6,6 +6,6 @@ import { StructuralRelationshipsWidget } from '../BaseLinkWidget'
 export const TYPE='compositionRelationship';
 
 export class CompositionRelationshipWidget extends StructuralRelationshipsWidget {
-  getClassName(link) { return TYPE; }
+  getBaseClassName(link) { return TYPE; }
 }
 

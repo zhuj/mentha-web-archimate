@@ -764,3 +764,17 @@
     }
   }
 }
+
+.viewGroup {
+  padding: 0 !important;
+  background-color: transparent;
+  border: 0;
+  > svg.border > path {
+    fill: #7f7f7f;
+  }
+  > .title {
+    width: 75% !important;
+    height: 18px !important;
+  }
+
+}

@@ -18,8 +18,8 @@ object Concepts {
   */
 sealed abstract class Concept extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
   def meta: ConceptMeta[Concept]
-  private[model] def checkIncomingRelationship(incoming: Relationship): Boolean = true
-  private[model] def checkOutgoingRelationship(outgoing: Relationship): Boolean = true
+  private[model] def checkIncomingRelationship(incoming: Relationship): List[String] = Nil
+  private[model] def checkOutgoingRelationship(outgoing: Relationship): List[String] = Nil
 }
 
 /**
@@ -68,19 +68,34 @@ abstract class RelationshipConnector extends NodeConcept {
   * @param source
   * @param target
   */
-abstract class Relationship(val source: Concept, val target: Concept) extends EdgeConcept {
-  require(meta.isLinkPossible(source.meta, target.meta), s"Link ${source.meta.name} -> ${target.meta.name} with type ${meta.name} is not possible.")
-  require(target.checkIncomingRelationship(this))
-  require(source.checkOutgoingRelationship(this))
+abstract class Relationship(val source: Concept, val target: Concept) extends EdgeConcept with ValidArchimateObject {
+
+  private[model] val _validationErrors: List[String] = {
+    val builder = List.newBuilder[String]
+    if (!meta.isLinkPossible(source.meta, target.meta)) {
+      builder += s"Relationship `${meta.name}` is not possible between `${source.meta.name}` and `${target.meta.name}`"
+    }
+    target.checkIncomingRelationship(this).foreach { v => builder += v }
+    source.checkOutgoingRelationship(this).foreach { v => builder += v }
+    builder.result()
+  }
+
+  @inline override def validationErrors: List[String] = _validationErrors
 
   override def meta: RelationshipMeta[Relationship]
 
   // An association relationship is always allowed between two elements, or between a relationship and an element.
-  override private[model] def checkIncomingRelationship(incoming: Relationship): Boolean =
-    incoming.isInstanceOf[AssociationRelationship]
+  // No other relationship is possible between relationships.
+  override private[model] def checkIncomingRelationship(incoming: Relationship) = incoming match {
+    case _: AssociationRelationship => Nil
+    case _ => List(s"Relationship concept is not possible as a target for `${incoming.meta.name}`")
+  }
 
   // An association relationship is always allowed between two elements, or between a relationship and an element.
-  override private[model] def checkOutgoingRelationship(outgoing: Relationship): Boolean =
-    outgoing.isInstanceOf[AssociationRelationship]
+  // No other relationship is possible between relationships.
+  override private[model] def checkOutgoingRelationship(outgoing: Relationship) = outgoing match {
+    case _: AssociationRelationship => Nil
+    case _ => List(s"Relationship concept is not possible as a source for `${outgoing.meta.name}`")
+  }
 
 }

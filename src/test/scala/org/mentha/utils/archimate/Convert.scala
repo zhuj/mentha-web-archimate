@@ -4,7 +4,7 @@ import java.io.{File, StringReader}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.model.edges.{CompositionRelationship, RelationshipMeta}
+import org.mentha.utils.archimate.model.edges.{CompositionRelationship, RelationshipMeta, StructuralRelationship}
 import org.mentha.utils.archimate.model.{json, _}
 import org.mentha.utils.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
 import org.mentha.utils.archimate.model.view._
@@ -19,21 +19,27 @@ object Convert extends MkModel {
   val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m) }.toMap
 
   val tpTransformation: PartialFunction[String, String] = {
+    case "network" => "communicationNetwork"
+    case "infrastructureFunction" => "technologyFunction"
+    case "infrastructureService" => "technologyService"
     case "usedByRelationship" => "servingRelationship"
     case "realisationRelationship" => "realizationRelationship"
     case "specialisationRelationship" => "specializationRelationship"
+    case "junction" => "andJunction"
     case s => s
   }
 
   def main(args: Array[String]): Unit = {
     val name = args(0)
-    val model = new Model withId s"convert-${name}"
+    val model = new Model withId s"convert-${name.replace('/','-')}"
 
-    val xmlFile = new File(s"src/test/${name}.archimate")
+    val xmlFile = new File(s"${name}.archimate")
     val xmlContent = FileUtils.readFileToString(xmlFile, "UTF-8")
     val xml = XML.load(new StringReader(xmlContent))
 
-    val elements = (xml \\ "folder").filter { n => "diagrams" != (n \ "@type").text } \ "element"
+    val elements = (xml \ "folder").filter { n => "diagrams" != n \@ "type" } \\ "element"
+
+    // first - nodes
     for {el <- elements} {
       val tp: String = getTp(el)
 
@@ -64,6 +70,7 @@ object Convert extends MkModel {
       }
     }
 
+    // then - edges
     for {el <- elements} {
       val tp: String = getTp(el)
 
@@ -71,28 +78,46 @@ object Convert extends MkModel {
 
       meta match {
         case rm: RelationshipMeta[_] => {
-          val concept = rm.newInstance(
-            model.concept( el \@ "source" ),
-            model.concept( el \@ "target" )
-          )
+          val src: Concept = model.concept(el \@ "source")
+          val dst: Concept = model.concept(el \@ "target")
+
+          val concept = Try[Relationship] {
+            val r = rm.newInstance(src, dst)
+            if (!r.valid) { throw new IllegalStateException("Invalid") }
+            r
+          } recover {
+            case _ => edges.OtherRelationships.association.newInstance(src, dst)
+          } get
+
+
           model.add(el \@ "id")(concept)
         }
         case _ =>
       }
     }
 
-    val diagrams = (xml \\ "folder").filter { n => "diagrams" == (n \ "@type").text } \ "element"
+
+    // process views after all
+    val diagrams = (xml \ "folder").filter { n => "diagrams" == n \@ "type" } \\ "element"
     for {dia <- diagrams if dia \@ "{http://www.w3.org/2001/XMLSchema-instance}type" == "archimate:ArchimateDiagramModel"} {
       val view = model.add( dia \@ "id" ) { new View() withName( dia \@ "name" ) }
 
-      def applyChilds(childs: NodeSeq, baseNode: Option[ViewNode]): Unit = {
-        val base = baseNode map { case n => Point(n.position.x - n.size.width/2, n.position.y - n.size.height/2) } getOrElse { Point(0, 0) }
+      def applyChildren(childs: NodeSeq, baseNode: Option[ViewNode]): Unit = {
+        val base = baseNode map { n => Point(n.position.x - n.size.width/2, n.position.y - n.size.height/2) } getOrElse { Point(0, 0) }
         for {child <- childs} {
 
           val chType = child \@ "{http://www.w3.org/2001/XMLSchema-instance}type"
-          val size = Try { (child \ "bounds") map { v => Size(java.lang.Double.parseDouble(v \@ "width"), java.lang.Double.parseDouble(v \@ "height")) } head } getOrElse { Size(100, 40) }
-          val lt = Try { (child \ "bounds") map { v => Point(java.lang.Double.parseDouble(v \@ "x") + base.x, java.lang.Double.parseDouble(v \@ "y") + base.y) } head } getOrElse { base }
-          val position = lt.copy(lt.x + size.width/2, lt.y + size.height/2)
+          val size = Try {
+            (child \ "bounds") map { v => Size(java.lang.Double.parseDouble(v \@ "width"), java.lang.Double.parseDouble(v \@ "height")) } head
+          } getOrElse {
+            Size(100, 40)
+          }
+          val lt = Try {
+            (child \ "bounds") map { v => Point(java.lang.Double.parseDouble(v \@ "x") + base.x, java.lang.Double.parseDouble(v \@ "y") + base.y) } head
+          } getOrElse {
+            base
+          }
+          val position = lt.copy(lt.x + size.width / 2, lt.y + size.height / 2)
 
 
           val node: ViewNode = if (chType == "archimate:DiagramObject") {
@@ -104,26 +129,43 @@ object Convert extends MkModel {
             view.add(child \@ "id") {
               new ViewNotes() withText ((child \ "content").text) withPosition (position) withSize (size)
             }
+          } else if (chType == "archimate:Group") {
+            view.add(child \@ "id") {
+              new ViewGroup() withName (child \@ "name") withPosition (position) withSize (size)
+            }
           } else {
+            println(s"Unexpected type: ${chType}")
             null
           }
 
           for {
             bn <- baseNode.collect { case x: ViewObject with ViewConcept[Concept] => x }
             nn <- Option(node).collect { case x: ViewObject with ViewConcept[Concept] => x }
-            rr <- model
-              .concepts[CompositionRelationship]
-              .collectFirst { case r if (r.source.id == bn.concept.id) && (r.target.id == nn.concept.id) => r }
           } {
-            view.add(s"${rr.id}-${view.id}") { new ViewRelationship[CompositionRelationship](bn, nn)(rr) }
+            val maybeRelationship = model
+              .concepts[StructuralRelationship]
+              .collectFirst { case r if (r.source.id == bn.concept.id) && (r.target.id == nn.concept.id) => r }
+              .orElse {
+                Try[CompositionRelationship] {
+                  model.add(s"${bn.concept.id}-${nn.concept.id}") {
+                    new CompositionRelationship(bn.concept, nn.concept).validate
+                  }
+                } toOption
+              }
+
+            for { rr <- maybeRelationship } {
+              view.add(s"${rr.id}-${view.id}") {
+                new ViewRelationship[StructuralRelationship](bn, nn)(rr)
+              }
+            }
           }
 
-          applyChilds(child \ "child", Option(node))
+          applyChildren(child \ "child", Option(node))
         }
       }
 
       // first apply all nodes
-      applyChilds(dia \ "child", None)
+      applyChildren(dia \ "child", None)
 
       // then apply their edges
       for {connection <- dia \\ "sourceConnection"} {
@@ -175,7 +217,7 @@ object Convert extends MkModel {
     val str = json.toJsonString(model)
     json.fromJsonString(str) // check
 
-    val jsonFile = new File(s"src/test/${name}.json")
+    val jsonFile = new File(s"${name}.json")
     FileUtils.write(jsonFile, str, "UTF-8")
 
     publishModel(model)

@@ -79,6 +79,9 @@ object ModelState {
       case c @ Commands.AddViewNotes(_, _) => {
         ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNotes]), c)
       }
+      case c @ Commands.AddViewGroup(_, _) => {
+        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewGroup]), c)
+      }
       case c @ Commands.AddViewConnection(_, src, dst, _) => {
         val source = view.get[ViewObject](src)
         val target = view.get[ViewObject](dst)
@@ -261,6 +264,8 @@ object ModelState {
 
     case class AddViewNotes(viewId: ID, params: JsonObject) extends AddViewObjectCommand[ViewNotes] {}
 
+    case class AddViewGroup(viewId: ID, params: JsonObject) extends AddViewObjectCommand[ViewGroup] {}
+
     case class AddViewNodeConcept(viewId: ID, conceptId: ID, params: JsonObject) extends AddViewObjectCommand[ViewNodeConcept[_]] {}
 
     case class AddViewConnection(viewId: ID, src: ID, dst: ID, params: JsonObject) extends AddViewObjectCommand[ViewConnection] with ConnectionParams {}
@@ -412,6 +417,7 @@ object ModelState {
         def add(vo: ViewObject) = toJsonDiff(model, view, view.add[ViewObject](newId) { vo }, OP_ADD)
         command match {
           case Commands.AddViewNotes(_, p) => add { json.readViewNotes(p) }
+          case Commands.AddViewGroup(_, p) => add { json.readViewGroup(p) }
           case Commands.AddViewConnection(_, src, dst, params) => add { json.readViewConnection(view.get[ViewObject](src), view.get(dst), params) }
           case Commands.AddViewNodeConcept(_, conceptId, params) => add { json.readViewNodeConcept(model.concept(conceptId), params) }
           case Commands.AddViewRelationship(_, src, dst, conceptId, params) => add { json.readViewRelationship(view.get(src), view.get(dst), model.concept(conceptId), params) }
@@ -440,6 +446,7 @@ object ModelState {
       override def commit(model: Model, view: View): Try[JsonObject] = Try {
         val vo = view.get[ViewObject](id) match {
           case vn: ViewNotes => json.fillViewNotes(vn, params)
+          case vg: ViewGroup => json.fillViewGroup(vg, params)
           case vc: ViewConnection => json.fillViewConnection(vc, params)
           case vnc: ViewNodeConcept[_] => json.fillViewNodeConcept(vnc, params)
           case vrs: ViewRelationship[_] => json.fillViewRelationship(vrs, params)
@@ -582,6 +589,7 @@ object ModelState {
       case "add-relationship" => Commands.AddRelationship(tp = (js \ json.names.`tp`).as[Type], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], params = js)
       case "add-view" => Commands.AddView(viewpoint = (js \ json.names.`viewpoint`).as[Type], params = js)
       case "add-view-notes" => Commands.AddViewNotes(viewId = (js \ "viewId").as[ID], params = js)
+      case "add-view-group" => Commands.AddViewGroup(viewId = (js \ "viewId").as[ID], params = js)
       case "add-view-connection" => Commands.AddViewConnection(viewId = (js \ "viewId").as[ID], src = (js \ json.names.`src`).as[ID], dst = (js \ json.names.`dst`).as[ID], params = js)
 
       case "add-view-node-concept" => {
@@ -672,6 +680,7 @@ class ModelState(private[state] var model: Model = new Model) {
     case Commands.AddRelationship(_, _, _, _) => model.prepare(command)
     case Commands.AddView(_, _) => model.prepare(command)
     case Commands.AddViewNotes(viewId, _) => (model, view(viewId)).prepare(command)
+    case Commands.AddViewGroup(viewId, _) => (model, view(viewId)).prepare(command)
     case Commands.AddViewConnection(viewId, _,_, _) => (model, view(viewId)).prepare(command)
     case Commands.AddViewNodeConcept(viewId, _,_) => (model, view(viewId)).prepare(command)
     case Commands.AddViewRelationship(viewId, _,_, _, _) => (model, view(viewId)).prepare(command)

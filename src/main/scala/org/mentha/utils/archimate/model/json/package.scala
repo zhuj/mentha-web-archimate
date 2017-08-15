@@ -91,6 +91,7 @@ package object json {
     val `points` = "points"
     
     val `deleted` = "deleted"
+    val `invalid` = "invalid"
   }
 
   implicit val pointWrites: Writes[Point] = new Writes[Point] {
@@ -157,26 +158,35 @@ package object json {
 
     builder += (names.`tp` -> tp(obj))
 
-    obj match {
-      case i: IdentifiedArchimateObject if i.isDeleted => builder += (names.`deleted` -> true)
-      case _ =>
-    }
-    obj match {
-      case n: NamedArchimateObject if n.name.nonEmpty => builder += (names.`name` -> n.name)
-      case _ =>
-    }
-    obj match {
-      case v: VersionedArchimateObject if v.version > 0 => builder += (names.`version` -> v.version)
-      case _ =>
-    }
-    obj match {
-      case p: PathBasedArchimateObject if p.path.nonEmpty => builder += (names.`path` -> p.path)
-      case _ =>
-    }
-    obj match {
-      case p: PropsArchimateObject if p.properties.value.nonEmpty => builder += (names.`props` -> p.properties)
-      case _ =>
-    }
+    Some(obj)
+      .collect { case i: IdentifiedArchimateObject if i.isDeleted => true }
+      .foreach { deleted => builder += (names.`deleted` -> deleted) }
+
+    Some(obj)
+      .collect { case n: NamedArchimateObject => n.name }
+      .filterNot { _.isEmpty }
+      .foreach { name => builder += (names.`name` -> name) }
+
+    Some(obj)
+      .collect { case v: VersionedArchimateObject => v.version }
+      .filter { _ > 0 }
+      .foreach { version => builder += (names.`version` -> version) }
+
+    Some(obj)
+      .collect { case p: PathBasedArchimateObject => p.path }
+      .filter { _.nonEmpty }
+      .foreach { path => builder += (names.`path` -> path) }
+
+    Some(obj)
+      .collect { case p: PropsArchimateObject => p.properties }
+      .filter { _.keys.nonEmpty }
+      .foreach { properties => builder += (names.`props` -> properties) }
+
+    Some(obj)
+      .collect { case v: ValidArchimateObject => v.validationErrors }
+      .filter { _.nonEmpty }
+      .foreach { errors => builder += (names.`invalid` -> errors) }
+
 
     builder ++= fields
 
@@ -331,6 +341,11 @@ package object json {
           names.`dst` -> c.target.id,
           names.`points` -> c.points
         )
+        case g: ViewGroup => writeArchimateObject(
+          o,
+          names.`pos` -> o.position,
+          names.`size` -> g.size
+        )
       }
     }
   }
@@ -383,6 +398,15 @@ package object json {
     fillViewConnection(new ViewConnection(source, target), json)
   }
 
+  def fillViewGroup(vn: ViewGroup, json: JsValue): ViewGroup = {
+    val res = fillArchimateObject(vn, json)
+    fillPosAndSize(res, json)
+  }
+
+  def readViewGroup(json: JsValue): ViewGroup = {
+    fillViewGroup(new ViewGroup, json)
+  }
+
   implicit def viewObjectReads(implicit model: Model, view: View) = new Reads[ViewObject] {
     override def reads(json: JsValue): JsResult[ViewObject] = (json \ names.`tp`).as[String] match {
       case "viewNodeConcept" => {
@@ -402,6 +426,9 @@ package object json {
         val source = viewObject((json \ names.`src`).as[String])
         val target = viewObject((json \ names.`dst`).as[String])
         JsSuccess(readViewConnection(source, target, json))
+      }
+      case "viewGroup" => {
+        JsSuccess(readViewGroup(json))
       }
     }
   }

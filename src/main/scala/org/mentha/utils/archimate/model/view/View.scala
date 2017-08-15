@@ -101,6 +101,11 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
 
 }
 
+/** Group at View Level*/
+final class ViewGroup extends ViewNode with NamedArchimateObject {
+
+}
+
 /** Just a text notes */
 final class ViewNotes extends ViewNode {
 
