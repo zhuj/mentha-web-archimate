@@ -16,20 +16,20 @@ object clientGenerator {
     // writeLinks()
     // writeNodes()
     // writeNodesScss()
-    writeLnksRestrictions()
+    writeLinksRestrictions()
 
   }
 
-  private def writeLnksRestrictions(): Unit = {
+  private def writeLinksRestrictions(): Unit = {
 
     val stream = new StringBuilderWriter(4096)
     val writer = new PrintWriter(stream)
 
-    import edges.validator.impl
+    import edges.validator
     import play.api.libs.json._
 
     val json = Json.toJsObject(
-      impl.data.map { case ((s,d), (x, _)) => s"${s}-${d}" -> x }
+      validator.data.data.map { case ((s,d), (all, _)) => s"${s.name}-${d.name}" -> all.map { _.key }.mkString("").sorted }
     )
 
     writer.println("export const constraints = (")

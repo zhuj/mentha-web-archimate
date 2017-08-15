@@ -184,6 +184,6 @@ object MotivationElements {
     override def name: String = "value"
   }
 
-  val motivationElements: Seq[ElementMeta[_]] = Seq(stakeholder, driver, assessment, goal, outcome, principle, requirement, constraint, meaning, value)
+  val motivationElements: Seq[ElementMeta[Element]] = Seq(stakeholder, driver, assessment, goal, outcome, principle, requirement, constraint, meaning, value)
 
 }

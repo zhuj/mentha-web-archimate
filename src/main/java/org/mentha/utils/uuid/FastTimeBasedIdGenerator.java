@@ -1,8 +1,6 @@
 package org.mentha.utils.uuid;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Random;
+import java.util.Arrays;
 
 public class FastTimeBasedIdGenerator {
 
@@ -10,14 +8,25 @@ public class FastTimeBasedIdGenerator {
   private long sequenceNumber;
   private long lastTimestamp;
 
-  private static final long hostIdentifier = getHostId();
-
   private static final FastTimeBasedIdGenerator INSTANCE = new FastTimeBasedIdGenerator();
-  public static String generateId(long typeIdentifier) {
+  public static String generateId(short typeIdentifier) {
     return INSTANCE.generateIdFromTimestamp(typeIdentifier, System.currentTimeMillis());
   }
 
-  final static char[] digits = {
+  public static boolean validateId(short typeIdentifier, String id) {
+    return (getCheckSum(typeIdentifier) == getCheckSum(id));
+  }
+
+  public static int getCheckSum(short typeIdentifier) {
+    return typeIdentifier & 0x7ff;
+  }
+
+  public static int getCheckSum(String id) {
+    return ( (index(id.charAt(2)) << 6) + index(id.charAt(3)) ) & 0x7ff;
+  }
+
+  // 64 digits = 6 bits
+  private final static char[] digits = {
           '0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' ,
           '8' , '9' , 'a' , 'b' , 'c' , 'd' , 'e' , 'f' ,
           'g' , 'h' , 'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
@@ -27,6 +36,21 @@ public class FastTimeBasedIdGenerator {
           'M' , 'N' , 'O' , 'P' , 'Q' , 'R' , 'S' , 'T' ,
           'U' , 'V' , 'W' , 'X' , 'Y' , 'Z' , '$' , '#'
   };
+
+  private static final int index(char c) {
+    byte index = indexes[c];
+    if (index < 0) { throw new IllegalStateException(); }
+    return index;
+  }
+
+  private static final byte[] indexes = new byte[128];
+  static {
+    Arrays.fill(indexes, (byte)-1);
+    for (byte i=0; i<digits.length; i++) {
+      indexes[digits[i]] = i;
+    }
+  }
+
 
   private static int formatUnsignedLong(long val, int shift, char[] buf, int offset, int len) {
     int charPos = len;
@@ -40,55 +64,41 @@ public class FastTimeBasedIdGenerator {
     return charPos;
   }
 
-  private String toString(long msb, long lsb) {
-    char[] buff = new char[22];
-    formatUnsignedLong(msb, 6, buff, 0, 11);
-    formatUnsignedLong(lsb, 6, buff, 11, 11);
+  private String generateIdFromTimestamp(short typeIdentifier, long currentTimeMillis) {
+
+    long seq = nextSeq(currentTimeMillis);
+
+    // we have to preserve the last 44 bits of timestamp (it will work up to Mon Jun 23 2527 06:20:44)
+    currentTimeMillis &= 0xfffffffffffL; // now there is 44 buts of data
+
+    int id11 = (typeIdentifier & 0x7ff); // 11 bits of data
+
+    long tl08 = (currentTimeMillis & 0xff); // 8 bits of data
+    long th36 = (currentTimeMillis >>> 8); // 36 bits of data
+
+    seq &= 0xffff; // 16 bits of data
+    long sl04 = (seq & 0xf); // 4 bits of data
+    long sh12 = (seq >>> 4); // 12 bits of data
+
+    long a24 = (((tl08 << 4) | sl04) << 11) | id11; // 1 + 8 + 4 + 11 = 24 bits (the first bit is always zero)
+    long b48 = ((th36 << 8) | sh12); // 36 + 12 = 48 bits
+
+    char[] buff = new char[12];
+    formatUnsignedLong(a24, 6, buff, 0, 4); // (24/6) = 4 digits
+    formatUnsignedLong(b48, 6, buff, 4, 8); // (48/6) = 8 digits
+
     return new String(buff);
   }
 
-  private String generateIdFromTimestamp(long typeIdentifier, long currentTimeMillis) {
-
+  private long nextSeq(long currentTimeMillis) {
     synchronized (lock) {
       if (currentTimeMillis > lastTimestamp) {
         lastTimestamp = currentTimeMillis;
-        sequenceNumber = 0;
+        return (sequenceNumber = 0);
       } else {
-        ++sequenceNumber;
+        return (++sequenceNumber);
       }
     }
-
-    long msb = (currentTimeMillis << 16) | (typeIdentifier & 0xffff);
-    long lsb = (hostIdentifier << 16) | (sequenceNumber);
-    return toString(msb, lsb);
-  }
-
-  private static long getHostId() {
-    byte[] mac = null;
-
-    try {
-      InetAddress address = InetAddress.getLocalHost();
-      NetworkInterface ni = NetworkInterface.getByInetAddress(address);
-      if (ni != null) {
-        mac = ni.getHardwareAddress();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    if (mac == null) {
-      mac = new byte[6];
-      new Random(0).nextBytes(mac);
-    }
-
-    // Converts array of unsigned bytes to an long
-    long macAddressAsLong = 0;
-    for (byte aMac : mac) {
-      macAddressAsLong <<= 8;
-      macAddressAsLong |= (long) aMac & 0xFF;
-    }
-
-    return macAddressAsLong;
   }
 
 }

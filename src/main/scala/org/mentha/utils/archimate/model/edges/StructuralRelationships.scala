@@ -28,7 +28,7 @@ object StructuralRelationships {
     override def newInstance(source: Concept, target: Concept): RealizationRelationship = new RealizationRelationship(source, target)
   }
 
-  val structuralRelations: Seq[RelationshipMeta[_]] = Seq(composition, aggregation, assignment, realization)
+  val structuralRelations: Seq[RelationshipMeta[Relationship]] = Seq(composition, aggregation, assignment, realization)
 
 }
 

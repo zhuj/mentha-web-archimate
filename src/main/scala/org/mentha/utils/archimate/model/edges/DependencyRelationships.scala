@@ -23,7 +23,7 @@ object DependencyRelationships {
     override def newInstance(source: Concept, target: Concept): InfluenceRelationship = new InfluenceRelationship(source, target)()
   }
 
-  val dependencyRelations: Seq[RelationshipMeta[_]] = Seq(serving, access, influence)
+  val dependencyRelations: Seq[RelationshipMeta[Relationship]] = Seq(serving, access, influence)
 
 }
 

@@ -148,7 +148,7 @@ object generator {
         for {(layer, stream) <- streams} {
           val writer = new PrintWriter(stream)
           writer.println()
-          writer.println(s"  val ${StringUtils.uncapitalize(layer)}Elements: Seq[ElementMeta[_]] = Seq(${ variables.collect { case (l, v) if layer == l => v }.mkString(", ") })")
+          writer.println(s"  val ${StringUtils.uncapitalize(layer)}Elements: Seq[ElementMeta[Element]] = Seq(${ variables.collect { case (l, v) if layer == l => v }.mkString(", ") })")
           writer.println()
           writer.println("}")
           writer.flush()
@@ -298,7 +298,13 @@ object generator {
   def relationships(): Unit = {
 
     val relsMap = rels
-      .filter { case (src, dst, _, _) => (src != "Junction") && (dst != "Junction") }
+      .map { case (src, dst, r1, r2) => (
+        StringUtils.uncapitalize(src),
+        StringUtils.uncapitalize(dst),
+        r1.sorted,
+        r2.mkString("").sorted
+      ) }
+      .filter { case (src, dst, _, _) => (src != "junction") && (dst != "junction") }
       .groupBy { case (src, _, _, _) => src }
 
     // possible relationships
@@ -315,8 +321,14 @@ object generator {
       writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
       writer.println()
 
-      writer.println("// "+generated)
-      writer.println("package object impl extends Validation {")
+      writer.println(generated)
+      writer.println("object data {")
+      writer.println()
+
+      writer.println("  import StructuralRelationships._")
+      writer.println("  import DependencyRelationships._")
+      writer.println("  import DynamicRelationships._")
+      writer.println("  import OtherRelationships._")
       writer.println()
 
       writer.println("  import MotivationElements._")
@@ -329,22 +341,51 @@ object generator {
       writer.println("  import CompositionElements._")
       writer.println()
 
-      writer.println("  val data: Map[(Meta, Meta), (String, String)] = (")
-      for { (src, items) <- relsMap } {
-        writer.println(s"    in(${StringUtils.uncapitalize(src)}) { source => ")
-        for { (_, dst, r1, r2 ) <- items } {
-          writer.println("      source.register("+StringUtils.uncapitalize(dst)+", \""+r1.sorted+"\", \""+r2.mkString("").sorted+"\")")
-        }
-        writer.println(s"    } ++ ")
-      }
-      writer.println("    Nil")
-      writer.println("  ).toMap")
+      writer.println("  type EMeta = validator.EMeta")
+      writer.println("  type RMeta = validator.RMeta")
+      writer.println("  type RSet = Set[RMeta]")
+      writer.println()
 
+      for { (k, (nm, _)) <- keys } {
+        writer.println(s"  private val ${k} = ${StringUtils.substringBeforeLast(StringUtils.uncapitalize(nm), "Relationship")}")
+      }
+      writer.println()
+
+      var combinations = Set[String]()
+      val dataStream = {
+        val stream = new StringBuilderWriter(4096)
+        val writer = new PrintWriter(stream)
+        for {(src, items) <- relsMap} {
+          writer.println(s"  private def ${src}Data: Map[(EMeta, EMeta), (RSet, RSet)] = Map(")
+          for {(_, dst, r1, r2) <- items} {
+            combinations += r1
+            combinations += r2
+            writer.println(s"    ((${src}, ${dst}), ($$${r1}, $$${r2})),")
+          }
+          writer.println("  )")
+        }
+        writer.flush()
+        stream
+      }
+
+      for { c <- combinations.toSeq.sorted } {
+        writer.println(s"  private val $$${c}: RSet = Set[RMeta](${c.mkString(", ")})")
+      }
+      writer.println()
+
+      writer.println(dataStream.toString)
+      writer.println()
+
+      writer.println("  val data: Map[(EMeta, EMeta), (RSet, RSet)] = Seq(")
+      for {(src, _) <- relsMap} {
+        writer.println(s"   ${src}Data,")
+      }
+      writer.println("  ).flatten.toMap")
       writer.println()
       writer.println("}")
 
       FileUtils.write(
-        new java.io.File("src/main/scala/org/mentha/utils/archimate/model/edges/validator/impl/package.scala"),
+        new java.io.File("src/main/scala/org/mentha/utils/archimate/model/edges/validator/data.scala"),
         stream.toString,
         "UTF-8"
       )

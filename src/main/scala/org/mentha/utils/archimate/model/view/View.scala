@@ -3,7 +3,6 @@ package org.mentha.utils.archimate.model.view
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.utils.Utils
 
-import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
 case class Point(x: Double, y: Double)
@@ -102,6 +101,11 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
 
 }
 
+/** Group at View Level*/
+final class ViewGroup extends ViewNode with NamedArchimateObject {
+
+}
+
 /** Just a text notes */
 final class ViewNotes extends ViewNode {
 
@@ -126,12 +130,12 @@ sealed trait ViewConcept[+T <: Concept] {
 }
 
 /** NodeConcept representation in the View */
-final class ViewNodeConcept[+T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
+final class ViewNodeConcept[T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
 
 }
 
 /** Relationship representation in the View */
-final class ViewRelationship[+T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
+final class ViewRelationship[T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
   require(source.concept == concept.source)
   require(target.concept == concept.target)
 

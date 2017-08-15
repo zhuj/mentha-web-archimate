@@ -57,7 +57,7 @@ class UserActor(modelId: String, stateActor: ActorRef) extends Actor {
 
   private def connected(outgoing: ActorRef): Receive = {
     // subscribe self first
-    stateActor ! StateActor.SubscriberJoin()
+    stateActor ! StateActor.SubscriberJoin
 
     // then return the new receive handler
     {

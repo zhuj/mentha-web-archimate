@@ -5,11 +5,11 @@ import org.mentha.utils.archimate.model._
 import scala.reflect.ClassTag
 
 /** */
-abstract class RelationshipMeta[T <: Relationship](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
+abstract class RelationshipMeta[+T <: Relationship: ClassTag] extends ConceptMeta[T] {
 
   def key: Char = ???
-  def isLinkPossible(sourceMeta: ConceptMeta[_], targetMeta: ConceptMeta[_]): Boolean = {
-    validator.impl.validate(sourceMeta, targetMeta, this)
+  def isLinkPossible(sourceMeta: ConceptMeta[Concept], targetMeta: ConceptMeta[Concept]): Boolean = {
+    validator.validate(sourceMeta, targetMeta, this)
   }
 
   override def toString: String = s"RelationshipMeta(${name})"
@@ -19,9 +19,7 @@ abstract class RelationshipMeta[T <: Relationship](implicit override val classTa
     val runtimeMirror = ru.runtimeMirror(this.getClass.getClassLoader)
 
     val ConceptClass = classOf[Concept]
-
-    val cls = runtimeClass
-    val classSymbol = runtimeMirror.classSymbol(cls)
+    val classSymbol = runtimeMirror.classSymbol(runtimeClass)
 
     val constructor = classSymbol.toType.member(ru.termNames.CONSTRUCTOR).asMethod
     val pls = constructor.paramLists

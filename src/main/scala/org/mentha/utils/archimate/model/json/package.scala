@@ -3,14 +3,15 @@ package org.mentha.utils.archimate.model
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.hash.Hash
 import org.mentha.utils.archimate.model.view._
-import play.api.libs.json.Json.JsValueWrapper
 
 import scala.util.control.NonFatal
 
 package object json {
 
   import play.api.libs.json._
+  import play.api.libs.json.Json.JsValueWrapper
 
   type JsonReader[A] = Reads[A]
   type JsonWriter[A] = Writes[A]
@@ -34,25 +35,23 @@ package object json {
 
   def toJson[T](o: T)(implicit tjs: JsonWriter[T]): JsonValue = Json.toJson(o)(tjs)
 
-  private[json] object hash {
+  private[json] object hash extends Hash {
 
-    @inline def _bool(b: JsonBoolean): Long = b.value.hashCode
-    @inline def _str(s: JsonString): Long = s.value.hashCode
-    @inline def _num(n: JsonNumber): Long = (n.value*1024).toLong
+    @inline def _bool(b: JsonBoolean): Int = _bool(b.value)
+    @inline def _str(s: JsonString): Int = _str(s.value)
+    @inline def _num(n: JsonNumber): Int = _num(n.value)
 
-    @inline def _add(h: Long, v: Long): Long = ((h<<5)-h) + v
+    def _obj(o: JsonObject): Int = _obj(o.fields:_*)
+    def _arr(a: JsonArray): Int = _arr(a.value)
 
-    def _obj(o: JsonObject): Long = o.fields.foldLeft(0l) { case (h, (k, v)) => _add(h, k.hashCode ^ hash(v)) }
-    def _arr(a: JsonArray): Long = a.value.foldLeft(0l) { case (h, v) => _add(h, hash(v)) }
-
-    def hash(v: JsonValue): Long = v match {
+    override def hash(v: Any): Int = v match {
       case o: JsonObject => _obj(o)
       case a: JsonArray => _arr(a)
       case s: JsonString => _str(s)
       case n: JsonNumber => _num(n)
       case b: JsonBoolean => _bool(b)
-      case play.api.libs.json.JsNull => 0l
-      case _ => throw new IllegalStateException(s"Unsupported type: ${v}")
+      case play.api.libs.json.JsNull => 0
+      case _ => super.hash(v)
     }
 
   }
@@ -92,6 +91,7 @@ package object json {
     val `points` = "points"
     
     val `deleted` = "deleted"
+    val `invalid` = "invalid"
   }
 
   implicit val pointWrites: Writes[Point] = new Writes[Point] {
@@ -158,26 +158,35 @@ package object json {
 
     builder += (names.`tp` -> tp(obj))
 
-    obj match {
-      case i: IdentifiedArchimateObject if i.isDeleted => builder += (names.`deleted` -> true)
-      case _ =>
-    }
-    obj match {
-      case n: NamedArchimateObject if n.name.nonEmpty => builder += (names.`name` -> n.name)
-      case _ =>
-    }
-    obj match {
-      case v: VersionedArchimateObject if v.version > 0 => builder += (names.`version` -> v.version)
-      case _ =>
-    }
-    obj match {
-      case p: PathBasedArchimateObject if p.path.nonEmpty => builder += (names.`path` -> p.path)
-      case _ =>
-    }
-    obj match {
-      case p: PropsArchimateObject if p.properties.value.nonEmpty => builder += (names.`props` -> p.properties)
-      case _ =>
-    }
+    Some(obj)
+      .collect { case i: IdentifiedArchimateObject if i.isDeleted => true }
+      .foreach { deleted => builder += (names.`deleted` -> deleted) }
+
+    Some(obj)
+      .collect { case n: NamedArchimateObject => n.name }
+      .filterNot { _.isEmpty }
+      .foreach { name => builder += (names.`name` -> name) }
+
+    Some(obj)
+      .collect { case v: VersionedArchimateObject => v.version }
+      .filter { _ > 0 }
+      .foreach { version => builder += (names.`version` -> version) }
+
+    Some(obj)
+      .collect { case p: PathBasedArchimateObject => p.path }
+      .filter { _.nonEmpty }
+      .foreach { path => builder += (names.`path` -> path) }
+
+    Some(obj)
+      .collect { case p: PropsArchimateObject => p.properties }
+      .filter { _.keys.nonEmpty }
+      .foreach { properties => builder += (names.`props` -> properties) }
+
+    Some(obj)
+      .collect { case v: ValidArchimateObject => v.validationErrors }
+      .filter { _.nonEmpty }
+      .foreach { errors => builder += (names.`invalid` -> errors) }
+
 
     builder ++= fields
 
@@ -278,9 +287,9 @@ package object json {
   }
 
   def fillRelationship(rel: Relationship, json: JsValue): Relationship = fillArchimateObject(rel, json) match {
-    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess(_) }; a
-    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence(_) }; i
-    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows(_) }; f
+    case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess }; a
+    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence }; i
+    case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlows }; f
     case r => r
   }
 
@@ -331,6 +340,11 @@ package object json {
           names.`src` -> c.source.id,
           names.`dst` -> c.target.id,
           names.`points` -> c.points
+        )
+        case g: ViewGroup => writeArchimateObject(
+          o,
+          names.`pos` -> o.position,
+          names.`size` -> g.size
         )
       }
     }
@@ -384,6 +398,15 @@ package object json {
     fillViewConnection(new ViewConnection(source, target), json)
   }
 
+  def fillViewGroup(vn: ViewGroup, json: JsValue): ViewGroup = {
+    val res = fillArchimateObject(vn, json)
+    fillPosAndSize(res, json)
+  }
+
+  def readViewGroup(json: JsValue): ViewGroup = {
+    fillViewGroup(new ViewGroup, json)
+  }
+
   implicit def viewObjectReads(implicit model: Model, view: View) = new Reads[ViewObject] {
     override def reads(json: JsValue): JsResult[ViewObject] = (json \ names.`tp`).as[String] match {
       case "viewNodeConcept" => {
@@ -403,6 +426,9 @@ package object json {
         val source = viewObject((json \ names.`src`).as[String])
         val target = viewObject((json \ names.`dst`).as[String])
         JsSuccess(readViewConnection(source, target, json))
+      }
+      case "viewGroup" => {
+        JsSuccess(readViewGroup(json))
       }
     }
   }

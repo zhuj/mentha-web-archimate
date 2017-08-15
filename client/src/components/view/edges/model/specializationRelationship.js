@@ -6,6 +6,6 @@ import { ModelLinkWidget } from '../BaseLinkWidget'
 export const TYPE='specializationRelationship';
 
 export class SpecializationRelationshipWidget extends ModelLinkWidget {
-  getClassName(link) { return TYPE; }
+  getBaseClassName(link) { return TYPE; }
 }
 

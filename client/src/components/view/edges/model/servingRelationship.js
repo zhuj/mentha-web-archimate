@@ -6,6 +6,6 @@ import { ModelLinkWidget } from '../BaseLinkWidget'
 export const TYPE='servingRelationship';
 
 export class ServingRelationshipWidget extends ModelLinkWidget {
-  getClassName(link) { return TYPE; }
+  getBaseClassName(link) { return TYPE; }
 }
 

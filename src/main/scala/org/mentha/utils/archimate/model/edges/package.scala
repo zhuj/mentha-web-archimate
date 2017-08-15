@@ -7,7 +7,7 @@ package object edges {
   import DynamicRelationships._
   import OtherRelationships._
 
-  val allRelations: Seq[RelationshipMeta[_]] =
+  val allRelations: Seq[RelationshipMeta[Relationship]] =
     structuralRelations ++
     dependencyRelations ++
     dynamicRelations ++
@@ -15,7 +15,7 @@ package object edges {
 
   val mapRelations: Map[String, RelationshipMeta[Relationship]] =
     allRelations
-      .map { m => (m.name, m.asInstanceOf[RelationshipMeta[Relationship]]) }
+      .map { m => (m.name, m) }
       .toMap
 
   @inline def _composes(whole: Concept, part: Concept)(implicit model: Model): CompositionRelationship = model.add { new CompositionRelationship(whole, part) }
@@ -27,6 +27,7 @@ package object edges {
   @inline def _triggers(src: Concept, dst: Concept)(implicit model: Model): TriggeringRelationship = model.add { new TriggeringRelationship(src, dst) }
   @inline def _specializes(src: Concept, dst: Concept)(implicit model: Model): SpecializationRelationship = model.add { new SpecializationRelationship(src, dst) }
   @inline def _associated_with(src: Concept, dst: Concept)(implicit model: Model): AssociationRelationship = model.add { new AssociationRelationship(src, dst) }
+
   @inline def _flows_to(src: Concept, dst: Concept)(what: String)(implicit model: Model): FlowRelationship = model.add { new FlowRelationship(src, dst)(what) }
   @inline def _influences_in(src: Concept, dst: Concept)(what: String)(implicit model: Model): InfluenceRelationship = model.add { new InfluenceRelationship(src, dst)(what) }
 

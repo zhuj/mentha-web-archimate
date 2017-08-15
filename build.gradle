@@ -9,17 +9,20 @@ sourceCompatibility = 1.8
 
 ext {
     scalaLibVersion = "2.12"
-    scalaVersion = "${scalaLibVersion}.2"
+    scalaVersion = "${scalaLibVersion}.3"
     zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
     slf4j = "1.7.13"
-    //orientDbVersion = "3.0.0m1"
-    akkaVersion = "2.5.3"
+    akkaVersion = "2.5.4"
     akkaHttpVersion = "10.0.9"
     playVersion = "2.6.2"
 }
 
 repositories {
     mavenCentral()
+}
+
+configurations {
+    scalaCompilerPlugin
 }
 
 dependencies {
@@ -33,6 +36,11 @@ dependencies {
 
     compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
     compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.6"
+
+    scalaCompilerPlugin "org.scalamacros:paradise_${scalaVersion}:2.1.1"
+    compile "org.scalameta:scalameta_${scalaLibVersion}:1.8.0"
+
+    compile "org.scalaz:scalaz-core_${scalaLibVersion}:7.2.14"
 
     compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
@@ -52,21 +60,21 @@ dependencies {
     compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
 
     compile "javax.validation:validation-api:1.1.0.Final"
-    compile "org.apache.commons:commons-lang3:3.5"
+    compile "org.apache.commons:commons-lang3:3.6"
     compile "commons-io:commons-io:2.5"
 
     compile "org.slf4j:slf4j-api:${slf4j}"
     compile "org.slf4j:slf4j-log4j12:${slf4j}"
-
-    //compile "com.orientechnologies:orientdb-core:${orientDbVersion}"
-    //compile "com.orientechnologies:orientdb-client:${orientDbVersion}"
-    //compile "com.orientechnologies:orientdb-object:${orientDbVersion}"
-    //compile "com.orientechnologies:orientdb-server:${orientDbVersion}"
-    //compile "com.orientechnologies:orientdb-studio:${orientDbVersion}"
 
     testCompile 'net.sf.saxon:Saxon-HE:9.7.0-18'
     testCompile "org.jsoup:jsoup:1.10.2"
 
     testCompile "junit:junit:4.12"
     testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.1"
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.additionalParameters = [
+            "-Xplugin:" + configurations.scalaCompilerPlugin.asPath
+    ]
 }

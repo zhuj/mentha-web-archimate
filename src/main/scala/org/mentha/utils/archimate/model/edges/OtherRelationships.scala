@@ -18,7 +18,7 @@ object OtherRelationships {
     override def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)
   }
 
-  val otherRelations: Seq[RelationshipMeta[_]] = Seq(specialization, association)
+  val otherRelations: Seq[RelationshipMeta[Relationship]] = Seq(specialization, association)
 
 }
 

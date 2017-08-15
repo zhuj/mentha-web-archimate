@@ -6,7 +6,7 @@ import { ModelLinkWidget } from '../BaseLinkWidget'
 export const TYPE='accessRelationship';
 
 export class AccessRelationshipWidget extends ModelLinkWidget {
-  getClassName(link) {
+  getBaseClassName(link) {
     switch (this.props.conceptInfo['access']) {
       case "r": return TYPE + " r";
       case "w": return TYPE + " w";

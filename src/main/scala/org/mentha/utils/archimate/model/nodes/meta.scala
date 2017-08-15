@@ -6,7 +6,7 @@ import org.mentha.utils.archimate.model.edges.RelationshipMeta
 import scala.reflect.ClassTag
 
 /** */
-abstract class ElementMeta[T <: Element](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
+abstract class ElementMeta[+T <: Element: ClassTag] extends ConceptMeta[T] {
 
   def newInstance(): T = runtimeClass.newInstance().asInstanceOf[T]
   def layerObject: LayerObject = ???
@@ -17,9 +17,9 @@ abstract class ElementMeta[T <: Element](implicit override val classTag: ClassTa
 }
 
 /** */
-class RelationshipConnectorMeta[T <: RelationshipConnector](implicit override val classTag: ClassTag[T]) extends ConceptMeta[T] {
+class RelationshipConnectorMeta[+T <: RelationshipConnector: ClassTag] extends ConceptMeta[T] {
 
-  def newInstance(relationship: RelationshipMeta[_]): T = runtimeClass.newInstance().asInstanceOf[T]
+  def newInstance(relationship: RelationshipMeta[Relationship]): T = runtimeClass.newInstance()
 
   override def toString: String = s"RelationshipConnectorMeta(${name})"
 

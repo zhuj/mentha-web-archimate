@@ -15,20 +15,30 @@ export class DefaultNodeWidget extends React.Component {
     return shape("rect", {x:0, y:0, width, height});
   }
 
-  borderPoint(node, border, p) {
+  borderPoint(node, border, p, simple) {
     /*if (false)*/ {
       try {
-        const width = node.width || 0;
-        const height = node.height || 0;
-        const x = node.x - width / 2;
-        const y = node.y - height / 2;
+        const { x: px, y: py } = p;
+        let { x: nx, y: ny } = node;
+
+        const w2 = (node.width || 0) / 2;
+        const h2 = (node.height || 0) / 2;
+        const x0 = nx - w2;
+        const y0 = ny - h2;
+
+        if (!simple) {
+          if (Math.abs(px - nx) < w2 - 10) { nx = px; }
+          if (Math.abs(py - ny) < h2 - 10) { ny = py; }
+        }
+
+
         const i = intersect(
           border,
-          shape("line", {x1: node.x-x, y1: node.y-y, x2: p.x-x, y2: p.y-y})
+          shape("line", { x1: nx-x0, y1: ny-y0, x2: px-x0, y2: py-y0 })
         );
         let first = _.first(i.points);
         if (!!first) {
-          return { x: first.x+x, y: first.y+y };
+          return { x: first.x+x0, y: first.y+y0 };
         }
       } catch (exc) {
         console.error(exc);
@@ -54,7 +64,7 @@ export class DefaultNodeWidget extends React.Component {
           firstPoint.updateLocation(node);
         } else {
           const targetPoint = (simple && !!targetNode) ? targetNode : link.getPoint(1 /* next to the first*/);
-          const point = this.borderPoint(node, border, targetPoint);
+          const point = this.borderPoint(node, border, targetPoint, simple);
           firstPoint.updateLocation(point);
         }
       }
@@ -68,7 +78,7 @@ export class DefaultNodeWidget extends React.Component {
           lastPoint.updateLocation(node);
         } else {
           const sourcePoint = (simple && !!sourceNode) ? sourceNode : link.getPoint(-2 /*one before the last*/);
-          const point = this.borderPoint(node, border, sourcePoint);
+          const point = this.borderPoint(node, border, sourcePoint, simple);
           lastPoint.updateLocation(point);
         }
       }

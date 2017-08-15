@@ -18,7 +18,7 @@ object DynamicRelationships {
     override def newInstance(source: Concept, target: Concept): FlowRelationship = new FlowRelationship(source, target)()
   }
 
-  val dynamicRelations: Seq[RelationshipMeta[_]] = Seq(triggering, flow)
+  val dynamicRelations: Seq[RelationshipMeta[Relationship]] = Seq(triggering, flow)
 
 }
 

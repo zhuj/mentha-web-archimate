@@ -242,6 +242,6 @@ object BusinessElements {
     override def name: String = "product"
   }
 
-  val businessElements: Seq[ElementMeta[_]] = Seq(businessActor, businessRole, businessCollaboration, businessInterface, businessProcess, businessFunction, businessInteraction, businessEvent, businessService, businessObject, contract, representation, product)
+  val businessElements: Seq[ElementMeta[Element]] = Seq(businessActor, businessRole, businessCollaboration, businessInterface, businessProcess, businessFunction, businessInteraction, businessEvent, businessService, businessObject, contract, representation, product)
 
 }

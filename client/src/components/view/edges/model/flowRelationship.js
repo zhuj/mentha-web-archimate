@@ -6,6 +6,6 @@ import { ModelLinkWidget } from '../BaseLinkWidget'
 export const TYPE='flowRelationship';
 
 export class FlowRelationshipWidget extends ModelLinkWidget {
-  getClassName(link) { return TYPE; }
+  getBaseClassName(link) { return TYPE; }
 }
 

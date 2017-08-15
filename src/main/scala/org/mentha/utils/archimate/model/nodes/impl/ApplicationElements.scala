@@ -169,6 +169,6 @@ object ApplicationElements {
     override def name: String = "dataObject"
   }
 
-  val applicationElements: Seq[ElementMeta[_]] = Seq(applicationComponent, applicationCollaboration, applicationInterface, applicationFunction, applicationInteraction, applicationProcess, applicationEvent, applicationService, dataObject)
+  val applicationElements: Seq[ElementMeta[Element]] = Seq(applicationComponent, applicationCollaboration, applicationInterface, applicationFunction, applicationInteraction, applicationProcess, applicationEvent, applicationService, dataObject)
 
 }

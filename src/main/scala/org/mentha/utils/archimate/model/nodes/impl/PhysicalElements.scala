@@ -82,6 +82,6 @@ object PhysicalElements {
     override def name: String = "material"
   }
 
-  val physicalElements: Seq[ElementMeta[_]] = Seq(equipment, facility, distributionNetwork, material)
+  val physicalElements: Seq[ElementMeta[Element]] = Seq(equipment, facility, distributionNetwork, material)
 
 }
