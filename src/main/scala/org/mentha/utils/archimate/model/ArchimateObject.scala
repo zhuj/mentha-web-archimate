@@ -65,7 +65,7 @@ trait PathBasedArchimateObject extends ArchimateObject {
 trait ValidArchimateObject extends ArchimateObject {
   def validationErrors: List[String] = Nil
   @inline def valid: Boolean = validationErrors.isEmpty
-  @inline def validate: this.type = {
+  @inline @throws[IllegalStateException] def validate: this.type = {
     val errors = validationErrors
     if (errors.nonEmpty) {
       throw new IllegalStateException(s"${this} is not valid: ${errors.mkString(", ")}")

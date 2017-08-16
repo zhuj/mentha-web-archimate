@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Technology {
+
   implicit class ImplicitNode(src: Node) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -238,7 +239,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitDevice(src: Device) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -470,7 +472,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitSystemSoftware(src: SystemSoftware) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -702,7 +705,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyCollaboration(src: TechnologyCollaboration) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -934,7 +938,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyInterface(src: TechnologyInterface) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1105,7 +1110,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitPath(src: Path) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Path)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1326,7 +1332,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitCommunicationNetwork(src: CommunicationNetwork) {
     def `composes`(dst: CommunicationNetwork)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1548,7 +1555,8 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyFunction(src: TechnologyFunction) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1724,7 +1732,8 @@ object Technology {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyProcess(src: TechnologyProcess) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1900,7 +1909,8 @@ object Technology {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyInteraction(src: TechnologyInteraction) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -2076,7 +2086,8 @@ object Technology {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyEvent(src: TechnologyEvent) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyEvent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -2189,7 +2200,8 @@ object Technology {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitTechnologyService(src: TechnologyService) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyService)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -2354,7 +2366,8 @@ object Technology {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitArtifact(src: Artifact) {
     def `composes`(dst: Artifact)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -2514,5 +2527,5 @@ object Technology {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
 }

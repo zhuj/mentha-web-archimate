@@ -20,7 +20,7 @@ const styleSheet = createStyleSheet('AppFrame', theme => ({
       background: theme.palette.background.default,
       color: theme.palette.text.primary,
       // lineHeight: '1.2',
-      overflowX: 'hidden',
+      overflow: 'hidden',
       // WebkitFontSmoothing: 'antialiased', // Antialiasing.
       // MozOsxFontSmoothing: 'grayscale', // Antialiasing.
     },

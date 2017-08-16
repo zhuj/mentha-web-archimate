@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
 
@@ -111,6 +112,26 @@ const updateDiagramModel = (view, diagramModel) => {
     });
   }
 
+  // overlaps
+  /*if (true)*/ {
+    const sorted = _.sortBy(diagramModel.getNodes(), (n) => n.zIndex);
+    for (let i=0,l=sorted.length;i<l;i++) {
+      const node = sorted[i];
+      let overlapped = false;
+      for (let j=1+i;j<l;j++) {
+        const n = sorted[j];
+        if (
+          (Math.abs(node.x - n.x) < 0.5*(node.width + n.width)) &&
+          (Math.abs(node.y - n.y) < 0.5*(node.height + n.height))
+        ) {
+          overlapped = true;
+          break;
+        }
+      }
+      node.overlapped = overlapped;
+    }
+  }
+
   return diagramModel;
 };
 
@@ -221,11 +242,6 @@ class ViewDiagram extends DiagramWidget {
   componentWillUpdate(nextProps, nextState) {
     reactLS.componentWillUpdate.bind(this)(nextProps, nextState);
     if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
-  }
-
-  componentDidMount() {
-    reactLS.componentDidMount.bind(this)();
-    if (!!super.componentDidMount) { return super.componentDidMount(); }
   }
 
   generateWidgetForNode(props) {
@@ -354,6 +370,33 @@ class ViewDiagram extends DiagramWidget {
     }
   }
 
+  onMouseEnterElement(event, model) {
+    this.onMouseLeaveElement(event, model);
+    this.hoverTimeout = setTimeout(
+      () => {
+        this.hoverTimeout = null;
+        const { clientX, clientY } = this.mouse;
+        const hover = this.refs['hover-region'];
+
+        let obj = model.viewObject;
+        if (!!obj['.conceptInfo']) { obj = obj['.conceptInfo']; }
+
+        hover.classList.add("visible");
+        hover.innerHTML = JSON.stringify(obj, null, 2);
+        hover.style.left = (clientX + 12)+'px';
+        hover.style.top = (clientY + 12)+'px';
+      },
+      1500
+    );
+  }
+
+  onMouseLeaveElement(event, model) {
+    if (!!this.hoverTimeout) { clearTimeout(this.hoverTimeout); }
+    const hover = this.refs['hover-region'];
+    hover.classList.remove("visible");
+    hover.innerHTML = "";
+  }
+
   renderNewLinkMenu() {
     const { ['new-link']: newLinkData } = this.state;
     if (!newLinkData) { return null; }
@@ -377,6 +420,13 @@ class ViewDiagram extends DiagramWidget {
     )
   }
 
+  renderHoverRegion() {
+    return (
+      <div key='hover-region' className='hover-region' ref='hover-region'>
+      </div>
+    );
+  }
+
   render() {
     // const timerName = `view-diagram-render-${this.props.id}`;
     // console.time(timerName);
@@ -385,6 +435,7 @@ class ViewDiagram extends DiagramWidget {
       return connectDropTarget(
         <div className='diagram-root'>
           {this.renderNewLinkMenu()}
+          {this.renderHoverRegion()}
           {super.render()}
         </div>
       );

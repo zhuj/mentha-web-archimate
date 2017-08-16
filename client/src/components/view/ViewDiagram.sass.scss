@@ -48,6 +48,13 @@
       }
     }
 
+    div.title{
+      &.overlapped {
+        display: block;
+        padding-top: 5px;
+      }
+    }
+
   }
 
 }
@@ -61,6 +68,27 @@
     z-index: 1300; // interface z-index
     //border: 1px solid black;
     //background-color: white;
+  }
+
+  div.hover-region {
+    position: absolute;
+    display: none;
+    visibility: hidden;
+
+    font-family: monospace;
+    white-space: pre;
+    font-size: 10px;
+    color: black;
+
+    &.visible {
+      display: block !important;
+      visibility: visible !important;
+
+      padding: 5px;
+      border: 1px solid black;
+      background-color: lightgoldenrodyellow;
+      z-index: 1200;
+    }
   }
 
 }

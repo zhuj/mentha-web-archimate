@@ -1,5 +1,9 @@
 package org.mentha.utils.archimate.model.view
 
+import org.mentha.utils.archimate.model.edges.{CompositionRelationship, StructuralRelationship, StructuralRelationships}
+
+import scala.util.{Success, Try}
+
 package object dsl {
 
   import org.mentha.utils.archimate.model._
@@ -18,22 +22,40 @@ package object dsl {
   }
 
   object geometry {
-    @inline def x(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = { (1.0-shift)*v1.position.x + (shift)*v2.position.x }
-    @inline def y(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = { (1.0-shift)*v1.position.y + (shift)*v2.position.y }
-    @inline def w(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = { (1.0-shift)*v1.size.width + (shift)*v2.size.width }
-    @inline def h(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = { (1.0-shift)*v1.size.height + (shift)*v2.size.height }
+    @inline def x(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = {
+      (1.0 - shift) * v1.position.x + (shift) * v2.position.x
+    }
+
+    @inline def y(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = {
+      (1.0 - shift) * v1.position.y + (shift) * v2.position.y
+    }
+
+    @inline def w(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = {
+      (1.0 - shift) * v1.size.width + (shift) * v2.size.width
+    }
+
+    @inline def h(v1: ViewObject, v2: ViewObject, shift: Double = 0.5) = {
+      (1.0 - shift) * v1.size.height + (shift) * v2.size.height
+    }
   }
 
   implicit class ImplicitViewNode[+T <: ViewNode](node: T) {
 
-    def scaleWidth(scale: Double): T = node withSize { Size(scale*node.size.width, node.size.height) }
-    def scaleHeight(scale: Double): T = node withSize { Size(node.size.width, scale*node.size.height) }
+    def scaleWidth(scale: Double): T = node withSize {
+      Size(scale * node.size.width, node.size.height)
+    }
+
+    def scaleHeight(scale: Double): T = node withSize {
+      Size(node.size.width, scale * node.size.height)
+    }
 
     def doubleWidth(): T = scaleWidth(2.0)
+
     def doubleHeight(): T = scaleHeight(2.0)
 
     @inline def place(dir: directions.Type, v: ViewObject)(implicit space: Size): T = place(dir, v, v)(space)
 
+    /** places the element between the given element + shifted to the given direction */
     def place(dir: directions.Type, v1: ViewObject, v2: ViewObject)(implicit space: Size): T = node.withPosition(
       dir match {
         case directions.Up => Point(
@@ -55,6 +77,73 @@ package object dsl {
       }
     )
 
+    /** places the element in the intersection of vertical and horizontal position of the given elements */
+    def place(vx: ViewObject, vy: ViewObject)(implicit space: Size): T = node.withPosition(
+      Point(
+        x = vx.position.x,
+        y = vy.position.y
+      )
+    )
+
+
+    def move(dir: directions.Type, amount: Double = 1.0)(implicit space: Size): T = node.withPosition(
+      dir match {
+        case directions.Up => Point(
+          x = node.position.x,
+          y = node.position.y - (node.size.height + space.height) * amount
+        )
+        case directions.Down => Point(
+          x = node.position.x,
+          y = node.position.y + (node.size.height + space.height) * amount
+        )
+        case directions.Left => Point(
+          x = node.position.x - (node.size.width + space.width) * amount,
+          y = node.position.y
+        )
+        case directions.Right => Point(
+          x = node.position.x + (node.size.width + space.width) * amount,
+          y = node.position.y
+        )
+      }
+    )
+
+    /** wraps the current element over the given group */
+    def wrap(callback: (ViewNode, ViewNode) => Unit, elements: ViewNode*)(implicit space: Size): T = {
+
+      if (elements.isEmpty) {
+        throw new IllegalStateException("")
+      }
+
+      var x0 = Double.MaxValue
+      var y0 = Double.MaxValue
+      var x1 = Double.MinValue
+      var y1 = Double.MinValue
+      for { el <- elements } {
+        callback(node, el)
+        x0 = Math.min(x0, el.position.x - el.size.width / 2)
+        x1 = Math.max(x1, el.position.x + el.size.width / 2)
+        y0 = Math.min(y0, el.position.y - el.size.height / 2)
+        y1 = Math.max(y1, el.position.y + el.size.height / 2)
+      }
+
+      node withPosition { Point( (x0+x1)/2, (y0+y1)/2 - 0.15*space.height ) } withSize { Size((x1-x0) + 0.5*space.width, (y1-y0) + 0.75*space.height) }
+    }
+  }
+
+  def wrapWithComposition(implicit model: Model, view: View): (ViewNode, ViewNode) => Unit = {
+    case (src: ViewGroup, dst) => view.add { new ViewConnection(src, dst) }
+    case (src: ViewNodeConcept[_], dst: ViewNodeConcept[_]) => view.add {
+      new ViewRelationship[Relationship](src, dst)(
+        model.add {
+          Seq(StructuralRelationships.composition, StructuralRelationships.assignment, StructuralRelationships.realization, StructuralRelationships.aggregation)
+            .iterator // make it lazy
+            .map { meta => Try[Relationship] { meta.newInstance(src.concept, dst.concept).validate } }
+            .collectFirst { case Success(r) => r }
+            .getOrElse { throw new IllegalArgumentException(s"There is no possible relationship between ${src} and ${dst}") }
+        }
+      )
+    }
+    case (src, dst) => throw new IllegalArgumentException(s"There is no possible relationship between ${src} and ${dst}")
   }
 
   implicit class ImplicitViewEdge[+T <: ViewEdge](edge: T) {

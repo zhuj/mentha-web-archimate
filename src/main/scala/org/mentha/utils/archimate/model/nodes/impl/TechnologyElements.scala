@@ -8,6 +8,8 @@ import org.mentha.utils.archimate.model.edges._
 sealed trait TechnologyElement extends TechnologyLayer {}
 
 /**
+ * A computational or physical resource that hosts, manipulates, or interacts with other computational or physical resources.
+ * ==Overview==
  * A node represents a computational or physical resource that hosts, manipulates, or interacts with other computational or physical resources.
  * @note Nodes are active structure elements that perform technology behavior and execute, store, and process technology objects such as artifacts (or materials, as outlined in Chapter 11). For instance, nodes are used to model application platforms, defined by the TOGAF framework as: “a collection of technology components of hardware and software that provide the services used to support applications”.
  * @note Nodes can be interconnected by paths. A node may be assigned to an artifact to model that the artifact is deployed on the node.
@@ -21,6 +23,8 @@ final class Node extends InternalActiveStructureElement with TechnologyElement {
 }
 
 /**
+ * A physical IT resource upon which system software and artifacts may be stored or deployed for execution.
+ * ==Overview==
  * A device is a physical IT resource upon which system software and artifacts may be stored or deployed for execution.
  * @note A device is a specialization of a node that represents a physical IT resource with processing capability. It is typically used to model hardware systems such as mainframes, PCs, or routers. Usually, they are part of a node together with system software. Devices may be composite; i.e., consist of sub-devices.
  * @note Devices can be interconnected by networks. Devices can be assigned to artifacts and to system software, to model that artifacts and system software are deployed on that device. A node can contain one or more devices.
@@ -34,6 +38,8 @@ final class Device extends InternalActiveStructureElement with TechnologyElement
 }
 
 /**
+ * Software that provides or contributes to an environment for storing, executing, and using software or data deployed within it.
+ * ==Overview==
  * System software represents software that provides or contributes to an environment for storing, executing, and using software or data deployed within it.
  * @note System software is a specialization of a node that is used to model the software environment in which artifacts run. This can be, for example, an operating system, a JEE application server, a database system, or a workflow engine. Also, system software can be used to represent, for example, communication middleware. Usually, system software is combined with a device representing the hardware environment to form a general node.
  * @note A device or system software can be assigned to other system software; e.g., to model different layers of software running on top of each other. System software can be assigned to artifacts, to model that these artifacts are deployed on that software. System software can realize other system software. A node can be composed of system software.
@@ -46,6 +52,8 @@ final class SystemSoftware extends InternalActiveStructureElement with Technolog
 }
 
 /**
+ * An aggregate of two or more nodes that work together to perform collective technology behavior.
+ * ==Overview==
  * A technology collaboration represents an aggregate of two or more nodes that work together to perform collective technology behavior.
  * @note A technology collaboration specifies which nodes cooperate to perform some task. The collaborative behavior, including, for example, the communication pattern of these nodes, is modeled by a technology interaction. A technology collaboration typically models a logical or temporary collaboration of nodes, and does not exist as a separate entity in the enterprise.
  * @note Technology collaboration is a specialization of node, and aggregates two or more (cooperating) nodes. A technology collaboration is an active structure element that may be assigned to one or more technology interactions or other technology internal behavior elements, which model the associated behavior. A technology interface may serve a technology collaboration, and a technology collaboration may be composed of technology interfaces. The name of a technology collaboration should preferably be a noun.
@@ -57,6 +65,8 @@ final class TechnologyCollaboration extends Collaboration with TechnologyElement
 }
 
 /**
+ * A point of access where technology services offered by a node can be accessed.
+ * ==Overview==
  * A technology interface represents a point of access where technology services offered by a node can be accessed.
  * @note A technology interface specifies how the technology services of a node can be accessed by other nodes. A technology interface exposes a technology service to the environment. The same service may be exposed through different interfaces.
  * @note In a sense, a technology interface specifies a kind of contract that a component realizing this interface must fulfill. This may include, for example, parameters, protocols used, pre- and post-conditions, and data formats.
@@ -71,6 +81,8 @@ final class TechnologyInterface extends ExternalActiveStructureElement with Tech
 }
 
 /**
+ * A link between two or more nodes, through which these nodes can exchange data or material.
+ * ==Overview==
  * A path represents a link between two or more nodes, through which these nodes can exchange data or material.
  * @note A path is used to model the logical communication (or distribution) relations between nodes. It is realized by one or more networks, which represent the physical communication (or distribution) links. The properties (e.g., bandwidth, latency) of a path are usually aggregated from these underlying networks.
  * @note A path connects two or more nodes. A path is realized by one or more networks. A path can aggregate nodes.
@@ -82,6 +94,8 @@ final class Path extends InternalActiveStructureElement with TechnologyElement {
 }
 
 /**
+ * A set of structures that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.
+ * ==Overview==
  * A communication network represents a set of structures and behaviors that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.
  * @note A communication network represents the physical communication infrastructure. It represents ”a set of products, concepts, and services that enable the connection of computer systems or devices for the purpose of transmitting data and other forms (e.g., voice and video) between the systems”, as defined by the TOGAF framework.
  * @note A communication network connects two or more devices. The most basic communication network is a single link between two devices, but it may comprise multiple links and associated network equipment. A network has properties such as bandwidth and latency. A communication network realizes one or more paths. It embodies the physical realization of the logical path between nodes.
@@ -95,6 +109,8 @@ final class CommunicationNetwork extends InternalActiveStructureElement with Tec
 }
 
 /**
+ * A collection of technology behavior that can be performed by a node.
+ * ==Overview==
  * A technology function represents a collection of technology behavior that can be performed by a node.
  * @note A technology function describes the internal behavior of a node; for the user of a node that performs a technology function, this function is invisible. If its behavior is exposed externally, this is done through one or more technology services. A technology function abstracts from the way it is implemented. Only the necessary behavior is specified.
  * @note A technology function may realize technology services. Technology services of other technology functions may serve technology functions. A technology function may access technology objects. A node may be assigned to a technology function (which means that the node performs the technology function). The name of a technology function should preferably be a verb ending with “ing”.
@@ -106,6 +122,8 @@ final class TechnologyFunction extends Function with TechnologyElement {
 }
 
 /**
+ * A sequence of technology behaviors that achieves a specific outcome.
+ * ==Overview==
  * A technology process represents a sequence of technology behaviors that achieves a specific outcome.
  * @note A technology process describes internal behavior of a node; for the user of that node, this process is invisible. If its behavior is exposed externally, this is done through one or more technology services. A technology process abstracts from the way it is implemented. Only the necessary behavior is specified. It can use technology objects as input and use or transform these to produce other technology objects as output.
  * @note A technology process may realize technology services. Other technology services may serve (be used by) a technology process. A technology process may access technology objects. A node may be assigned to a technology process, which means that this node performs the process. The name of a technology process should clearly identify a series of technology behaviors; e.g., “System boot sequence” or “Replicate database”.
@@ -117,6 +135,8 @@ final class TechnologyProcess extends Process with TechnologyElement {
 }
 
 /**
+ * A unit of collective technology behavior performed by (a collaboration of) two or more nodes.
+ * ==Overview==
  * A technology interaction represents a unit of collective technology behavior performed by (a collaboration of) two or more nodes.
  * @note A technology interaction describes the collective behavior that is performed by the nodes that participate in a technology collaboration. This may, for example, include the communication pattern between these components. A technology interaction can also specify the externally visible behavior needed to realize a technology service. The details of the interaction between the nodes involved in a technology interaction can be expressed during the detailed design using, for example, a UML interaction diagram.
  * @note A technology collaboration may be assigned to a technology interaction. A technology interaction may realize a technology service. Technology services may serve a technology interaction. A technology interaction may access artifacts. The name of a technology interaction should clearly identify a series of technology behaviors; e.g., “Client profile creation” or “Update customer records”.
@@ -128,6 +148,8 @@ final class TechnologyInteraction extends Interaction with TechnologyElement {
 }
 
 /**
+ * A technology behavior element that denotes a state change.
+ * ==Overview==
  * A technology event is a technology behavior element that denotes a state change.
  * @note Technology functions and other technology behavior may be triggered or interrupted by a technology event. Also, technology functions may raise events that trigger other infrastructure behavior. Unlike processes, functions, and interactions, an event is instantaneous: it does not have duration. Events may originate from the environment of the organization, but also internal events may occur generated by, for example, other devices within the organization.
  * @note A technology event may have a time attribute that denotes the moment or moments at which the event happens. For example, this can be used to model time schedules; e.g., to model an event that triggers a recurring infrastructure function such as making a daily backup.
@@ -140,6 +162,8 @@ final class TechnologyEvent extends Event with TechnologyElement {
 }
 
 /**
+ * An explicitly defined exposed technology behavior.
+ * ==Overview==
  * A technology service represents an explicitly defined exposed technology behavior.
  * @note A technology service exposes the functionality of a node to its environment. This functionality is accessed through one or more technology interfaces. It may require, use, and produce artifacts.
  * @note A technology service should be meaningful from the point of view of the environment; it should provide a unit of behavior that is, in itself, useful to its users, such as application components and nodes.
@@ -155,6 +179,8 @@ final class TechnologyService extends ExternalBehaviorElement with TechnologyEle
 }
 
 /**
+ * A piece of data that is used or produced in a software development process, or by deployment and operation of a system.
+ * ==Overview==
  * An artifact represents a piece of data that is used or produced in a software development process, or by deployment and operation of an IT system.
  * @note An artifact represents a tangible element in the IT world. Artifact is a specialization of technology object. It is typically used to model (software) products such as source files, executables, scripts, database tables, messages, documents, specifications, and model files. An instance (copy) of an artifact can be deployed on a node. An artifact could be used to represent a physical data component that realizes a data object.
  * @note An application component or system software may be realized by one or more artifacts. A data object may be realized by one or more artifacts. A node may be assigned to an artifact to model that the artifact is deployed on the node. Thus, the two typical ways to use the artifact element are as an execution component or as a data file. In fact, these could be defined as specializations of the artifact element.

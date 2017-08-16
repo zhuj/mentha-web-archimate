@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Motivation {
+
   implicit class ImplicitStakeholder(src: Stakeholder) {
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Stakeholder)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -22,7 +23,8 @@ object Motivation {
       def `in`(dst: Stakeholder)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
+
   implicit class ImplicitDriver(src: Driver) {
     def `aggregates`(dst: Driver)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -46,7 +48,8 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
+
   implicit class ImplicitAssessment(src: Assessment) {
     def `aggregates`(dst: Assessment)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -70,7 +73,8 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
+
   implicit class ImplicitGoal(src: Goal) {
     def `aggregates`(dst: Goal)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -94,7 +98,8 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
+
   implicit class ImplicitOutcome(src: Outcome) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Outcome)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -121,7 +126,8 @@ object Motivation {
     def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitPrinciple(src: Principle) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Principle)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -149,7 +155,8 @@ object Motivation {
     def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitRequirement(src: Requirement) {
     def `composes`(dst: Constraint)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -181,7 +188,8 @@ object Motivation {
     def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitConstraint(src: Constraint) {
     def `composes`(dst: Constraint)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -213,7 +221,8 @@ object Motivation {
     def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitMeaning(src: Meaning) {
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Meaning)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -237,7 +246,8 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
+
   implicit class ImplicitValue(src: Value) {
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Value)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -261,5 +271,5 @@ object Motivation {
       def `in`(dst: Value)(implicit model: Model): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
- }
+  }
 }

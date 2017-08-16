@@ -10,7 +10,7 @@ import './DiagramWidget.sass.scss'
 class LinkWrapper extends React.Component {
   shouldComponentUpdate() {
     const { diagram, link } = this.props;
-    return diagram.canEntityRepaint.bind(diagram)(link);
+    return diagram.canEntityRepaint.call(diagram,link);
   }
 
   render() {
@@ -26,11 +26,11 @@ class LinkWrapper extends React.Component {
 class NodeWrapper extends React.Component {
   shouldComponentUpdate() {
     const { diagram, node } = this.props;
-    return diagram.canEntityRepaint.bind(diagram)(node);
+    return diagram.canEntityRepaint.call(diagram,node);
   }
 
   render() {
-    const { node, children } = this.props;
+    const { diagram, node, children } = this.props;
     const width = node.width || 0;
     const height = node.height || 0;
     const selected = node.isSelected();
@@ -43,8 +43,10 @@ class NodeWrapper extends React.Component {
         width: width,
         height: height,
         zIndex: node.zIndex || 0
-      }
-    };
+      },
+      onMouseEnter: (event)=>{diagram.onMouseEnterElement.call(diagram, event, node)},
+      onMouseLeave: (event)=>{diagram.onMouseLeaveElement.call(diagram, event, node)}
+  };
 
     if (selected) {
       return (
@@ -74,7 +76,7 @@ class NodeWrapper extends React.Component {
 class PortWrapper extends React.Component {
   // shouldComponentUpdate() {
   //   const { diagram, node } = this.props;
-  //   return diagram.canEntityRepaint.bind(diagram)(node);
+  //   return diagram.canEntityRepaint.call(diagram,node);
   // }
   render() {
     const { node } = this.props;
@@ -270,6 +272,14 @@ export class DiagramWidget extends React.Component {
     return null;
   }
 
+  onMouseEnterElement(event, model) {
+
+  }
+
+  onMouseLeaveElement(event, model) {
+
+  }
+
   onWheel(event) {
 
     event.preventDefault();
@@ -379,6 +389,7 @@ export class DiagramWidget extends React.Component {
   }
 
   onMouseMove(event) {
+    this.mouse = { clientX: event.clientX, clientY: event.clientY };
 
     if (!this.state['action']) { return; }
 

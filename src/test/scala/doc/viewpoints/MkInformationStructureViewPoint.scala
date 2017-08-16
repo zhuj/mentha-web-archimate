@@ -6,8 +6,8 @@ import org.mentha.utils.archimate.MkModel
 /**
   * The information structure viewpoint is comparable to the traditional information models created in the development of almost any information system. It shows the structure of the information used in the enterprise or in a specific business process or application, in terms of data types or (object-oriented) class structures. Furthermore, it may show how the information at the business level is represented at the application level in the form of the data structures used there, and how these are then mapped onto the underlying technology infrastructure; e.g., by means of a database schema.
   *
-  * @see http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758130
-  * @see http://pubs.opengroup.org/architecture/archimate2-doc/chap08.html#_Toc371945245
+  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758130]]
+  * @see [[http://pubs.opengroup.org/architecture/archimate2-doc/chap08.html#_Toc371945245]]
   */
 object MkInformationStructureViewPoint extends MkModel {
 

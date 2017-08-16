@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Application {
+
   implicit class ImplicitApplicationComponent(src: ApplicationComponent) {
     def `composes`(dst: ApplicationCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationComponent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -194,7 +195,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationCollaboration(src: ApplicationCollaboration) {
     def `composes`(dst: ApplicationCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationComponent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -382,7 +384,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationInterface(src: ApplicationInterface) {
     def `composes`(dst: ApplicationInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -550,7 +553,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationFunction(src: ApplicationFunction) {
     def `composes`(dst: ApplicationFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -721,7 +725,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationInteraction(src: ApplicationInteraction) {
     def `composes`(dst: ApplicationFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -892,7 +897,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationProcess(src: ApplicationProcess) {
     def `composes`(dst: ApplicationFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1063,7 +1069,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationEvent(src: ApplicationEvent) {
     def `composes`(dst: ApplicationEvent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1174,7 +1181,8 @@ object Application {
     @derived def `writes`(dst: BusinessObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Contract)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitApplicationService(src: ApplicationService) {
     def `composes`(dst: ApplicationService)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1337,7 +1345,8 @@ object Application {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitDataObject(src: DataObject) {
     def `composes`(dst: DataObject)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1373,5 +1382,5 @@ object Application {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
 }

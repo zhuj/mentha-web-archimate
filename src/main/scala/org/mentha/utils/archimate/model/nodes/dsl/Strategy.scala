@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Strategy {
+
   implicit class ImplicitResource(src: Resource) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Resource)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -56,7 +57,8 @@ object Strategy {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitCapability(src: Capability) {
     def `composes`(dst: Capability)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -103,7 +105,8 @@ object Strategy {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitCourseOfAction(src: CourseOfAction) {
     def `composes`(dst: CourseOfAction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -147,5 +150,5 @@ object Strategy {
     @derived def `realizes`(dst: Goal)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
 }

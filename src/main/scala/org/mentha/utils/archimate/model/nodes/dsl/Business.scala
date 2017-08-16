@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Business {
+
   implicit class ImplicitBusinessActor(src: BusinessActor) {
     def `composes`(dst: BusinessActor)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -180,7 +181,8 @@ object Business {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessRole(src: BusinessRole) {
     def `composes`(dst: BusinessInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessRole)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -354,7 +356,8 @@ object Business {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessCollaboration(src: BusinessCollaboration) {
     def `composes`(dst: BusinessCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -530,7 +533,8 @@ object Business {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessInterface(src: BusinessInterface) {
     def `composes`(dst: BusinessInterface)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -695,7 +699,8 @@ object Business {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessProcess(src: BusinessProcess) {
     def `composes`(dst: BusinessFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -861,7 +866,8 @@ object Business {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessFunction(src: BusinessFunction) {
     def `composes`(dst: BusinessFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1027,7 +1033,8 @@ object Business {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessInteraction(src: BusinessInteraction) {
     def `composes`(dst: BusinessFunction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1193,7 +1200,8 @@ object Business {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessEvent(src: BusinessEvent) {
     def `composes`(dst: BusinessEvent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1312,7 +1320,8 @@ object Business {
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessService(src: BusinessService) {
     def `composes`(dst: BusinessService)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1473,7 +1482,8 @@ object Business {
     @derived def `writes`(dst: DataObject)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitBusinessObject(src: BusinessObject) {
     def `composes`(dst: BusinessObject)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Contract)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1510,7 +1520,8 @@ object Business {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitContract(src: Contract) {
     def `composes`(dst: BusinessObject)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Contract)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1547,7 +1558,8 @@ object Business {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitRepresentation(src: Representation) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Representation)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1583,7 +1595,8 @@ object Business {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitProduct(src: Product) {
     def `composes`(dst: ApplicationService)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Artifact)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -1758,5 +1771,5 @@ object Business {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
 }

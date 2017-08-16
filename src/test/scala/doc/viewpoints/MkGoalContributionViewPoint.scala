@@ -5,8 +5,8 @@ import org.mentha.utils.archimate.MkModel
 /**
   * (v2 only) The goal contribution viewpoint allows a designer or analyst to model the influence relationships between goals and requirements. The resulting views can be used to analyze the impact that goals have on each other or to detect conflicts between stakeholder goals.
   *
-  * @see http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758136
-  * @see http://pubs.opengroup.org/architecture/archimate2-doc/chap10.html#_Toc371945273
+  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758136]]
+  * @see [[http://pubs.opengroup.org/architecture/archimate2-doc/chap10.html#_Toc371945273]]
   */
 object MkGoalContributionViewPoint extends MkModel {
 
@@ -26,9 +26,9 @@ object MkGoalContributionViewPoint extends MkModel {
     val p = in(view) node { principle withName "Principle" } place(directions.Right, g)
     val rq = in(view) node { requirement withName "Requirement/\nConstraint" } place(directions.Down, g, p)
 
-    in(view) edge { $(p) `realizes` $(g) }
-    in(view) edge { $(rq) `realizes` $(g) }
-    in(view) edge { $(rq) `realizes` $(p) }
+    in(view) edge { $(p) `realizes` $(g) } flex(0)
+    in(view) edge { $(rq) `realizes` $(g) } flex(0)
+    in(view) edge { $(rq) `realizes` $(p) } flex(0)
 
     in(view) edge { $(g) `influences` "+/-" `in` $(g) } routeLoop(directions.Up, 1)
     in(view) edge { $(g) `influences` "+/-" `in` $(p) } flex(1)

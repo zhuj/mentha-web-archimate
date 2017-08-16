@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Implementation {
+
   implicit class ImplicitWorkPackage(src: WorkPackage) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: WorkPackage)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -95,7 +96,8 @@ object Implementation {
     def `writes`(dst: Deliverable)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitDeliverable(src: Deliverable) {
     def `composes`(dst: Deliverable)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -170,7 +172,8 @@ object Implementation {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitImplementationEvent(src: ImplementationEvent) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ImplementationEvent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -216,7 +219,8 @@ object Implementation {
     def `writes`(dst: Deliverable)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitPlateau(src: Plateau) {
     def `composes`(dst: ApplicationCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationComponent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -403,7 +407,8 @@ object Implementation {
 
     def `writes`(dst: Grouping)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitGap(src: Gap) {
     def `aggregates`(dst: Gap)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping)(implicit model: Model): AggregationRelationship = _aggregates(src, dst)(model)
@@ -414,5 +419,5 @@ object Implementation {
     def `specializes`(dst: Gap)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping)(implicit model: Model): SpecializationRelationship = _specializes(src, dst)(model)
 
- }
+  }
 }

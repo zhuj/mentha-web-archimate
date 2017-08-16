@@ -15,6 +15,7 @@ object ModelTraverser {
 
 
   /**
+    * TODO: add http://pubs.opengroup.org/architecture/archimate3-doc/chap12.html#_Toc489946115
     * changes influence (from specific to general)
     */
   object ChangesInfluence extends Direction {

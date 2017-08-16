@@ -99,8 +99,9 @@ export class DefaultNodeWidget extends React.Component {
   }
 
   renderTitle(node) {
+
     return (
-      <div className='title'>
+      <div className={node['overlapped'] ? 'title overlapped' : 'title'}>
         <div className='name'>
           {this.getTitle(node)}
         </div>
@@ -158,7 +159,7 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   generateLink(first, last, extraProps) {
-    const {link} = this.props;
+    const {link,diagram} = this.props;
     const selected = link.isSelected();
     const uiPathProps = {
       className: `p${(selected ? ' selected' : '')}`,
@@ -168,8 +169,10 @@ export class DefaultLinkWidget extends React.Component {
       ... extraProps,
       className: 'x-link t',
       'data-linkid': link.id,
-      strokeOpacity: (selected ? 0.1 : 0)
-    };
+      strokeOpacity: (selected ? 0.1 : 0),
+      onMouseEnter: (event) => {diagram.onMouseEnterElement.call(diagram, event, link)},
+      onMouseLeave: (event) => {diagram.onMouseLeaveElement.call(diagram, event, link)}
+  };
 
     const className = 'x-link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
     return (

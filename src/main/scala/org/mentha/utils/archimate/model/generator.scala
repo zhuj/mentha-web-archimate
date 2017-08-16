@@ -107,6 +107,8 @@ object generator {
         val fixedParent = StringUtils.replace(parent, "?", "")
         writer.println()
         writer.println("/**")
+        (el \ "summ").foreach { summ => writer.println(s" * ${summ.text}") }
+        writer.println(s" * ==Overview==")
         (el \ "info").foreach { info => writer.println(s" * ${info.text}") }
         (el \ "text").foreach { text => writer.println(s" * @note ${text.text}") }
         (el \ "link").foreach { link => writer.println(s" * @see [[${(link \@ "src")} ${name} ArchiMate® 3.0 Specification ]]") }
@@ -185,8 +187,10 @@ object generator {
       writer.println("  class derived extends scala.annotation.Annotation { }")
       writer.println()
 
-      for { (name, _) <- elements } {
+      for { (name, (layer, _, el)) <- elements } {
+        writer.println(s"  /** ${layer}: ${ (el\"summ").map{ _.text }.mkString(", ") } */")
         writer.println(s"  def ${StringUtils.uncapitalize(name)}(implicit model: Model): ${name} = model.add(new ${name})")
+        writer.println()
       }
 
       writer.println("}")
@@ -207,6 +211,7 @@ object generator {
       for { (name, (layer, _, _)) <- elements } {
         val writer = new PrintWriter(streams(layer))
 
+        writer.println("")
         writer.println(s"  implicit class Implicit${name}(src: ${name}) {")
 
         val localRels = relsMap(name)
@@ -260,7 +265,7 @@ object generator {
           writer.println()
         }
 
-        writer.println(" }")
+        writer.println("  }")
         writer.flush()
       }
 
