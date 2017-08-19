@@ -6,8 +6,8 @@ import { connect } from "react-redux";
 
 import "../stylesheets/main.scss";
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-const styleSheet = createStyleSheet('AppFrame', theme => ({
+import { withStyles } from 'material-ui/styles';
+const styleSheet = theme => ({
   '@global': {
     html: {
       boxSizing: 'border-box',
@@ -36,7 +36,7 @@ const styleSheet = createStyleSheet('AppFrame', theme => ({
     minHeight: '100vh',
     width: '100%',
   },
-}));
+});
 
 
 // App component

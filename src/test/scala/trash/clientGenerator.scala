@@ -6,8 +6,11 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.output.StringBuilderWriter
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.generator.xml
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.view._
+
+import scala.xml.XML
 
 object clientGenerator {
 
@@ -16,35 +19,72 @@ object clientGenerator {
     // writeLinks()
     // writeNodes()
     // writeNodesScss()
-    writeLinksRestrictions()
+    // writeLinksRestrictions()
+    // writeClientHelp()
 
   }
 
-  private def writeLinksRestrictions(): Unit = {
+//  private def writeClientHelp(): Unit = {
+//    val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
+//    val elements = (xml \ "element").map { el => (el \@ "name") -> ((el \@ "layer"), (el \@ "parent"), el) }
+//
+//    val stream = new StringBuilderWriter(4096)
+//    val writer = new PrintWriter(stream)
+//
+//    import play.api.libs.json._
+//
+//    val json = Json.toJsObject(
+//      elements.map {
+//        case (name, (layer, _, el)) => StringUtils.uncapitalize(name) -> Json.obj(
+//          "name" -> name,
+//          "layer" -> layer,
+//          "help" -> Json.obj(
+//            "summ" -> (el \ "summ").map { _.text },
+//            "info" -> (el \ "info").map { _.text },
+//            //"text" -> (el \ "text").map { _.text },
+//          )
+//        )
+//      }.toMap
+//    )
+//
+//    writer.println("export const elementMeta = (")
+//    writer.println(json.toString())
+//    writer.println(");")
+//
+//    writer.flush()
+//    FileUtils.write(
+//      new java.io.File(s"client/src/meta/elements.js"),
+//      stream.toString,
+//      "UTF-8"
+//    )
+//
+//  }
 
-    val stream = new StringBuilderWriter(4096)
-    val writer = new PrintWriter(stream)
-
-    import edges.validator
-    import play.api.libs.json._
-
-    val json = Json.toJsObject(
-      validator.data.data.map { case ((s,d), (all, _)) => s"${s.name}-${d.name}" -> all.map { _.key }.mkString("").sorted }
-    )
-
-    writer.println("export const constraints = (")
-    writer.println(json.toString())
-    writer.println(");")
-
-    writer.flush()
-    FileUtils.write(
-      new java.io.File(s"client/src/components/view/edges/constraints.js"),
-      stream.toString,
-      "UTF-8"
-    )
-
-
-  }
+//  private def writeLinksRestrictions(): Unit = {
+//
+//    val stream = new StringBuilderWriter(4096)
+//    val writer = new PrintWriter(stream)
+//
+//    import edges.validator
+//    import play.api.libs.json._
+//
+//    val json = Json.toJsObject(
+//      validator.data.data.map { case ((s,d), (all, _)) => s"${s.name}-${d.name}" -> all.map { _.key }.mkString("").sorted }
+//    )
+//
+//    writer.println("export const constraints = (")
+//    writer.println(json.toString())
+//    writer.println(");")
+//
+//    writer.flush()
+//    FileUtils.write(
+//      new java.io.File(s"client/src/components/view/edges/constraints.js"),
+//      stream.toString,
+//      "UTF-8"
+//    )
+//
+//
+//  }
 
 
 //  private def writeNodesScss(): Unit = {

@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+
 import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
 
@@ -15,6 +15,7 @@ import * as models from './diagram/models'
 
 import { viewNodeWidget } from './nodes/ViewNodeWidget'
 import { viewEdgeWidget } from './edges/ViewEdgeWidget'
+import { allMeta } from '../../meta/index'
 
 import NewLinkMenu from './NewLinkMenu'
 
@@ -132,6 +133,26 @@ const updateDiagramModel = (view, diagramModel) => {
     }
   }
 
+  // size
+  /*if (true)*/ {
+    let x0=Number.POSITIVE_INFINITY, y0=Number.POSITIVE_INFINITY, x1=Number.NEGATIVE_INFINITY, y1=Number.NEGATIVE_INFINITY;
+    _.forEach(diagramModel.getNodes(), (node) => {
+      const w2 = 0.5*node.width;
+      const h2 = 0.5*node.height;
+      x0 = Math.min(x0, node.x - w2);
+      x1 = Math.max(x1, node.x + w2);
+      y0 = Math.min(y0, node.y - h2);
+      y1 = Math.max(y1, node.y + h2);
+    });
+    diagramModel.rect = {
+      x0, y0, x1, y1,
+      xc: 0.5*(x0+x1),
+      yc: 0.5*(y0+y1),
+      width: (x1 - x0),
+      height: (y1 - y0)
+    };
+  }
+
   return diagramModel;
 };
 
@@ -216,6 +237,14 @@ class ViewDiagram extends DiagramWidget {
       ...this.state,
       ...diagramModelInState(props, new models.DiagramModel(props.id))
     };
+
+    /*if (true)*/ {
+      const rect = this.getDiagramModel().rect;
+      this.state['offset'] = {
+        x: -rect.xc,
+        y: -rect.yc
+      };
+    }
   }
 
   /* @override: react-localstorage */
@@ -240,8 +269,13 @@ class ViewDiagram extends DiagramWidget {
   // TODO: }
 
   componentWillUpdate(nextProps, nextState) {
-    reactLS.componentWillUpdate.bind(this)(nextProps, nextState);
+    reactLS.componentWillUpdate.call(this, nextProps, nextState);
     if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
+  }
+
+  componentDidMount() {
+    reactLS.componentDidMount.call(this);
+    if (!!super.componentDidMount) { return super.componentDidMount(); }
   }
 
   generateWidgetForNode(props) {
@@ -381,6 +415,16 @@ class ViewDiagram extends DiagramWidget {
         let obj = model.viewObject;
         if (!!obj['.conceptInfo']) { obj = obj['.conceptInfo']; }
 
+        const meta = allMeta[obj['_tp']];
+        if (!!meta) {
+          obj = {
+            type: meta['name'],
+            summary: _.join(meta['help']['summ']),
+            ...obj
+          };
+          delete obj['_tp'];
+        }
+
         hover.classList.add("visible");
         hover.innerHTML = JSON.stringify(obj, null, 2);
         hover.style.left = (clientX + 12)+'px';
@@ -431,9 +475,9 @@ class ViewDiagram extends DiagramWidget {
     // const timerName = `view-diagram-render-${this.props.id}`;
     // console.time(timerName);
     try {
-      const {connectDropTarget} = this.props;
+      const {id,connectDropTarget} = this.props;
       return connectDropTarget(
-        <div className='diagram-root'>
+        <div className='diagram-root' id={`diagrams-canvas-${id}`}>
           {this.renderNewLinkMenu()}
           {this.renderHoverRegion()}
           {super.render()}
