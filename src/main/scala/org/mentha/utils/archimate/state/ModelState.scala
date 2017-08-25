@@ -48,7 +48,7 @@ object ModelState {
         withPathAndName(params) {
           case (path, name) => require(model.findView(path, name).isEmpty, s"Duplicate view name: ${name}.")
         }
-         ChangeSets.AddView(Identifiable.generateId(classOf[View]), c)
+        ChangeSets.AddView(Identifiable.generateId(classOf[View]), c)
       }
       case c @ Commands.ModView(id, params) => {
         // TODO: move this to ModelValidator
@@ -85,33 +85,44 @@ object ModelState {
       case c @ Commands.AddViewConnection(_, src, dst, _) => {
         val source = view.get[ViewObject](src)
         val target = view.get[ViewObject](dst)
-        require(
-          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
-          s"Duplicate edge: ${src} -> ${dst}"
-        )
-        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewConnection]), c)
+        val candidate = view.objects[ViewEdge].find {
+          edge => (edge.source == source && edge.target == target)
+        }
+        candidate match {
+          case None => ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewConnection]), c)
+          case Some(v) => {
+            require(v.isDeleted, s"Duplicate edge: ${src} -> ${dst}")
+            ChangeSets.UnDelViewObject(v.id, c) // un-delete
+          }
+        }
       }
       case c @ Commands.AddViewNodeConcept(_, conceptId, _) => {
         val concept = model.concept[NodeConcept](conceptId)
-        require(
-          !view.objects[ViewNodeConcept[NodeConcept]].exists { vc => (vc.concept.id == concept.id) },
-          s"Duplicate concept: ${conceptId}"
-        )
-        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNodeConcept[_]]), c)
+        val candidate = view.objects[ViewNodeConcept[NodeConcept]].find {
+          vc => (vc.concept == concept)
+        }
+        candidate match {
+          case None => ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNodeConcept[_]]), c)
+          case Some(v) => {
+            require(v.isDeleted, s"Duplicate concept: ${conceptId}")
+            ChangeSets.UnDelViewObject(v.id, c) // un-delete
+          }
+        }
       }
       case c @ Commands.AddViewRelationship(_, src, dst, conceptId, _) => {
         val concept = model.concept[Relationship](conceptId)
         val source = view.get[ViewObject with ViewConcept[Concept]](src)
         val target = view.get[ViewObject with ViewConcept[Concept]](dst)
-        require(
-          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
-          s"Duplicate edge: ${src} -> ${dst}"
-        )
-        require(
-          !view.objects[ViewRelationship[Relationship]].exists { vc => (vc.concept.id == concept.id) },
-          s"Duplicate concept: ${conceptId}"
-        )
-        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c)
+        val candidate = view.objects[ViewRelationship[Relationship]].find {
+          edge => (edge.source == source && edge.target == target && edge.concept == concept)
+        }
+        candidate match {
+          case None => ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c)
+          case Some(v) => {
+            require(v.isDeleted, s"Duplicate edge: ${src} -> ${dst}")
+            ChangeSets.UnDelViewObject(v.id, c) // un-delete
+          }
+        }
       }
       case c @ Commands.AddViewNodeConcept2(_, Left(cmd), _) => {
         val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
@@ -121,11 +132,16 @@ object ModelState {
         val cs = model.prepare(cmd).asInstanceOf[ChangeSets.AddConcept]
         val source = view.get[ViewObject with ViewConcept[Concept]](src)
         val target = view.get[ViewObject with ViewConcept[Concept]](dst)
-        require(
-          !view.objects[ViewEdge].exists { edge => (edge.source == source && edge.target == target) },
-          s"Duplicate edge: ${src} -> ${dst}"
-        )
-        ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c.copy(concept = Right(cs)))
+        val candidate = view.objects[ViewRelationship[Relationship]].find {
+          edge => (edge.source == source && edge.target == target && edge.concept.id == cs.newId)
+        }
+        candidate match {
+          case None => ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewRelationship[_]]), c.copy(concept = Right(cs)))
+          case Some(v) => {
+            require(v.isDeleted, s"Duplicate edge: ${src} -> ${dst}")
+            ChangeSets.UnDelViewObject(v.id, c.copy(concept = Right(cs))) // un-delete
+          }
+        }
       }
     }
   }
@@ -362,8 +378,15 @@ object ModelState {
           case rc: RelationshipConnector => json.fillRelationshipConnector(rc, params)
           case rel: Relationship => json.fillRelationship(rel, params)
         }
+        concept.markAsDeleted(marker = false)
         toJsonDiff(model, concept, OP_SET)
       }
+    }
+
+    object UnDelConcept {
+      def apply(id: ID, command: Commands.AddConceptCommand[_]): ModConcept = ModConcept(Commands.ModConcept(
+        id = id, params = command.params
+      ))
     }
 
     case class DelConcept(command: Commands.DelConcept) extends ModelChangeSet with Del[Concept] {
@@ -451,8 +474,15 @@ object ModelState {
           case vnc: ViewNodeConcept[_] => json.fillViewNodeConcept(vnc, params)
           case vrs: ViewRelationship[_] => json.fillViewRelationship(vrs, params)
         }
+        vo.markAsDeleted(marker = false)
         toJsonDiff(model, view, vo, OP_SET)
       }
+    }
+
+    object UnDelViewObject {
+      def apply(id: Identifiable.ID, command: Commands.AddViewObjectCommand[_]): ModViewObject = ModViewObject(Commands.ModViewObject(
+        id = id, viewId = command.viewId, params = command.params
+      ))
     }
 
     case class DelViewObject(command: Commands.DelViewObject) extends ViewChangeSet with Del[ViewObject] {

@@ -374,7 +374,7 @@ class ViewDiagram extends DiagramWidget {
   }
 
   onSelectNewLinkType(link, tp) {
-    const { id: viewId } = this.props;
+    const { id: viewId, model } = this.props;
     const { sourceNode, targetNode } = link;
     try {
       if (tp === 'viewConnection') {
@@ -386,10 +386,14 @@ class ViewDiagram extends DiagramWidget {
           )
         ]);
       } else {
+        const candidate = _.findKey(
+          model.edges,
+          (e) => ( ( e.src === sourceNode.viewObject.concept ) && ( e.dst === targetNode.viewObject.concept ) && ( e._tp === tp ))
+        );
         this.props.sendModelCommands([
           api.addViewRelationship(
             viewId,
-            api.addRelationship({
+            candidate || api.addRelationship({
               _tp: tp,
               src: sourceNode.viewObject.concept,
               dst: targetNode.viewObject.concept,
@@ -493,7 +497,7 @@ class ViewDiagram extends DiagramWidget {
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
   const model = state.model || {};
-  return { id,
+  return { id, model,
     view: model.views[id],
     localHash: model['.hash-local'],
     diagramModel: null
