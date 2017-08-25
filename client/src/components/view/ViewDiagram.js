@@ -261,6 +261,7 @@ class ViewDiagram extends DiagramWidget {
   componentWillReceiveProps(nextProps) {
     super.componentWillReceiveProps(nextProps);
     this.setState(diagramModelInState(nextProps, this.getDiagramModel()));
+    this.clearHoverRegion();
   }
 
   // TODO: shouldComponentUpdate(nextProps, nextState) {
@@ -408,8 +409,18 @@ class ViewDiagram extends DiagramWidget {
     }
   }
 
+  clearHoverRegion() {
+    if (!!this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = null;
+    }
+    const hover = this.refs['hover-region'];
+    hover.classList.remove("visible");
+    hover.innerHTML = "";
+  }
+
   onMouseEnterElement(event, model) {
-    this.onMouseLeaveElement(event, model);
+    this.clearHoverRegion();
     this.hoverTimeout = setTimeout(
       () => {
         this.hoverTimeout = null;
@@ -439,10 +450,7 @@ class ViewDiagram extends DiagramWidget {
   }
 
   onMouseLeaveElement(event, model) {
-    if (!!this.hoverTimeout) { clearTimeout(this.hoverTimeout); }
-    const hover = this.refs['hover-region'];
-    hover.classList.remove("visible");
-    hover.innerHTML = "";
+    this.clearHoverRegion();
   }
 
   renderNewLinkMenu() {
