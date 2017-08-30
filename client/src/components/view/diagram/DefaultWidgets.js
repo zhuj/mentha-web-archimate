@@ -98,6 +98,10 @@ export class DefaultNodeWidget extends React.Component {
     return node.name;
   }
 
+  getHint(node) {
+    return null;
+  }
+
   renderTitle(node) {
 
     return (
@@ -116,7 +120,7 @@ export class DefaultNodeWidget extends React.Component {
   render() {
     const { node } = this.props;
     return (
-      <div className={this.getClassName(node)}>
+      <div className={this.getClassName(node)} title={this.getHint(node)}>
         { this.renderTitle(node) }
         { this.renderBorder(node) }
       </div>
@@ -301,10 +305,23 @@ export class DefaultLinkWidget extends React.Component {
     return link.linkType;
   }
 
+  getHint(link) {
+    return null;
+  }
+
+  drawHint(link) {
+    let hint = this.getHint(link);
+    if (!hint) { return null; }
+    return (
+      <title>{hint}</title>
+    );
+  }
+
   render() {
     const { link } = this.props;
     return (
       <g className={this.getClassName(link)}>
+        {this.drawHint(link)}
         {this.drawLine(link)}
       </g>
     );

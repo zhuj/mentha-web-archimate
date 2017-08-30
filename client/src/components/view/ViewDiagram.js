@@ -15,7 +15,6 @@ import * as models from './diagram/models'
 
 import { viewNodeWidget } from './nodes/ViewNodeWidget'
 import { viewEdgeWidget } from './edges/ViewEdgeWidget'
-import { allMeta } from '../../meta/index'
 
 import NewLinkMenu from './NewLinkMenu'
 
@@ -261,7 +260,6 @@ class ViewDiagram extends DiagramWidget {
   componentWillReceiveProps(nextProps) {
     super.componentWillReceiveProps(nextProps);
     this.setState(diagramModelInState(nextProps, this.getDiagramModel()));
-    this.clearHoverRegion();
   }
 
   // TODO: shouldComponentUpdate(nextProps, nextState) {
@@ -409,50 +407,6 @@ class ViewDiagram extends DiagramWidget {
     }
   }
 
-  clearHoverRegion() {
-    if (!!this.hoverTimeout) {
-      clearTimeout(this.hoverTimeout);
-      this.hoverTimeout = null;
-    }
-    const hover = this.refs['hover-region'];
-    hover.classList.remove("visible");
-    hover.innerHTML = "";
-  }
-
-  onMouseEnterElement(event, model) {
-    this.clearHoverRegion();
-    this.hoverTimeout = setTimeout(
-      () => {
-        this.hoverTimeout = null;
-        const { clientX, clientY } = this.mouse;
-        const hover = this.refs['hover-region'];
-
-        let obj = model.viewObject;
-        if (!!obj['.conceptInfo']) { obj = obj['.conceptInfo']; }
-
-        const meta = allMeta[obj['_tp']];
-        if (!!meta) {
-          obj = {
-            type: meta['name'],
-            summary: _.join(meta['help']['summ']),
-            ...obj
-          };
-          delete obj['_tp'];
-        }
-
-        hover.classList.add("visible");
-        hover.innerHTML = JSON.stringify(obj, null, 2);
-        hover.style.left = (clientX + 12)+'px';
-        hover.style.top = (clientY + 12)+'px';
-      },
-      1500
-    );
-  }
-
-  onMouseLeaveElement(event, model) {
-    this.clearHoverRegion();
-  }
-
   renderNewLinkMenu() {
     const { ['new-link']: newLinkData } = this.state;
     if (!newLinkData) { return null; }
@@ -476,13 +430,6 @@ class ViewDiagram extends DiagramWidget {
     )
   }
 
-  renderHoverRegion() {
-    return (
-      <div key='hover-region' className='hover-region' ref='hover-region'>
-      </div>
-    );
-  }
-
   render() {
     // const timerName = `view-diagram-render-${this.props.id}`;
     // console.time(timerName);
@@ -491,7 +438,6 @@ class ViewDiagram extends DiagramWidget {
       return connectDropTarget(
         <div className='diagram-root' id={`diagrams-canvas-${id}`}>
           {this.renderNewLinkMenu()}
-          {this.renderHoverRegion()}
           {super.render()}
         </div>
       );

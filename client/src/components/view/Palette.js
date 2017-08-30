@@ -12,10 +12,10 @@ import { allMeta } from '../../meta/index'
 
 import './Palette.sass.scss'
 
-const title = (tp) => {
+const hint = (tp) => {
   let meta = allMeta[tp];
   if (!!meta) {
-    return `${meta.name}: ${_.join(meta['help']['summ'])}`
+    return `${meta.name}:\n * ${_.join(meta['help']['summ'])}`
   }
   return tp;
 };
@@ -64,7 +64,7 @@ class Palette extends React.Component {
         onMouseOut={()=>this.setState({hover:null})}
       >
         <DragWrapper key={`palette-drag-${node.id}`} tp={tp} kind={kind}>
-          <div className="x-node p-node" style={style} title={title(tp)}>
+          <div className="x-node p-node" style={style} title={hint(tp)}>
             { body(node) }
           </div>
         </DragWrapper>
