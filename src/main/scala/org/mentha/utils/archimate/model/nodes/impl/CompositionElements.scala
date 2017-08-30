@@ -8,6 +8,8 @@ import org.mentha.utils.archimate.model.edges._
 sealed trait CompositionElement extends CompositionLayer {}
 
 /**
+ * Aggregates or composes concepts that belong together based on some common characteristic.
+ * ==Overview==
  * The grouping element aggregates or composes concepts that belong together based on some common characteristic.
  * @note The grouping element is used to aggregate or compose an arbitrary group of concepts, which can be elements and/or relationships of the same or of different types. An aggregation or composition relationship is used to link the grouping element to the grouped concepts.
  * @note Concepts may be aggregated by multiple (overlapping) groups.
@@ -20,6 +22,8 @@ final class Grouping extends CompositeElement with CompositionElement {
 }
 
 /**
+ * A place or position where structure elements can be located or behavior can be performed
+ * ==Overview==
  * A location is a place or position where structure elements can be located or behavior can be performed.
  * @note The location element is used to model the places where (active and passive) structure elements such as business actors, application components, and devices are located. This is modeled by means of an aggregation relationship from a location to structure element. A location can also aggregate a behavior element, to indicate where the behavior is performed. This element corresponds to the “Where” column of the Zachman framework.
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap04.html#_Toc451757950 Location ArchiMate® 3.0 Specification ]]

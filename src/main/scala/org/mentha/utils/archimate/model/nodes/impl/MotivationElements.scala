@@ -8,6 +8,8 @@ import org.mentha.utils.archimate.model.edges._
 sealed trait MotivationElement extends MotivationLayer {}
 
 /**
+ * The role of an individual, team, or organization (or classes thereof) that represents their interests in the outcome of the architecture.
+ * ==Overview==
  * A stakeholder is the role of an individual, team, or organization (or classes thereof) that represents their interests in the outcome of the architecture.
  * @note This definition is based on the definition in the TOGAF framework. A stakeholder has one or more interests in, or concerns about, the organization and its Enterprise Architecture. In order to direct efforts to these interests and concerns, stakeholders change, set, and emphasize goals. Stakeholders may also influence each other. Examples of stakeholders are the CEO, the board of directors, shareholders, customers, business and application architects, but also legislative authorities. The name of a stakeholder should preferably be a noun.
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757975 Stakeholder ArchiMate® 3.0 Specification ]]
@@ -18,6 +20,8 @@ final class Stakeholder extends ExternalActiveStructureElement with MotivationEl
 }
 
 /**
+ * An external or internal condition that motivates an organization to define its goals and implement the changes necessary to achieve them.
+ * ==Overview==
  * A driver represents an external or internal condition that motivates an organization to define its goals and implement the changes necessary to achieve them.
  * @note Drivers may be internal, in which case they are usually associated with a stakeholder, and are often called “concerns”. Stakeholder concerns are defined in the TOGAF framework as ”the key interests that are crucially important to the stakeholders in a system, and determine the acceptability of the system. Concerns may pertain to any aspect of the function, development, or operation of the system, including considerations such as performance, reliability, security, distribution, and evolvability.” Examples of internal drivers are Customer satisfaction and Profitability. Drivers of change may also be external; e.g., economic changes or changing legislation. The name of a driver should preferably be a noun.
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757976 Driver ArchiMate® 3.0 Specification ]]
@@ -28,6 +32,8 @@ final class Driver extends GenericElement with MotivationElement {
 }
 
 /**
+ * The result of an analysis of the state of affairs of the enterprise with respect to some driver.
+ * ==Overview==
  * An assessment represents the result of an analysis of the state of affairs of the enterprise with respect to some driver.
  * @note An assessment may reveal strengths, weaknesses, opportunities, or threats for some area of interest. These need to be addressed by adjusting existing goals or setting new ones, which may trigger changes to the Enterprise Architecture.
  * @note Strengths and weaknesses are internal to the organization. Opportunities and threats are external to the organization. Weaknesses and threats can be considered as problems that need to be addressed by goals that “negate” the weaknesses and threats. Strengths and opportunities may be translated directly into goals. For example, the weakness “Customers complain about the helpdesk” can be addressed by defining the goal “Improve helpdesk”. Or, the opportunity “Customers favor insurances that can be managed online” can be addressed by the goal “Introduce online portfolio management”. The name of an assessment should preferably be a noun or a (very) short sentence.
@@ -39,6 +45,8 @@ final class Assessment extends GenericElement with MotivationElement {
 }
 
 /**
+ * A high-level statement of intent, direction, or desired end state for an organization and its stakeholders.
+ * ==Overview==
  * A goal represents a high-level statement of intent, direction, or desired end state for an organization and its stakeholders.
  * @note In principle, a goal can represent anything a stakeholder may desire, such as a state of affairs, or a produced value. Examples of goals are: to increase profit, to reduce waiting times at the helpdesk, or to introduce online portfolio management. Goals are typically used to measure success of an organization.
  * @note Goals are generally expressed using qualitative words; e.g., “increase”, “improve”, or “easier”. Goals can also be decomposed; e.g., Increase profit can be decomposed into the goals Reduce cost and Increase sales. However, it is also very common to associate concrete outcomes with goals, which can be used to describe both the quantitative and time-related results that are essential to describe the desired state, and when it should be achieved.
@@ -50,6 +58,8 @@ final class Goal extends GenericElement with MotivationElement {
 }
 
 /**
+ * An end result that has been achieved.
+ * ==Overview==
  * An outcome represents an end result that has been achieved.
  * @note Outcomes are high-level, business-oriented results produced by capabilities of an organization, and by inference by the core elements of its architecture that realize these capabilities. Outcomes are tangible, possibly quantitative, and time-related, and can be associated with assessments. An outcome may have a different value for different stakeholders.
  * @note The notion of outcome is important in business outcome-driven approaches to Enterprise Architecture and in capability-based planning. Outcomes are closely related to requirements, goals, and other intentions. Outcomes are the end results, and goals or requirements are often formulated in terms of outcomes that should be realized. Capabilities are designed to achieve such outcomes.
@@ -62,6 +72,8 @@ final class Outcome extends GenericElement with MotivationElement {
 }
 
 /**
+ * A qualitative statement of intent that should be met by the architecture.
+ * ==Overview==
  * A principle represents a qualitative statement of intent that should be met by the architecture.
  * @note Principles are strongly related to goals and requirements. Similar to requirements, principles define intended properties of systems. However, in contrast to requirements, principles are broader in scope and more abstract than requirements. A principle defines a general property that applies to any system in a certain context. A requirement defines a property that applies to a specific system as described by an architecture.
  * @note A principle needs to be made specific for a given system by means of one or more requirements, in order to enforce that the system conforms to the principle. For example, the principle “Information management processes comply with all relevant laws, policies, and regulations” is realized by the requirements that are imposed by the actual laws, policies, and regulations that apply to the specific system under design.
@@ -74,6 +86,8 @@ final class Principle extends GenericElement with MotivationElement {
 }
 
 /**
+ * A statement of need that must be met by the architecture.
+ * ==Overview==
  * A requirement represents a statement of need that must be met by the architecture.
  * @note In the end, a business goal must be realized by a plan or concrete change goal, which may or may not require a new system or changes to an existing system.
  * @note The term “system” is used in its general meaning; i.e., as a group of (functionally) related elements, where each element may be considered as a system again. Therefore, a system may refer to any active structural element, behavior element, or passive structural element of some organization, such as a business actor, application component, business process, application service, business object, or data object.
@@ -88,6 +102,8 @@ final class Requirement extends GenericElement with MotivationElement {
 }
 
 /**
+ * A factor that prevents or obstructs the realization of goals.
+ * ==Overview==
  * A constraint represents a factor that prevents or obstructs the realization of goals.
  * @note In contrast to a requirement, a constraint does not prescribe some intended functionality of the system to be realized, but imposes a restriction on the way it operates or may be realized. This may be a restriction on the implementation of the system (e.g., specific technology that is to be used), a restriction on the implementation process (e.g., time or budget constraints), or a restriction on the functioning of the system (e.g., legal constraints).
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap06.html#_Toc451757984 Constraint ArchiMate® 3.0 Specification ]]
@@ -98,6 +114,8 @@ final class Constraint extends GenericElement with MotivationElement {
 }
 
 /**
+ * The knowledge or expertise present in, or the interpretation given to, a core element in a particular context.
+ * ==Overview==
  * Meaning represents the knowledge or expertise present in, or the interpretation given to, a core element in a particular context.
  * @note A meaning represents the interpretation of an element of the architecture. In particular, this is used to describe the meaning of passive structure elements (for example, a document, message). It is a description that expresses the intent of that element; i.e., how it informs the external user.
  * @note It is possible that different users view the informative functionality of an element differently. For example, what may be a “registration confirmation” for a client could be a “client mutation” for a CRM department (assuming for the sake of argument that it is modeled as an external user). Also, various different representations may carry essentially the same meaning. For example, various different documents (a web document, a filled-in paper form, a “client contact” report from the call center) may essentially carry the same meaning.
@@ -110,6 +128,8 @@ final class Meaning extends GenericElement with MotivationElement {
 }
 
 /**
+ * The relative worth, utility, or importance of a core element or an outcome.
+ * ==Overview==
  * Value represents the relative worth, utility, or importance of a core element or an outcome.
  * @note Value may apply to what a party gets by selling or making available some product or service, or it may apply to what a party gets by buying or obtaining access to it. Value is often expressed in terms of money, but it has long since been recognized that non-monetary value is also essential to business; for example, practical/functional value (including the right to use a service), and the value of information or knowledge. Though value can hold internally for some system or organizational unit, it is most typically applied to external appreciation of goods, services, information, knowledge, or money, normally as part of some sort of customer-provider relationship.
  * @note A value can be associated with all core elements of an architecture as well as with outcomes. To model the stakeholder for whom this value applies, this stakeholder can also be associated with that value. Although the name of a value can be expressed in many different ways (including amounts, objects), where the “functional” value of an architecture element is concerned it is recommended to try and express it as an action or state that can be performed or reached as a result of the corresponding element being available.

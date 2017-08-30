@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
+import { allMeta } from '../../../meta/index'
 import { DefaultNodeWidget } from '../diagram/DefaultWidgets'
 
 class BaseNodeWidget extends DefaultNodeWidget {
@@ -56,6 +57,23 @@ export class ModelNodeWidget extends BaseNodeWidget {
       "name": title
     });
   }
+
+  getHint(node) {
+    if (!node) { return null; }
+
+    let obj = node.viewObject;
+    if (!obj) { return null; }
+
+    obj = obj['.conceptInfo'];
+    if (!obj) { return null; }
+
+    const meta = allMeta[obj['_tp']];
+    if (!!meta) {
+      return `${meta['name']}: «${this.getTitle(node)}»\n * ${_.join(meta['help']['summ'])}`;
+    }
+    return `${obj['_tp']}: «${this.getTitle(node)}»`;
+  }
+
 }
 
 export class ViewNodeWidget extends BaseNodeWidget {

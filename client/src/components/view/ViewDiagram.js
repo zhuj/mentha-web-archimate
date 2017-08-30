@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
 
@@ -111,6 +112,46 @@ const updateDiagramModel = (view, diagramModel) => {
     });
   }
 
+  // overlaps
+  /*if (true)*/ {
+    const sorted = _.sortBy(diagramModel.getNodes(), (n) => n.zIndex);
+    for (let i=0,l=sorted.length;i<l;i++) {
+      const node = sorted[i];
+      let overlapped = false;
+      for (let j=1+i;j<l;j++) {
+        const n = sorted[j];
+        if (
+          (Math.abs(node.x - n.x) < 0.5*(node.width + n.width)) &&
+          (Math.abs(node.y - n.y) < 0.5*(node.height + n.height))
+        ) {
+          overlapped = true;
+          break;
+        }
+      }
+      node.overlapped = overlapped;
+    }
+  }
+
+  // size
+  /*if (true)*/ {
+    let x0=Number.POSITIVE_INFINITY, y0=Number.POSITIVE_INFINITY, x1=Number.NEGATIVE_INFINITY, y1=Number.NEGATIVE_INFINITY;
+    _.forEach(diagramModel.getNodes(), (node) => {
+      const w2 = 0.5*node.width;
+      const h2 = 0.5*node.height;
+      x0 = Math.min(x0, node.x - w2);
+      x1 = Math.max(x1, node.x + w2);
+      y0 = Math.min(y0, node.y - h2);
+      y1 = Math.max(y1, node.y + h2);
+    });
+    diagramModel.rect = {
+      x0, y0, x1, y1,
+      xc: 0.5*(x0+x1),
+      yc: 0.5*(y0+y1),
+      width: (x1 - x0),
+      height: (y1 - y0)
+    };
+  }
+
   return diagramModel;
 };
 
@@ -195,6 +236,14 @@ class ViewDiagram extends DiagramWidget {
       ...this.state,
       ...diagramModelInState(props, new models.DiagramModel(props.id))
     };
+
+    /*if (true)*/ {
+      const rect = this.getDiagramModel().rect;
+      this.state['offset'] = {
+        x: -rect.xc,
+        y: -rect.yc
+      };
+    }
   }
 
   /* @override: react-localstorage */
@@ -219,12 +268,12 @@ class ViewDiagram extends DiagramWidget {
   // TODO: }
 
   componentWillUpdate(nextProps, nextState) {
-    reactLS.componentWillUpdate.bind(this)(nextProps, nextState);
+    reactLS.componentWillUpdate.call(this, nextProps, nextState);
     if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
   }
 
   componentDidMount() {
-    reactLS.componentDidMount.bind(this)();
+    reactLS.componentDidMount.call(this);
     if (!!super.componentDidMount) { return super.componentDidMount(); }
   }
 
@@ -324,7 +373,7 @@ class ViewDiagram extends DiagramWidget {
   }
 
   onSelectNewLinkType(link, tp) {
-    const { id: viewId } = this.props;
+    const { id: viewId, model } = this.props;
     const { sourceNode, targetNode } = link;
     try {
       if (tp === 'viewConnection') {
@@ -336,10 +385,14 @@ class ViewDiagram extends DiagramWidget {
           )
         ]);
       } else {
+        const candidate = _.findKey(
+          model.edges,
+          (e) => ( ( e.src === sourceNode.viewObject.concept ) && ( e.dst === targetNode.viewObject.concept ) && ( e._tp === tp ))
+        );
         this.props.sendModelCommands([
           api.addViewRelationship(
             viewId,
-            api.addRelationship({
+            candidate || api.addRelationship({
               _tp: tp,
               src: sourceNode.viewObject.concept,
               dst: targetNode.viewObject.concept,
@@ -381,9 +434,9 @@ class ViewDiagram extends DiagramWidget {
     // const timerName = `view-diagram-render-${this.props.id}`;
     // console.time(timerName);
     try {
-      const {connectDropTarget} = this.props;
+      const {id,connectDropTarget} = this.props;
       return connectDropTarget(
-        <div className='diagram-root'>
+        <div className='diagram-root' id={`diagrams-canvas-${id}`}>
           {this.renderNewLinkMenu()}
           {super.render()}
         </div>
@@ -398,7 +451,7 @@ class ViewDiagram extends DiagramWidget {
 const mapStateToProps = (state, ownProps) => {
   const id = ownProps.id;
   const model = state.model || {};
-  return { id,
+  return { id, model,
     view: model.views[id],
     localHash: model['.hash-local'],
     diagramModel: null

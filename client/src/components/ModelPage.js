@@ -15,14 +15,18 @@ import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
+import DownloadIcon from 'material-ui-icons/ScreenShare';
 import List, { ListItem } from 'material-ui/List';
 
 import View from './view/View'
 
 import * as actions from '../actions'
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-const styleSheet = createStyleSheet('ModelPage', theme => ({
+import dom2image from 'dom-to-image'
+import filesaver from 'file-saver'
+
+import { withStyles } from 'material-ui/styles';
+const styleSheet = theme => ({
   modelPage: {
     width: '100%',
   },
@@ -65,8 +69,7 @@ const styleSheet = createStyleSheet('ModelPage', theme => ({
     paddingTop: 0,
     paddingBottom: 0,
   },
-}));
-
+});
 
 const loadData = ({ id, connectModel }) => {
   connectModel(id);
@@ -91,12 +94,12 @@ class ModelPage extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    reactLS.componentWillUpdate.bind(this)(nextProps, nextState);
+    reactLS.componentWillUpdate.call(this, nextProps, nextState);
     if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
   }
 
   componentDidMount() {
-    reactLS.componentDidMount.bind(this)();
+    reactLS.componentDidMount.call(this);
     if (!!super.componentDidMount) { return super.componentDidMount(); }
   }
 
@@ -163,6 +166,13 @@ class ModelPage extends React.Component {
               <MenuIcon/>
             </IconButton>
             <div className={classes.grow} />
+            <IconButton
+              color="contrast"
+              onClick={()=>{ this.downloadCurrentView() }}
+              className={classes.icon}
+            >
+              <DownloadIcon/>
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -183,6 +193,19 @@ class ModelPage extends React.Component {
       </div>
     )
   }
+
+  downloadCurrentView() {
+    const { 'current-view': id } = this.state;
+    const diagram = document.getElementById(`diagrams-canvas-${id}`);
+    if (!!diagram) {
+      dom2image
+        .toBlob(diagram, {})
+        .then(function (blob) {
+          filesaver.saveAs(blob, `view-${id}.png`);
+        });
+    }
+  }
+
 }
 
 const mapStateToProps = (state, ownProps) => {

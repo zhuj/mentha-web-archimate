@@ -8,8 +8,17 @@ import DragWrapper from './diagram/DragWrapper'
 
 import { layerElements, viewNodeConceptWidget } from './nodes/view/viewNodeConcept'
 import { ViewNotesWidget } from "./nodes/view/viewNotes"
+import { allMeta } from '../../meta/index'
 
 import './Palette.sass.scss'
+
+const hint = (tp) => {
+  let meta = allMeta[tp];
+  if (!!meta) {
+    return `${meta.name}:\n * ${_.join(meta['help']['summ'])}`
+  }
+  return tp;
+};
 
 class Palette extends React.Component {
 
@@ -55,7 +64,7 @@ class Palette extends React.Component {
         onMouseOut={()=>this.setState({hover:null})}
       >
         <DragWrapper key={`palette-drag-${node.id}`} tp={tp} kind={kind}>
-          <div className="x-node p-node" style={style} title={tp}>
+          <div className="x-node p-node" style={style} title={hint(tp)}>
             { body(node) }
           </div>
         </DragWrapper>

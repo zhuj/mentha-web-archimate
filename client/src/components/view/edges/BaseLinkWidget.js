@@ -1,5 +1,7 @@
 import React from 'react'
+import _ from 'lodash'
 
+import { allMeta } from '../../../meta/index'
 import { DefaultLinkWidget } from '../diagram/DefaultWidgets'
 
 export class BaseLinkWidget extends DefaultLinkWidget {
@@ -37,6 +39,24 @@ export class ModelLinkWidget extends BaseLinkWidget {
       return this.getBaseClassName(link);
     }
   }
+
+  getHint(node) {
+    if (!node) { return null; }
+
+    let obj = node.viewObject;
+    if (!obj) { return null; }
+
+    obj = obj['.conceptInfo'];
+    if (!obj) { return null; }
+
+    const meta = allMeta[obj['_tp']];
+    if (!!meta) {
+      return `${meta['name']}\n * ${_.join(meta['help']['summ'])}`;
+    }
+    return `${obj['_tp']}`;
+  }
+
+
 }
 
 export const StructuralRelationshipsWidget = ModelLinkWidget;

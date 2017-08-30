@@ -98,9 +98,14 @@ export class DefaultNodeWidget extends React.Component {
     return node.name;
   }
 
+  getHint(node) {
+    return null;
+  }
+
   renderTitle(node) {
+
     return (
-      <div className='title'>
+      <div className={node['overlapped'] ? 'title overlapped' : 'title'}>
         <div className='name'>
           {this.getTitle(node)}
         </div>
@@ -115,7 +120,7 @@ export class DefaultNodeWidget extends React.Component {
   render() {
     const { node } = this.props;
     return (
-      <div className={this.getClassName(node)}>
+      <div className={this.getClassName(node)} title={this.getHint(node)}>
         { this.renderTitle(node) }
         { this.renderBorder(node) }
       </div>
@@ -158,7 +163,7 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   generateLink(first, last, extraProps) {
-    const {link} = this.props;
+    const {link,diagram} = this.props;
     const selected = link.isSelected();
     const uiPathProps = {
       className: `p${(selected ? ' selected' : '')}`,
@@ -168,8 +173,10 @@ export class DefaultLinkWidget extends React.Component {
       ... extraProps,
       className: 'x-link t',
       'data-linkid': link.id,
-      strokeOpacity: (selected ? 0.1 : 0)
-    };
+      strokeOpacity: (selected ? 0.1 : 0),
+      onMouseEnter: (event) => {diagram.onMouseEnterElement.call(diagram, event, link)},
+      onMouseLeave: (event) => {diagram.onMouseLeaveElement.call(diagram, event, link)}
+  };
 
     const className = 'x-link ' + ((first ? 'first' : '') + ' ' + (last ? 'last': '')).trim();
     return (
@@ -298,10 +305,23 @@ export class DefaultLinkWidget extends React.Component {
     return link.linkType;
   }
 
+  getHint(link) {
+    return null;
+  }
+
+  drawHint(link) {
+    let hint = this.getHint(link);
+    if (!hint) { return null; }
+    return (
+      <title>{hint}</title>
+    );
+  }
+
   render() {
     const { link } = this.props;
     return (
       <g className={this.getClassName(link)}>
+        {this.drawHint(link)}
         {this.drawLine(link)}
       </g>
     );

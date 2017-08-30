@@ -5,8 +5,8 @@ import org.mentha.utils.archimate.MkModel
 /**
   * A project viewpoint is primarily used to model the management of architecture change. The “architecture” of the migration process from an old situation (current state Enterprise Architecture) to a new desired situation (target state Enterprise Architecture) has significant consequences on the medium and long-term growth strategy and the subsequent decision-making process.
   *
-  * @see http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758145
-  * @see http://pubs.opengroup.org/architecture/archimate2-doc/chap11.html#_Toc371945288
+  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/apdxc.html#_Toc451758145]]
+  * @see [[http://pubs.opengroup.org/architecture/archimate2-doc/chap11.html#_Toc371945288]]
   */
 object MkProjectViewPoint extends MkModel {
 

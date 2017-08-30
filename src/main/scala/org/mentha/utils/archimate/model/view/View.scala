@@ -130,12 +130,12 @@ sealed trait ViewConcept[+T <: Concept] {
 }
 
 /** NodeConcept representation in the View */
-final class ViewNodeConcept[T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
+final class ViewNodeConcept[+T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
 
 }
 
 /** Relationship representation in the View */
-final class ViewRelationship[T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
+final class ViewRelationship[+T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
   require(source.concept == concept.source)
   require(target.concept == concept.target)
 

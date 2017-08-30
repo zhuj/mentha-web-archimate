@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Physical {
+
   implicit class ImplicitEquipment(src: Equipment) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -239,7 +240,8 @@ object Physical {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitFacility(src: Facility) {
     def `composes`(dst: Device)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Equipment)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -471,7 +473,8 @@ object Physical {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitDistributionNetwork(src: DistributionNetwork) {
     def `composes`(dst: DistributionNetwork)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -693,7 +696,8 @@ object Physical {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitMaterial(src: Material) {
     def `composes`(dst: Grouping)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Material)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -729,5 +733,5 @@ object Physical {
     @derived def `realizes`(dst: Outcome)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle)(implicit model: Model): RealizationRelationship = _realizes(src, dst)(model)
 
- }
+  }
 }

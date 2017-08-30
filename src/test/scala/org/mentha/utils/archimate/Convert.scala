@@ -4,7 +4,8 @@ import java.io.{File, StringReader}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.model.edges.{CompositionRelationship, RelationshipMeta, StructuralRelationship}
+import org.mentha.utils.archimate.model.edges.{AggregationRelationship, CompositionRelationship, RelationshipMeta, StructuralRelationship}
+import org.mentha.utils.archimate.model.nodes.impl.Grouping
 import org.mentha.utils.archimate.model.{json, _}
 import org.mentha.utils.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
 import org.mentha.utils.archimate.model.view._
@@ -142,20 +143,30 @@ object Convert extends MkModel {
             bn <- baseNode.collect { case x: ViewObject with ViewConcept[Concept] => x }
             nn <- Option(node).collect { case x: ViewObject with ViewConcept[Concept] => x }
           } {
+            val priority = Map(
+              edges.StructuralRelationships.composition.key -> 0,
+              edges.StructuralRelationships.aggregation.key -> 1,
+            ).withDefaultValue(2)
+
             val maybeRelationship = model
-              .concepts[StructuralRelationship]
+              .concepts[StructuralRelationship].toSeq
+              .sortBy { r => priority(r.meta.key) }
               .collectFirst { case r if (r.source.id == bn.concept.id) && (r.target.id == nn.concept.id) => r }
               .orElse {
-                Try[CompositionRelationship] {
+                Try[Relationship] {
                   model.add(s"${bn.concept.id}-${nn.concept.id}") {
-                    new CompositionRelationship(bn.concept, nn.concept).validate
+                    if (bn.concept.isInstanceOf[Grouping]) {
+                      new AggregationRelationship(bn.concept, nn.concept).validate
+                    } else {
+                      new CompositionRelationship(bn.concept, nn.concept).validate
+                    }
                   }
                 } toOption
               }
 
             for { rr <- maybeRelationship } {
               view.add(s"${rr.id}-${view.id}") {
-                new ViewRelationship[StructuralRelationship](bn, nn)(rr)
+                new ViewRelationship[Relationship](bn, nn)(rr)
               }
             }
           }

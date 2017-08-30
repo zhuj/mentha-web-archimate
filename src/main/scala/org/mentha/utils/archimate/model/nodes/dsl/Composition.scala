@@ -7,6 +7,7 @@ import org.mentha.utils.archimate.model.edges._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Composition {
+
   implicit class ImplicitGrouping(src: Grouping) {
     def `composes`(dst: ApplicationCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationComponent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -439,7 +440,8 @@ object Composition {
     def `writes`(dst: Plateau)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
+
   implicit class ImplicitLocation(src: Location) {
     def `composes`(dst: ApplicationCollaboration)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationComponent)(implicit model: Model): CompositionRelationship = _composes(src, dst)(model)
@@ -774,5 +776,5 @@ object Composition {
     @derived def `writes`(dst: Material)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Representation)(implicit model: Model): AccessRelationship = _writes(src, dst)(model)
 
- }
+  }
 }

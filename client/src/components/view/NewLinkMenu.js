@@ -9,8 +9,8 @@ import { constraints } from './edges/constraints'
 
 import _ from 'lodash'
 
-import { withStyles, createStyleSheet } from 'material-ui/styles';
-const styleSheet = createStyleSheet(theme => ({
+import { withStyles } from 'material-ui/styles';
+const styleSheet =theme => ({
   root: {
     background: theme.palette.background.paper,
   },
@@ -35,7 +35,7 @@ const styleSheet = createStyleSheet(theme => ({
   svg: {
     transform:'scale(0.8)'
   }
-}));
+});
 
 class NewLinkMenu extends React.Component {
 
