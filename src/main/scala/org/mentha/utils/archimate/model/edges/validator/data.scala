@@ -2,6 +2,7 @@ package org.mentha.utils.archimate.model.edges.validator
 
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl._
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.nodes.impl._
 
@@ -26,17 +27,17 @@ object data {
   type RMeta = validator.RMeta
   type RSet = Set[RMeta]
 
-  private val s = specialization
-  private val n = influence
-  private val t = triggering
-  private val f = flow
-  private val a = access
-  private val i = assignment
-  private val v = serving
-  private val g = aggregation
-  private val c = composition
-  private val r = realization
-  private val o = association
+  private val s = specializationRelationship
+  private val n = influenceRelationship
+  private val t = triggeringRelationship
+  private val f = flowRelationship
+  private val a = accessRelationship
+  private val i = assignmentRelationship
+  private val v = servingRelationship
+  private val g = aggregationRelationship
+  private val c = compositionRelationship
+  private val r = realizationRelationship
+  private val o = associationRelationship
 
   private val $: RSet = Set[RMeta]()
   private val $a: RSet = Set[RMeta](a)

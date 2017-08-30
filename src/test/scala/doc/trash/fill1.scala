@@ -18,8 +18,8 @@ object fill1 extends MkModel {
   val random = new util.Random(0)
   val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
 
-  val keys = (xml \ "relations" \ "key")
-    .map { el => (el \ "@char").text.charAt(0) -> ( (el \ "@relationship").text, (el \ "@verbs" ).text ) }
+  val keys = (xml \ "relationship")
+    .map { el => (el \@ "key").charAt(0) -> ((el \@ "name"), el) }
     .toMap
 
   val association: Char = 'o' // <key char="o" relationship="AssociationRelationship" />

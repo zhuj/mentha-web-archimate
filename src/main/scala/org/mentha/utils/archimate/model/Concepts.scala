@@ -1,6 +1,7 @@
 package org.mentha.utils.archimate.model
 
-import org.mentha.utils.archimate.model.edges.{AssociationRelationship, RelationshipMeta}
+import org.mentha.utils.archimate.model.edges.RelationshipMeta
+import org.mentha.utils.archimate.model.edges.impl.AssociationRelationship
 import org.mentha.utils.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
 
 /**

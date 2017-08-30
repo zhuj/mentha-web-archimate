@@ -144,64 +144,64 @@ final class Value extends GenericElement with MotivationElement {
 object MotivationElements {
 
   case object stakeholder extends ElementMeta[Stakeholder] {
-    override def newInstance(): Stakeholder = new Stakeholder
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "msh"
     override def name: String = "stakeholder"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Stakeholder = new Stakeholder
   }
   case object driver extends ElementMeta[Driver] {
-    override def newInstance(): Driver = new Driver
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mdr"
     override def name: String = "driver"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Driver = new Driver
   }
   case object assessment extends ElementMeta[Assessment] {
-    override def newInstance(): Assessment = new Assessment
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mas"
     override def name: String = "assessment"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Assessment = new Assessment
   }
   case object goal extends ElementMeta[Goal] {
-    override def newInstance(): Goal = new Goal
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mgo"
     override def name: String = "goal"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Goal = new Goal
   }
   case object outcome extends ElementMeta[Outcome] {
-    override def newInstance(): Outcome = new Outcome
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "moc"
     override def name: String = "outcome"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Outcome = new Outcome
   }
   case object principle extends ElementMeta[Principle] {
-    override def newInstance(): Principle = new Principle
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mpr"
     override def name: String = "principle"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Principle = new Principle
   }
   case object requirement extends ElementMeta[Requirement] {
-    override def newInstance(): Requirement = new Requirement
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mrq"
     override def name: String = "requirement"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Requirement = new Requirement
   }
   case object constraint extends ElementMeta[Constraint] {
-    override def newInstance(): Constraint = new Constraint
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mcs"
     override def name: String = "constraint"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Constraint = new Constraint
   }
   case object meaning extends ElementMeta[Meaning] {
-    override def newInstance(): Meaning = new Meaning
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mmn"
     override def name: String = "meaning"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Meaning = new Meaning
   }
   case object value extends ElementMeta[Value] {
-    override def newInstance(): Value = new Value
-    override def layerObject: LayerObject = MotivationLayer
     override def key: String = "mvl"
     override def name: String = "value"
+    override def layerObject: LayerObject = MotivationLayer
+    override def newInstance(): Value = new Value
   }
 
   val motivationElements: Seq[ElementMeta[Element]] = Seq(stakeholder, driver, assessment, goal, outcome, principle, requirement, constraint, meaning, value)

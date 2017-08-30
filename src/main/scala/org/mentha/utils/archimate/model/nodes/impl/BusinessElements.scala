@@ -38,7 +38,8 @@ final class BusinessRole extends InternalActiveStructureElement with BusinessEle
  * An aggregate of two or more business internal active structure elements that work together to perform collective behavior.
  * ==Overview==
  * A business collaboration is an aggregate of two or more business internal active structure elements that work together to perform collective behavior.
- * @note A business process or function may be interpreted as the internal behavior of a single business role. In some cases, behavior is the collective effort of more than one business role; in fact, a collaboration of two or more business roles results in collective behavior which may be more than simply the sum of the behavior of the separate roles. Business collaborations represent this collective effort. Business interactions are used to describe the internal behavior that takes place within business collaboration. A collaboration is a (possibly temporary) collection of business roles or actors within an organization, which perform collaborative behavior (interactions). Unlike a department, which may also group roles, a business collaboration need not have an official (permanent) status within the organization; it is specifically aimed at a specific interaction or set of interactions between roles. It is especially useful in modeling B2B interactions between different organizations such as provider networks, and also for describing social networks.
+ * @note A business process or function may be interpreted as the internal behavior of a single business role. In some cases, behavior is the collective effort of more than one business role; in fact, a collaboration of two or more business roles results in collective behavior which may be more than simply the sum of the behavior of the separate roles.
+ * @note Business collaborations represent this collective effort. Business interactions are used to describe the internal behavior that takes place within business collaboration. A collaboration is a (possibly temporary) collection of business roles or actors within an organization, which perform collaborative behavior (interactions). Unlike a department, which may also group roles, a business collaboration need not have an official (permanent) status within the organization; it is specifically aimed at a specific interaction or set of interactions between roles. It is especially useful in modeling B2B interactions between different organizations such as provider networks, and also for describing social networks.
  * @note A business collaboration may aggregate a number of business roles or actors, and may be assigned to one or more business interactions or other business internal behavior elements. A business interface or an application interface may serve a business collaboration, while a business collaboration may have business interfaces (through composition, and also through aggregation via derived relationships). The name of a business collaboration should preferably be a noun. It is also rather common to leave a business collaboration unnamed.
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758007 BusinessCollaboration ArchiMate® 3.0 Specification ]]
  */
@@ -190,82 +191,82 @@ final class Product extends CompositeElement with BusinessElement {
 object BusinessElements {
 
   case object businessActor extends ElementMeta[BusinessActor] {
-    override def newInstance(): BusinessActor = new BusinessActor
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bac"
     override def name: String = "businessActor"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessActor = new BusinessActor
   }
   case object businessRole extends ElementMeta[BusinessRole] {
-    override def newInstance(): BusinessRole = new BusinessRole
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bro"
     override def name: String = "businessRole"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessRole = new BusinessRole
   }
   case object businessCollaboration extends ElementMeta[BusinessCollaboration] {
-    override def newInstance(): BusinessCollaboration = new BusinessCollaboration
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bcl"
     override def name: String = "businessCollaboration"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessCollaboration = new BusinessCollaboration
   }
   case object businessInterface extends ElementMeta[BusinessInterface] {
-    override def newInstance(): BusinessInterface = new BusinessInterface
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bif"
     override def name: String = "businessInterface"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessInterface = new BusinessInterface
   }
   case object businessProcess extends ElementMeta[BusinessProcess] {
-    override def newInstance(): BusinessProcess = new BusinessProcess
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bpr"
     override def name: String = "businessProcess"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessProcess = new BusinessProcess
   }
   case object businessFunction extends ElementMeta[BusinessFunction] {
-    override def newInstance(): BusinessFunction = new BusinessFunction
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bfn"
     override def name: String = "businessFunction"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessFunction = new BusinessFunction
   }
   case object businessInteraction extends ElementMeta[BusinessInteraction] {
-    override def newInstance(): BusinessInteraction = new BusinessInteraction
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bia"
     override def name: String = "businessInteraction"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessInteraction = new BusinessInteraction
   }
   case object businessEvent extends ElementMeta[BusinessEvent] {
-    override def newInstance(): BusinessEvent = new BusinessEvent
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bev"
     override def name: String = "businessEvent"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessEvent = new BusinessEvent
   }
   case object businessService extends ElementMeta[BusinessService] {
-    override def newInstance(): BusinessService = new BusinessService
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bsv"
     override def name: String = "businessService"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessService = new BusinessService
   }
   case object businessObject extends ElementMeta[BusinessObject] {
-    override def newInstance(): BusinessObject = new BusinessObject
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bob"
     override def name: String = "businessObject"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): BusinessObject = new BusinessObject
   }
   case object contract extends ElementMeta[Contract] {
-    override def newInstance(): Contract = new Contract
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bco"
     override def name: String = "contract"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): Contract = new Contract
   }
   case object representation extends ElementMeta[Representation] {
-    override def newInstance(): Representation = new Representation
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bre"
     override def name: String = "representation"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): Representation = new Representation
   }
   case object product extends ElementMeta[Product] {
-    override def newInstance(): Product = new Product
-    override def layerObject: LayerObject = BusinessLayer
     override def key: String = "bpr"
     override def name: String = "product"
+    override def layerObject: LayerObject = BusinessLayer
+    override def newInstance(): Product = new Product
   }
 
   val businessElements: Seq[ElementMeta[Element]] = Seq(businessActor, businessRole, businessCollaboration, businessInterface, businessProcess, businessFunction, businessInteraction, businessEvent, businessService, businessObject, contract, representation, product)

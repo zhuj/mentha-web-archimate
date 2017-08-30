@@ -4,6 +4,7 @@ import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.nodes.impl._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl._
 
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
 object Motivation {

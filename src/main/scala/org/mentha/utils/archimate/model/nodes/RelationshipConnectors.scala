@@ -2,7 +2,8 @@ package org.mentha.utils.archimate.model.nodes
 
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model._
-import org.mentha.utils.archimate.model.edges.{AssociationRelationship, RelationshipMeta}
+import org.mentha.utils.archimate.model.edges.RelationshipMeta
+import org.mentha.utils.archimate.model.edges.impl.AssociationRelationship
 
 /**
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757967 Junction ArchiMate® 3.0 Specification ]]

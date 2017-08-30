@@ -3,7 +3,6 @@ package doc.trash
 import java.io.File
 import java.util
 
-import doc.trash.fill2.publishModel
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.MkModel
@@ -19,8 +18,8 @@ object fill3 extends MkModel {
   val random = new util.Random(0)
   val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
 
-  val keys = (xml \ "relations" \ "key")
-    .map { el => (el \ "@char").text.charAt(0) -> ( (el \ "@relationship").text, (el \ "@verbs" ).text ) }
+  val keys = (xml \ "relationship")
+    .map { el => (el \@ "key").charAt(0) -> ((el \@ "name"), el) }
     .toMap
 
   val association: Char = 'o' // <key char="o" relationship="AssociationRelationship" />

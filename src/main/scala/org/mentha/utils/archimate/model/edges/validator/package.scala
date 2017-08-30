@@ -2,6 +2,7 @@ package org.mentha.utils.archimate.model.edges
 
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl.OtherRelationships
 import org.mentha.utils.archimate.model.nodes._
 
 package object validator {
@@ -12,13 +13,13 @@ package object validator {
   type RCMeta = RelationshipConnectorMeta[_ <: RelationshipConnector]
 
   def validate(src: EMeta, dst: EMeta, rel: RMeta): Boolean = {
-    (rel == OtherRelationships.association) || {
+    (rel == OtherRelationships.associationRelationship) || {
       data.data.get((src, dst)).exists { case (all, _) => all.contains(rel) }
     }
   }
 
   def validate(src: CMeta, dst: CMeta, rel: RMeta): Boolean = {
-    (rel == OtherRelationships.association) || {
+    (rel == OtherRelationships.associationRelationship) || {
       (src, dst) match {
         case (s: EMeta, d: EMeta) => validate(s, d, rel)
         case (_: RCMeta, _: RCMeta) => true

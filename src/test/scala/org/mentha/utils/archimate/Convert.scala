@@ -4,15 +4,15 @@ import java.io.{File, StringReader}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.model.edges.{AggregationRelationship, CompositionRelationship, RelationshipMeta, StructuralRelationship}
-import org.mentha.utils.archimate.model.nodes.impl.Grouping
-import org.mentha.utils.archimate.model.{json, _}
-import org.mentha.utils.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
+import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl._
+import org.mentha.utils.archimate.model.nodes._
+import org.mentha.utils.archimate.model.nodes.impl._
+import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.view._
 
 import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
-
 
 object Convert extends MkModel {
 
@@ -87,7 +87,7 @@ object Convert extends MkModel {
             if (!r.valid) { throw new IllegalStateException("Invalid") }
             r
           } recover {
-            case _ => edges.OtherRelationships.association.newInstance(src, dst)
+            case _ => OtherRelationships.associationRelationship.newInstance(src, dst)
           } get
 
 
@@ -144,8 +144,8 @@ object Convert extends MkModel {
             nn <- Option(node).collect { case x: ViewObject with ViewConcept[Concept] => x }
           } {
             val priority = Map(
-              edges.StructuralRelationships.composition.key -> 0,
-              edges.StructuralRelationships.aggregation.key -> 1,
+              StructuralRelationships.compositionRelationship.key -> 0,
+              StructuralRelationships.aggregationRelationship.key -> 1,
             ).withDefaultValue(2)
 
             val maybeRelationship = model
