@@ -1,5 +1,7 @@
 package org.mentha.utils.archimate.model
 
+import org.mentha.utils.archimate.model.edges.impl._
+
 package object edges {
 
   import StructuralRelationships._
@@ -8,10 +10,10 @@ package object edges {
   import OtherRelationships._
 
   val allRelations: Seq[RelationshipMeta[Relationship]] =
-    structuralRelations ++
-    dependencyRelations ++
-    dynamicRelations ++
-    otherRelations
+    structuralRelationships ++
+    dependencyRelationships ++
+    dynamicRelationships ++
+    otherRelationships
 
   val mapRelations: Map[String, RelationshipMeta[Relationship]] =
     allRelations

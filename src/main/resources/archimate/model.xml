@@ -1,7 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- see http://pubs.opengroup.org/architecture/archimate3-doc/ !-->
 <model version="3.0">
 
-  <!-- see http://pubs.opengroup.org/architecture/archimate3-doc/ !-->
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945989 !-->
+  <!-- Structural Relationships: Structural relationships represent the ‘static’ coherence within an architecture. !-->
+
+  <relationship key="c" name="CompositionRelationship" kind="Structural" derivation-strength="7">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945990"/>
+    <summ>Indicates that an element consists of one or more other concepts.</summ>
+    <info>The composition relationship indicates that an element consists of one or more other concepts.</info>
+    <info>The usual interpretation of a composition relationship is that the whole or part of the source element is composed of the whole of the target element.</info>
+    <text>The composition relationship has been inspired by the composition relationship in UML class diagrams. In contrast to the aggregation relationship, the composed concept can be part of only one composition.</text>
+    <text>A composition relationship is always allowed between two instances of the same element type.</text>
+    <text>In addition to this, the metamodel explicitly defines other source and target elements that may be connected by a composition relationship.</text>
+    <verb>composes</verb>
+  </relationship>
+
+  <relationship key="g" name="AggregationRelationship" kind="Structural" derivation-strength="6">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945991"/>
+    <summ>Indicates that an element consists of one or more other concepts.</summ>
+    <info>The aggregation relationship indicates that an element consists of one or more other concepts.</info>
+    <info>The usual interpretation of an aggregation relationship is that the whole or part of the source element aggregates the whole of the target element.</info>
+    <text>The aggregation relationship has been inspired by the aggregation relationship in UML class diagrams. In contrast to the composition relationship, an object can be part of more than one aggregation.</text>
+    <text>An aggregation relationship is always allowed between two instances of the same element type.</text>
+    <text>In addition to this, the metamodel explicitly defines other source and target elements that may be connected by an aggregation relationship.</text>
+    <verb>aggregates</verb>
+  </relationship>
+
+  <relationship key="i" name="AssignmentRelationship" kind="Structural" derivation-strength="5">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945992"/>
+    <summ>Expresses the allocation of responsibility, performance of behavior, or execution.</summ>
+    <info>The assignment relationship expresses the allocation of responsibility, performance of behavior, or execution.</info>
+    <info>The usual interpretation of an assignment relationship is that the whole or part of the source element is assigned the whole of the target element.</info>
+    <text>The assignment relationship links active structure elements with units of behavior that are performed by them, business actors with business roles that are fulfilled by them, and nodes with technology objects.</text>
+    <verb>assigned-to</verb>
+  </relationship>
+
+  <relationship key="r" name="RealizationRelationship" kind="Structural" derivation-strength="4">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945993"/>
+    <summ>Indicates that an entity plays a critical role in the creation, achievement, sustenance, or operation of a more abstract entity.</summ>
+    <info>The realization relationship indicates that an entity plays a critical role in the creation, achievement, sustenance, or operation of a more abstract entity.</info>
+    <info>The usual interpretation of a realization relationship is that the whole or part of the source element realizes the whole of the target element.</info>
+    <text>The realization relationship indicates that more abstract entities (“what” or “logical”) are realized by means of more tangible entities (“how” or “physical”).</text>
+    <text>The realization relationship is used to model run-time realization; for example, that a business process realizes a business service, and that a data object realizes a business object, an artifact realizes an application component, or a core element realizes a motivation element.</text>
+    <verb>realizes</verb>
+  </relationship>
+
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945994 !-->
+  <!-- Dependency Relationships: Dependency relationships describe how elements support or are used by other elements. !-->
+
+  <relationship key="v" name="ServingRelationship" kind="Dependency" derivation-strength="3">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945995"/>
+    <summ>Models that an element provides its functionality to another element.</summ>
+    <info>The serving relationship models that an element provides its functionality to another element.</info>
+    <info>The usual interpretation of a serving relationship is that the whole of the source element serves (is used by) the target element.</info>
+    <text>The serving relationship describes how the services or interfaces offered by a behavior or active structure element serve entities in their environment. This relationship is applied for both the behavior aspect and the active structure aspect.</text>
+    <text>Compared to the earlier versions of this standard, the name of this relationship has been changed from ‘used by’ to ‘serving’, to better reflect its direction with an active verb: a service serves a user. The meaning of the relationship has not been altered. The ‘used by’ designation is still allowed but deprecated, and will be removed in a future version of the standard.</text>
+    <verb>serves</verb>
+  </relationship>
+
+  <relationship key="a" name="AccessRelationship" kind="Dependency" derivation-strength="2">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945996"/>
+    <summ>Models the ability of behavior and active structure elements to observe or act upon passive structure elements.</summ>
+    <info>The access relationship models the ability of behavior and active structure elements to observe or act upon passive structure elements.</info>
+    <info>The usual interpretation of an access relationship is that the whole of the target element is accessed by the source element.</info>
+    <text>The access relationship indicates that a process, function, interaction, service, or event “does something” with a passive structure element; e.g., create a new object, read data from the object, write or modify the object data, or delete the object.</text>
+    <text>The relationship can also be used to indicate that the object is just associated with the behavior; e.g., it models the information that comes with an event, or the information that is made available as part of a service.</text>
+    <text>Alternatively, an access relationship can be expressed by nesting the passive structure element inside the behavior or active structure element that accesses it; for example, nesting a data object inside an application component.</text>
+    <param name="access" type="AccessType" default="ReadWriteAccess"/>
+    <verb>reads</verb>
+    <verb>writes</verb>
+    <verb>accesses-$mode:AccessType$-of</verb>
+  </relationship>
+
+  <relationship key="n" name="InfluenceRelationship" kind="Dependency" derivation-strength="1">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945997"/>
+    <summ>Models that an element affects the implementation or achievement of some motivation element.</summ>
+    <info>The influence relationship models that an element affects the implementation or achievement of some motivation element.</info>
+    <info>The influence relationship is used to describe that some architectural element influences achievement or implementation of a motivation element, such as a goal or a principle. In general, a motivation element is realized to a certain degree.</info>
+    <text>Additional to this ‘vertical’ use of contribution, from core elements upwards to requirements and goals, the relationship can also be used to model ‘horizontal’ contributions between motivation elements. The influence relationship in that case describes that some motivation element may influence (the achievement or implementation of) another motivation element. In general, a motivation element is achieved to a certain degree. An influence by some other element may affect this degree, depending on the degree in which this other element is satisfied itself.</text>
+    <text>The realization relationship should be used to represent relationships that are critical to the existence or realization of the target, while the influence relationship should be used to represent relationships that are not critical to the target object’s existence or realization.</text>
+    <text>Moreover, an influence relationship can be used to model either: (1) The fact that an element positively contributes to the achievement or implementation of some motivation element, or (2) The fact that an element negatively influences – i.e., prevents or counteracts – such achievement.</text>
+    <text>Attributes can be used to indicate the sign and/or strength of the influence. The choice of possible attribute values is left to the modeler; e.g., {++, +, 0, -, --} or [0..10]. By default, the influence relationship models a contribution with unspecified sign and strength.</text>
+    <param name="influence" type="String" default="null"/>
+    <verb>influences-$what:String$-in</verb>
+  </relationship>
+
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945998 !-->
+  <!--  Dynamic Relationships: The dynamic relationships describe temporal dependencies between elements within the architecture. !-->
+
+  <relationship key="t" name="TriggeringRelationship" kind="Dynamic">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945999"/>
+    <summ>Describes a temporal or causal relationship between elements.</summ>
+    <info>The triggering relationship describes a temporal or causal relationship between elements.</info>
+    <info>The triggering relationship is used to model the temporal or causal precedence of behavior elements in a process.</info>
+    <info>The usual interpretation of a triggering relationship is that the source element should be completed before the target element can start, although weaker interpretations are also permitted.</info>
+    <text>Note that this does not necessarily represent that one behavior element actively starts another; a traffic light turning green also triggers the cars to go through the intersection.</text>
+    <verb>triggers</verb>
+  </relationship>
+  
+  <relationship key="f" name="FlowRelationship" kind="Dynamic">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489946000"/>
+    <summ>Transfer from one element to another.</summ>
+    <info>The flow relationship represents transfer from one element to another.</info>
+    <info>The flow relationship is used to model the flow of, for example, information, goods, or money between behavior elements.</info>
+    <text>A flow relationship does not imply a causal relationship.</text>
+    <param name="flow" type="String" default="null"/>
+    <verb>flows-$what:String$-to</verb>
+  </relationship>
+
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489946001 !-->
+  <!-- Other Relationsips !-->
+
+  <relationship key="s" name="SpecializationRelationship" kind="Other">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489946002"/>
+    <summ>Indicates that an element is a particular kind of another element.</summ>
+    <info>The specialization relationship indicates that an element is a particular kind of another element.</info>
+    <text>The specialization relationship has been inspired by the generalization relationship in UML class diagrams, but is applicable to specialize a wider range of concepts. The specialization relationship can relate any instance of a concept with another instance of the same concept.</text>
+    <text>A specialization relationship is always allowed between two instances of the same element.</text>
+    <text>Alternatively, a specialization relationship can be expressed by nesting the specialized element inside the generic element.</text>
+    <verb>specializes</verb>
+  </relationship>
+
+  <relationship key="o" name="AssociationRelationship" kind="Other">
+    <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489946003"/>
+    <summ>Models an unspecified relationship, or one that is not represented by another ArchiMate relationship.</summ>
+    <info>An association relationship models an unspecified relationship, or one that is not represented by another ArchiMate relationship.</info>
+    <text>An association relationship is always allowed between two elements, or between a relationship and an element.</text>
+    <text>The association relationship can be used when drawing a first high-level model where relationships are initially denoted in a generic way, and later refined to show more specific relationship types.</text>
+    <verb>associated-with</verb>
+  </relationship>
+
 
   <!-- Motivation Elements (1) !-->
 
@@ -145,9 +275,8 @@
     <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap08.html#_Toc451758007"/>
     <summ>An aggregate of two or more business internal active structure elements that work together to perform collective behavior.</summ>
     <info>A business collaboration is an aggregate of two or more business internal active structure elements that work together to perform collective behavior.</info>
-    <text>A business process or function may be interpreted as the internal behavior of a single business role. In some cases, behavior is the collective effort of more than one business role; in fact, a collaboration of two or more business roles results in collective behavior which may be more than simply the sum of the behavior of the separate roles. Business collaborations represent this collective effort. Business interactions are used to describe the internal behavior that takes place within business collaboration. A collaboration is a (possibly temporary) collection of business roles or actors within an organization, which perform collaborative behavior (interactions). Unlike a department, which may also group roles, a business collaboration need not have an official (permanent) status within the organization; it is specifically aimed at a specific interaction or set of interactions between roles. It is especially useful in modeling B2B interactions between different
-      organizations such as provider networks, and also for describing social networks.
-    </text>
+    <text>A business process or function may be interpreted as the internal behavior of a single business role. In some cases, behavior is the collective effort of more than one business role; in fact, a collaboration of two or more business roles results in collective behavior which may be more than simply the sum of the behavior of the separate roles.</text>
+    <text>Business collaborations represent this collective effort. Business interactions are used to describe the internal behavior that takes place within business collaboration. A collaboration is a (possibly temporary) collection of business roles or actors within an organization, which perform collaborative behavior (interactions). Unlike a department, which may also group roles, a business collaboration need not have an official (permanent) status within the organization; it is specifically aimed at a specific interaction or set of interactions between roles. It is especially useful in modeling B2B interactions between different organizations such as provider networks, and also for describing social networks.</text>
     <text>A business collaboration may aggregate a number of business roles or actors, and may be assigned to one or more business interactions or other business internal behavior elements. A business interface or an application interface may serve a business collaboration, while a business collaboration may have business interfaces (through composition, and also through aggregation via derived relationships). The name of a business collaboration should preferably be a noun. It is also rather common to leave a business collaboration unnamed.</text>
   </element>
 
@@ -569,26 +698,9 @@
   </element>
 
 
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/apdxb.html#_Toc451758118 !-->
+  <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757969 !-->
   <relations>
-    <!-- http://pubs.opengroup.org/architecture/archimate3-doc/apdxb.html#_Toc451758118 !-->
-    <!-- http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757969 !-->
-
-    <!-- Structural and Dependency Relationships !-->
-    <key char="n" relationship="InfluenceRelationship" derivation-strength="1" verbs="influences-$what:String$-in"/>
-    <key char="a" relationship="AccessRelationship" derivation-strength="2" verbs="reads writes accesses-$mode:AccessType$-of"/>
-    <key char="v" relationship="ServingRelationship" derivation-strength="3" verbs="serves"/>
-    <key char="r" relationship="RealizationRelationship" derivation-strength="4" verbs="realizes"/>
-    <key char="i" relationship="AssignmentRelationship" derivation-strength="5" verbs="assigned-to"/>
-    <key char="g" relationship="AggregationRelationship" derivation-strength="6" verbs="aggregates"/>
-    <key char="c" relationship="CompositionRelationship" derivation-strength="7" verbs="composes"/>
-
-    <!--  Dynamic Relationships !-->
-    <key char="t" relationship="TriggeringRelationship" verbs="triggers"/>
-    <key char="f" relationship="FlowRelationship" verbs="flows-$what:String$-to"/>
-
-    <!-- Other Relationsips !-->
-    <key char="o" relationship="AssociationRelationship" verbs="associated-with"/>
-    <key char="s" relationship="SpecializationRelationship" verbs="specializes"/>
 
     <source concept="ApplicationCollaboration">
       <target concept="ApplicationCollaboration" relations="cfgorstv" derived="ftv"/>

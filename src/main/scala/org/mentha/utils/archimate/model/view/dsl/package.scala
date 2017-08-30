@@ -1,11 +1,10 @@
 package org.mentha.utils.archimate.model.view
 
-import org.mentha.utils.archimate.model.edges.{CompositionRelationship, StructuralRelationship, StructuralRelationships}
-
-import scala.util.{Success, Try}
+import scala.util._
 
 package object dsl {
 
+  import org.mentha.utils.archimate.model.edges.impl._
   import org.mentha.utils.archimate.model._
 
   implicit class NodeConceptToView[T <: NodeConcept](val concept: T) {
@@ -135,7 +134,12 @@ package object dsl {
     case (src: ViewNodeConcept[_], dst: ViewNodeConcept[_]) => view.add {
       new ViewRelationship[Relationship](src, dst)(
         model.add {
-          Seq(StructuralRelationships.composition, StructuralRelationships.assignment, StructuralRelationships.realization, StructuralRelationships.aggregation)
+          Seq(
+            StructuralRelationships.compositionRelationship,
+            StructuralRelationships.assignmentRelationship,
+            StructuralRelationships.realizationRelationship,
+            StructuralRelationships.aggregationRelationship
+          )
             .iterator // make it lazy
             .map { meta => Try[Relationship] { meta.newInstance(src.concept, dst.concept).validate } }
             .collectFirst { case Success(r) => r }

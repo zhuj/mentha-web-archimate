@@ -3,6 +3,7 @@ package org.mentha.utils.archimate.model.traverse
 import org.mentha.utils.archimate.model.Identifiable.ID
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl._
 
 import scala.annotation.tailrec
 import scalaz.Scalaz._

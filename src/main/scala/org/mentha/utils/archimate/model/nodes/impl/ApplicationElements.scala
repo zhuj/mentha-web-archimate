@@ -133,58 +133,58 @@ final class DataObject extends PassiveStructureElement with ApplicationElement {
 object ApplicationElements {
 
   case object applicationComponent extends ElementMeta[ApplicationComponent] {
-    override def newInstance(): ApplicationComponent = new ApplicationComponent
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "aco"
     override def name: String = "applicationComponent"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationComponent = new ApplicationComponent
   }
   case object applicationCollaboration extends ElementMeta[ApplicationCollaboration] {
-    override def newInstance(): ApplicationCollaboration = new ApplicationCollaboration
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "acl"
     override def name: String = "applicationCollaboration"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationCollaboration = new ApplicationCollaboration
   }
   case object applicationInterface extends ElementMeta[ApplicationInterface] {
-    override def newInstance(): ApplicationInterface = new ApplicationInterface
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "aif"
     override def name: String = "applicationInterface"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationInterface = new ApplicationInterface
   }
   case object applicationFunction extends ElementMeta[ApplicationFunction] {
-    override def newInstance(): ApplicationFunction = new ApplicationFunction
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "afn"
     override def name: String = "applicationFunction"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationFunction = new ApplicationFunction
   }
   case object applicationInteraction extends ElementMeta[ApplicationInteraction] {
-    override def newInstance(): ApplicationInteraction = new ApplicationInteraction
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "aia"
     override def name: String = "applicationInteraction"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationInteraction = new ApplicationInteraction
   }
   case object applicationProcess extends ElementMeta[ApplicationProcess] {
-    override def newInstance(): ApplicationProcess = new ApplicationProcess
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "apr"
     override def name: String = "applicationProcess"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationProcess = new ApplicationProcess
   }
   case object applicationEvent extends ElementMeta[ApplicationEvent] {
-    override def newInstance(): ApplicationEvent = new ApplicationEvent
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "aev"
     override def name: String = "applicationEvent"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationEvent = new ApplicationEvent
   }
   case object applicationService extends ElementMeta[ApplicationService] {
-    override def newInstance(): ApplicationService = new ApplicationService
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "asv"
     override def name: String = "applicationService"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): ApplicationService = new ApplicationService
   }
   case object dataObject extends ElementMeta[DataObject] {
-    override def newInstance(): DataObject = new DataObject
-    override def layerObject: LayerObject = ApplicationLayer
     override def key: String = "ado"
     override def name: String = "dataObject"
+    override def layerObject: LayerObject = ApplicationLayer
+    override def newInstance(): DataObject = new DataObject
   }
 
   val applicationElements: Seq[ElementMeta[Element]] = Seq(applicationComponent, applicationCollaboration, applicationInterface, applicationFunction, applicationInteraction, applicationProcess, applicationEvent, applicationService, dataObject)

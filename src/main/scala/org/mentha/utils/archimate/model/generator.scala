@@ -5,7 +5,6 @@ import java.io.PrintWriter
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.output.StringBuilderWriter
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.model.edges.OtherRelationships
 
 import scala.collection.mutable
 import scala.xml.XML
@@ -18,11 +17,18 @@ object generator {
 
   private val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
 
-  private val keys = (xml \ "relations" \ "key")
-    .map { el => (el \@ "char").charAt(0) -> ( (el \@ "relationship"), (el \@ "verbs" ) ) }
+  private val relationships = (xml \ "relationship")
+    .map { el => (el \@ "name") -> ((el \@ "kind"), el) }
     .toMap
 
-  private val association: Char = OtherRelationships.association.key
+  private val relationshipKeys = (xml \ "relationship")
+    .map { el => (el \@ "key").charAt(0) -> (el \@ "name") }
+    .toMap
+
+  private val elements = (xml \ "element")
+    .map { el => (el \@ "name") -> ((el \@ "layer"), (el \@ "parent"), el) }
+
+  private val association: Char = 'o' // OtherRelationships.association.key
   private val rels = (xml \ "relations" \ "source")
     .flatMap {
       s => (s \ "target").map {
@@ -41,7 +47,7 @@ object generator {
       case (_, d, _, _) => d == "Junction"
     }
 
-  def elements(): Unit = {
+  def mkElements(): Unit = {
 
     def impl_stream(layer: String): StringBuilderWriter = {
 
@@ -76,6 +82,7 @@ object generator {
       writer.println("import org.mentha.utils.archimate.model.nodes._")
       writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
       writer.println("import org.mentha.utils.archimate.model.edges._")
+      writer.println("import org.mentha.utils.archimate.model.edges.impl._")
       writer.println()
 
       writer.println(generated)
@@ -87,9 +94,6 @@ object generator {
 
     val relsMap = rels
       .groupBy { case (src, _, _, _) => src }
-
-    val elements = (xml \ "element")
-      .map { el => (el \@ "name") -> ((el \@ "layer"), (el \@ "parent"), el) }
 
     val layers = elements
       .map { case (_, (layer, _, _)) => layer }
@@ -136,16 +140,14 @@ object generator {
           val writer = new PrintWriter(streams(layer))
           val variable = StringUtils.uncapitalize(name)
           writer.println(s"  case object ${variable} extends ElementMeta[${name}] {")
-          writer.println(s"    override def newInstance(): ${name} = new ${name}")
-          writer.println(s"    override def layerObject: LayerObject = ${layer}Layer")
           writer.println(s"    override def key: String = ${"\""}${(el \@ "key")}${"\""}")
           writer.println(s"    override def name: String = ${"\""}${variable}${"\""}")
-
+          writer.println(s"    override def layerObject: LayerObject = ${layer}Layer")
+          writer.println(s"    override def newInstance(): ${name} = new ${name}")
           writer.println(s"  }")
           writer.flush()
           variables += (layer -> variable)
         }
-
 
         for {(layer, stream) <- streams} {
           val writer = new PrintWriter(stream)
@@ -156,7 +158,6 @@ object generator {
           writer.flush()
         }
       }
-
 
       for {(layer, stream) <- streams} {
         FileUtils.write(
@@ -216,8 +217,10 @@ object generator {
 
         val localRels = relsMap(name)
           .flatMap { case (_, dst, rs, der) => rs.map { r => (r, dst, der.contains(r)) } }
-          .flatMap { case (r, dst, der) => keys(r) match {
-            case (rname, verbs) => verbs.split("\\s+").map { verb => (verb, rname, dst, der) }
+          .flatMap { case (r, dst, der) => {
+            val rname = relationshipKeys(r)
+            val (_, rel) = relationships(rname)
+            (rel \ "verb").map { verb => (verb.text, rname, dst, der) }
           } }
           .groupBy { case (verb, _, _, _) => verb }
 
@@ -280,129 +283,221 @@ object generator {
           "UTF-8"
         )
       }
-
-    }
-
-    // edges validator
-    {
-      val rels = (xml \ "relations" \ "source").flatMap {
-        s => (s \ "target").flatMap {
-          t => (t \@ "relations").toSeq
-            .map { keys }
-            .map { case (r, _) => (
-              (s \@ "concept"),
-              (t \@ "concept"),
-              r
-            ) }
-        }
-      }
-
     }
   }
 
-  def relationships(): Unit = {
+  def mkRelationships(): Unit = {
 
-    val relsMap = rels
-      .map { case (src, dst, r1, r2) => (
-        StringUtils.uncapitalize(src),
-        StringUtils.uncapitalize(dst),
-        r1.sorted,
-        r2.mkString("").sorted
-      ) }
-      .filter { case (src, dst, _, _) => (src != "junction") && (dst != "junction") }
-      .groupBy { case (src, _, _, _) => src }
+    def impl_stream(kind: String): StringBuilderWriter = {
 
-    // possible relationships
-    {
       val stream = new StringBuilderWriter(4096)
       val writer = new PrintWriter(stream)
 
-      writer.println("package org.mentha.utils.archimate.model.edges.validator")
+      writer.println("package org.mentha.utils.archimate.model.edges.impl")
       writer.println()
 
       writer.println("import org.mentha.utils.archimate.model._")
       writer.println("import org.mentha.utils.archimate.model.edges._")
-      writer.println("import org.mentha.utils.archimate.model.nodes._")
-      writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
       writer.println()
 
-      writer.println(generated)
-      writer.println("object data {")
-      writer.println()
+      writer.flush()
 
-      writer.println("  import StructuralRelationships._")
-      writer.println("  import DependencyRelationships._")
-      writer.println("  import DynamicRelationships._")
-      writer.println("  import OtherRelationships._")
-      writer.println()
-
-      writer.println("  import MotivationElements._")
-      writer.println("  import StrategyElements._")
-      writer.println("  import BusinessElements._")
-      writer.println("  import ApplicationElements._")
-      writer.println("  import TechnologyElements._")
-      writer.println("  import PhysicalElements._")
-      writer.println("  import ImplementationElements._")
-      writer.println("  import CompositionElements._")
-      writer.println()
-
-      writer.println("  type EMeta = validator.EMeta")
-      writer.println("  type RMeta = validator.RMeta")
-      writer.println("  type RSet = Set[RMeta]")
-      writer.println()
-
-      for { (k, (nm, _)) <- keys } {
-        writer.println(s"  private val ${k} = ${StringUtils.substringBeforeLast(StringUtils.uncapitalize(nm), "Relationship")}")
-      }
-      writer.println()
-
-      var combinations = Set[String]()
-      val dataStream = {
-        val stream = new StringBuilderWriter(4096)
-        val writer = new PrintWriter(stream)
-        for {(src, items) <- relsMap} {
-          writer.println(s"  private def ${src}Data: Map[(EMeta, EMeta), (RSet, RSet)] = Map(")
-          for {(_, dst, r1, r2) <- items} {
-            combinations += r1
-            combinations += r2
-            writer.println(s"    ((${src}, ${dst}), ($$${r1}, $$${r2})),")
-          }
-          writer.println("  )")
-        }
-        writer.flush()
-        stream
-      }
-
-      for { c <- combinations.toSeq.sorted } {
-        writer.println(s"  private val $$${c}: RSet = Set[RMeta](${c.mkString(", ")})")
-      }
-      writer.println()
-
-      writer.println(dataStream.toString)
-      writer.println()
-
-      writer.println("  val data: Map[(EMeta, EMeta), (RSet, RSet)] = Seq(")
-      for {(src, _) <- relsMap} {
-        writer.println(s"   ${src}Data,")
-      }
-      writer.println("  ).flatten.toMap")
-      writer.println()
-      writer.println("}")
-
-      FileUtils.write(
-        new java.io.File("src/main/scala/org/mentha/utils/archimate/model/edges/validator/data.scala"),
-        stream.toString,
-        "UTF-8"
-      )
+      stream
     }
 
+    val kinds = relationships
+      .map { case (_, (kind, _)) => kind }
+      .toSet
+
+    // relationship classess
+    {
+      val streams = kinds
+        .map { kind => (kind, impl_stream(kind)) }
+        .toMap
+
+      // elements
+      for { (name, (kind, el)) <- relationships } {
+        val writer = new PrintWriter(streams(kind))
+        writer.println()
+        writer.println("/**")
+        (el \ "summ").foreach { summ => writer.println(s" * ${summ.text}") }
+        writer.println(s" * ==Overview==")
+        (el \ "info").foreach { info => writer.println(s" * ${info.text}") }
+        (el \ "text").foreach { text => writer.println(s" * @note ${text.text}") }
+        (el \ "link").foreach { link => writer.println(s" * @see [[${(link \@ "src")} ${name} ArchiMate® 3.0 Specification ]]") }
+
+        val params = (el \ "param")
+        val paramStr = if (params.isEmpty) "" else s"(${
+          params.map {
+            el => "var " + (el \@ "name") + ": " + (el \@ "type") + " = " + (el \@ "default")
+          }.mkString(", ")
+        })"
+
+        writer.println(" */")
+        writer.println(generated)
+        writer.println(s"final class ${name}(source: Concept, target: Concept)${paramStr}")
+        writer.println(s"  extends ${kind}Relationship(source: Concept, target: Concept) {")
+        writer.println(s"  @inline override def meta: RelationshipMeta[${name}] = ${kind}Relationships.${StringUtils.uncapitalize(name)}")
+        params.foreach { param =>
+          val n = param \@ "name"
+          val t = param \@ "type"
+          writer.println(s"  @inline def with${StringUtils.capitalize(n)}(${n}: ${t}): this.type = {")
+          writer.println(s"    this.${n} = ${n}")
+          writer.println(s"    this")
+          writer.println(s"  }")
+        }
+        writer.println("}")
+        writer.flush()
+      }
+
+      // meta
+      {
+        for {(kind, stream) <- streams} {
+          val writer = new PrintWriter(stream)
+          writer.println()
+          writer.println(generated)
+          writer.println(s"object ${kind}Relationships {")
+          writer.println()
+          writer.flush()
+        }
+
+        val variables = mutable.ListBuffer[(String, String)]()
+        for {(name, (kind, el)) <- relationships} {
+          val params = (el \ "param")
+          val writer = new PrintWriter(streams(kind))
+          val variable = StringUtils.uncapitalize(name)
+          writer.println(s"  case object ${variable} extends RelationshipMeta[${name}] {")
+          writer.println(s"    override def key: Char = ${"'"}${(el \@ "key")}${"'"}")
+          writer.println(s"    override def name: String = ${"\""}${variable}${"\""}")
+          writer.println(s"    override def newInstance(source: Concept, target: Concept): ${name} = new ${name}(source, target)${if(params.isEmpty) "" else "()"}")
+          writer.println(s"  }")
+          writer.flush()
+          variables += (kind -> variable)
+        }
+
+        for {(layer, stream) <- streams} {
+          val writer = new PrintWriter(stream)
+          writer.println()
+          writer.println(s"  val ${StringUtils.uncapitalize(layer)}Relationships: Seq[RelationshipMeta[Relationship]] = Seq(${ variables.collect { case (l, v) if layer == l => v }.mkString(", ") })")
+          writer.println()
+          writer.println("}")
+          writer.flush()
+        }
+      }
+
+      for {(kind, stream) <- streams} {
+        FileUtils.write(
+          new java.io.File(s"src/main/scala/org/mentha/utils/archimate/model/edges/impl/${kind}Relationships.scala"),
+          stream.toString,
+          "UTF-8"
+        )
+      }
+    }
+
+    // validator
+    {
+      val relsMap = rels
+        .map { case (src, dst, r1, r2) => (
+          StringUtils.uncapitalize(src),
+          StringUtils.uncapitalize(dst),
+          r1.sorted,
+          r2.mkString("").sorted
+        ) }
+        .filter { case (src, dst, _, _) => (src != "junction") && (dst != "junction") }
+        .groupBy { case (src, _, _, _) => src }
+
+      // possible relationships
+      {
+        val stream = new StringBuilderWriter(4096)
+        val writer = new PrintWriter(stream)
+
+        writer.println("package org.mentha.utils.archimate.model.edges.validator")
+        writer.println()
+
+        writer.println("import org.mentha.utils.archimate.model._")
+        writer.println("import org.mentha.utils.archimate.model.edges._")
+        writer.println("import org.mentha.utils.archimate.model.edges.impl._")
+        writer.println("import org.mentha.utils.archimate.model.nodes._")
+        writer.println("import org.mentha.utils.archimate.model.nodes.impl._")
+        writer.println()
+
+        writer.println(generated)
+        writer.println("object data {")
+        writer.println()
+
+        writer.println("  import StructuralRelationships._")
+        writer.println("  import DependencyRelationships._")
+        writer.println("  import DynamicRelationships._")
+        writer.println("  import OtherRelationships._")
+        writer.println()
+
+        writer.println("  import MotivationElements._")
+        writer.println("  import StrategyElements._")
+        writer.println("  import BusinessElements._")
+        writer.println("  import ApplicationElements._")
+        writer.println("  import TechnologyElements._")
+        writer.println("  import PhysicalElements._")
+        writer.println("  import ImplementationElements._")
+        writer.println("  import CompositionElements._")
+        writer.println()
+
+        writer.println("  type EMeta = validator.EMeta")
+        writer.println("  type RMeta = validator.RMeta")
+        writer.println("  type RSet = Set[RMeta]")
+        writer.println()
+
+        for { (k, nm) <- relationshipKeys } {
+          writer.println(s"  private val ${k} = ${StringUtils.uncapitalize(nm)}")
+        }
+        writer.println()
+
+        var combinations = Set[String]()
+        val dataStream = {
+          val stream = new StringBuilderWriter(4096)
+          val writer = new PrintWriter(stream)
+          for {(src, items) <- relsMap} {
+            writer.println(s"  private def ${src}Data: Map[(EMeta, EMeta), (RSet, RSet)] = Map(")
+            for {(_, dst, r1, r2) <- items} {
+              combinations += r1
+              combinations += r2
+              writer.println(s"    ((${src}, ${dst}), ($$${r1}, $$${r2})),")
+            }
+            writer.println("  )")
+          }
+          writer.flush()
+          stream
+        }
+
+        for { c <- combinations.toSeq.sorted } {
+          writer.println(s"  private val $$${c}: RSet = Set[RMeta](${c.mkString(", ")})")
+        }
+        writer.println()
+
+        writer.println(dataStream.toString)
+        writer.println()
+
+        writer.println("  val data: Map[(EMeta, EMeta), (RSet, RSet)] = Seq(")
+        for {(src, _) <- relsMap} {
+          writer.println(s"   ${src}Data,")
+        }
+        writer.println("  ).flatten.toMap")
+        writer.println()
+        writer.println("}")
+
+        FileUtils.write(
+          new java.io.File("src/main/scala/org/mentha/utils/archimate/model/edges/validator/data.scala"),
+          stream.toString,
+          "UTF-8"
+        )
+      }
+    }
   }
 
 
 
   def main(args: Array[String]): Unit = {
-    elements()
-    relationships()
+    mkElements()
+    mkRelationships()
   }
 
 }

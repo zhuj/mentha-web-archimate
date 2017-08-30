@@ -20,45 +20,82 @@ object clientGenerator {
     // writeNodes()
     // writeNodesScss()
     // writeLinksRestrictions()
-    // writeClientHelp()
+    writeClientHelp()
 
   }
 
-//  private def writeClientHelp(): Unit = {
-//    val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
-//    val elements = (xml \ "element").map { el => (el \@ "name") -> ((el \@ "layer"), (el \@ "parent"), el) }
-//
-//    val stream = new StringBuilderWriter(4096)
-//    val writer = new PrintWriter(stream)
-//
-//    import play.api.libs.json._
-//
-//    val json = Json.toJsObject(
-//      elements.map {
-//        case (name, (layer, _, el)) => StringUtils.uncapitalize(name) -> Json.obj(
-//          "name" -> name,
-//          "layer" -> layer,
-//          "help" -> Json.obj(
-//            "summ" -> (el \ "summ").map { _.text },
-//            "info" -> (el \ "info").map { _.text },
-//            //"text" -> (el \ "text").map { _.text },
-//          )
-//        )
-//      }.toMap
-//    )
-//
-//    writer.println("export const elementMeta = (")
-//    writer.println(json.toString())
-//    writer.println(");")
-//
-//    writer.flush()
-//    FileUtils.write(
-//      new java.io.File(s"client/src/meta/elements.js"),
-//      stream.toString,
-//      "UTF-8"
-//    )
-//
-//  }
+  private def writeClientHelp(): Unit = {
+    val xml = XML.load(this.getClass.getClassLoader.getResource("archimate/model.xml"))
+
+    import play.api.libs.json._
+
+
+    // elements
+    {
+      val elements = (xml \ "element").map { el => (el \@ "name") -> ((el \@ "layer"), el) }
+      val json = Json.toJsObject(
+        elements.map {
+          case (name, (layer, el)) => StringUtils.uncapitalize(name) -> Json.obj(
+            "name" -> name,
+            "layer" -> layer,
+            "help" -> Json.obj(
+              "summ" -> (el \ "summ").map { _.text },
+              "info" -> (el \ "info").map { _.text },
+              //"text" -> (el \ "text").map { _.text },
+            )
+          )
+        }.toMap
+      )
+
+      val stream = new StringBuilderWriter(4096)
+      val writer = new PrintWriter(stream)
+
+      writer.println("export const elementMeta = (")
+      writer.println(json.toString())
+      writer.println(");")
+
+      writer.flush()
+      FileUtils.write(
+        new java.io.File(s"client/src/meta/elements.js"),
+        stream.toString,
+        "UTF-8"
+      )
+    }
+
+    // relations
+    {
+      val relationships = (xml \ "relationship").map { el => (el \@ "name") -> ((el \@ "kind"), el) }
+      val json = Json.toJsObject(
+        relationships.map {
+          case (name, (layer, el)) => StringUtils.uncapitalize(name) -> Json.obj(
+            "name" -> name,
+            "layer" -> layer,
+            "help" -> Json.obj(
+              "summ" -> (el \ "summ").map { _.text },
+              "info" -> (el \ "info").map { _.text },
+              //"text" -> (el \ "text").map { _.text },
+            )
+          )
+        }.toMap
+      )
+
+      val stream = new StringBuilderWriter(4096)
+      val writer = new PrintWriter(stream)
+
+      writer.println("export const relationMeta = (")
+      writer.println(json.toString())
+      writer.println(");")
+
+      writer.flush()
+      FileUtils.write(
+        new java.io.File(s"client/src/meta/relations.js"),
+        stream.toString,
+        "UTF-8"
+      )
+    }
+
+
+  }
 
 //  private def writeLinksRestrictions(): Unit = {
 //
