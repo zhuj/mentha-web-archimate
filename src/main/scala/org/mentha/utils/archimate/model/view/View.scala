@@ -5,42 +5,25 @@ import org.mentha.utils.archimate.model.utils.Utils
 
 import scala.reflect.ClassTag
 
-case class Point(x: Double, y: Double)
-case class Size(width: Double, height: Double)
-
 object View {
 
   private[model] val defaultPosition = Point(0, 0)
   private[model] val defaultSize = Size(120, 40)
 
-  private[model] def middle(source: Point, target: Point): Point = Point(
-    (source.x + target.x) / 2,
-    (source.y + target.y) / 2
-  )
+}
 
-  private[model] def middle(source: Point, points: Seq[Point], target: Point): Point = {
-    if (points.isEmpty) middle(source, target)
-    else middle(
-      points((points.length-0) / 2),
-      points((points.length-1) / 2)
-    )
-  }
-
-  private[model] def size(source: Point, points: Seq[Point], target: Point): Size = {
-    Size(
-      Math.abs(source.x - target.x),
-      Math.abs(source.y - target.y)
-    )
-  }
+sealed abstract class ViewObject
+  extends IdentifiedArchimateObject
+    with VersionedArchimateObject
+    with DescribedArchimateObject
+    with PropsArchimateObject
+    with PlanarObject
+    with Vertex {
 
 }
 
-sealed abstract class ViewObject extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
-  def position: Point
-  def size: Size
-}
-
-sealed abstract class ViewNode extends ViewObject {
+sealed abstract class ViewNode
+  extends ViewObject {
 
   // position of the center of the box of the node
   private[model] var _position: Point = View.defaultPosition
@@ -68,7 +51,9 @@ sealed abstract class ViewNode extends ViewObject {
 
 }
 
-sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
+sealed abstract class ViewEdge
+  extends ViewObject
+    with Edge[ViewObject] {
 
   // bend points
   private[model] var _points: Seq[Point] = Nil
@@ -87,13 +72,13 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
     super.isDeleted || (source.isDeleted || target.isDeleted)
   }
 
-  override def position: Point = View.middle(
+  override def position: Point = Planar.middle(
     source.position,
     points,
     target.position
   )
 
-  override def size: Size = View.size(
+  override def size: Size = Planar.size(
     source.position,
     points,
     target.position
@@ -102,12 +87,15 @@ sealed abstract class ViewEdge extends ViewObject with Edge[ViewObject] {
 }
 
 /** Group at View Level*/
-final class ViewGroup extends ViewNode with NamedArchimateObject {
+final class ViewGroup
+  extends ViewNode
+    with NamedArchimateObject {
 
 }
 
 /** Just a text notes */
-final class ViewNotes extends ViewNode {
+final class ViewNotes
+  extends ViewNode {
 
   private[model] var _text: String = ""
   @inline def text: String = _text
@@ -119,7 +107,8 @@ final class ViewNotes extends ViewNode {
 }
 
 /** Connects everything */
-final class ViewConnection(val source: ViewObject, val target: ViewObject) extends ViewEdge {
+final class ViewConnection(val source: ViewObject, val target: ViewObject)
+  extends ViewEdge {
 
 }
 
@@ -130,23 +119,30 @@ sealed trait ViewConcept[+T <: Concept] {
 }
 
 /** NodeConcept representation in the View */
-final class ViewNodeConcept[+T <: NodeConcept](val concept: T) extends ViewNode with ViewConcept[T] {
+final class ViewNodeConcept[+T <: NodeConcept](val concept: T)
+  extends ViewNode
+    with ViewConcept[T] {
 
 }
 
 /** Relationship representation in the View */
-final class ViewRelationship[+T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T) extends ViewEdge with ViewConcept[T] {
+final class ViewRelationship[+T <: Relationship](val source: ViewObject with ViewConcept[_], val target: ViewObject with ViewConcept[_])(val concept: T)
+  extends ViewEdge
+    with ViewConcept[T] {
   require(source.concept == concept.source)
   require(target.concept == concept.target)
 
 }
 
-
 /**
   * http://pubs.opengroup.org/architecture/archimate3-doc/chap14.html
   * Viewpoints are a means to focus on particular aspects and layers of the architecture. These aspects and layers are determined by the concerns of a stakeholder with whom communication takes place.
   */
-final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends IdentifiedArchimateObject  with VersionedArchimateObject with PathBasedArchimateObject with NamedArchimateObject {
+final class View(val viewpoint: ViewPoint = LayeredViewPoint)
+  extends IdentifiedArchimateObject
+    with VersionedArchimateObject
+    with PathBasedArchimateObject
+    with NamedArchimateObject {
   require(null != viewpoint, "Viewpoint is required.")
 
   private[model] val _objects: Storage[ViewObject] = Storage.buildStorage
@@ -191,6 +187,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint) extends Identified
       }
     }
 
+  // TODO: comment me
   def backwardDependencies(vo: ViewObject): Set[ViewObject] = Utils.backwardDependencies(vo, this.edges)
 
 }

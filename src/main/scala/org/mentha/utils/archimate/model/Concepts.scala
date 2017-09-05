@@ -17,7 +17,13 @@ object Concepts {
   * All concepts are are vertex (could be source and target for an edge)
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap03.html#_Toc451757929 Language Structure ArchiMate® 3.0 Specification ]]
   */
-sealed abstract class Concept extends IdentifiedArchimateObject with VersionedArchimateObject with PropsArchimateObject with Vertex {
+sealed abstract class Concept
+  extends IdentifiedArchimateObject
+    with VersionedArchimateObject
+    with DescribedArchimateObject
+    with PropsArchimateObject
+    with Vertex {
+
   def meta: ConceptMeta[Concept]
   private[model] def checkIncomingRelationship(incoming: Relationship): List[String] = Nil
   private[model] def checkOutgoingRelationship(outgoing: Relationship): List[String] = Nil
@@ -27,26 +33,32 @@ sealed abstract class Concept extends IdentifiedArchimateObject with VersionedAr
   * Links two Concepts.
   * EdgeConcept is a Concept (due to the fact that it's possible to connect edges together)
   */
-sealed abstract class EdgeConcept extends Concept with Edge[Concept] {
+sealed abstract class EdgeConcept
+  extends Concept
+    with Edge[Concept] {
 
-    // TODO: XXX: make it work safer - scheme should not contain cycles on the edges level
-    override def isDeleted: Boolean = {
-      super.isDeleted || (source.isDeleted || target.isDeleted)
-    }
+  // TODO: XXX: make it work safer - scheme should not contain cycles on the edges level
+  override def isDeleted: Boolean = {
+    super.isDeleted || (source.isDeleted || target.isDeleted)
+  }
 
 }
 
 /**
   * Subclass of Concept - only Elements and Junctions.
   */
-sealed abstract class NodeConcept extends Concept {
+sealed abstract class NodeConcept
+  extends Concept {
 
 }
 
 /**
   * Basic unit in the ArchiMate metamodel. Used to define and describe the constituent parts of Enterprise Architectures and their unique set of characteristics.
   */
-abstract class Element extends NodeConcept with NamedArchimateObject {
+abstract class Element
+  extends NodeConcept
+    with NamedArchimateObject {
+
   override def meta: ElementMeta[Element]
 }
 
@@ -55,7 +67,9 @@ abstract class Element extends NodeConcept with NamedArchimateObject {
   * @see elements.Junction
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc451757967 Junction ArchiMate® 3.0 Specification ]]
   */
-abstract class RelationshipConnector extends NodeConcept {
+abstract class RelationshipConnector
+  extends NodeConcept {
+
   def relationship: RelationshipMeta[Relationship]
   override def meta: RelationshipConnectorMeta[RelationshipConnector]
 }
@@ -69,7 +83,9 @@ abstract class RelationshipConnector extends NodeConcept {
   * @param source
   * @param target
   */
-abstract class Relationship(val source: Concept, val target: Concept) extends EdgeConcept with ValidArchimateObject {
+abstract class Relationship(val source: Concept, val target: Concept)
+  extends EdgeConcept
+    with ValidArchimateObject {
 
   private[model] val _validationErrors: List[String] = {
     val builder = List.newBuilder[String]

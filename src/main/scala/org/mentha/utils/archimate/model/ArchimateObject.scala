@@ -32,6 +32,21 @@ trait NamedArchimateObject extends ArchimateObject {
 /**
   *
   */
+trait DescribedArchimateObject extends ArchimateObject {
+
+  private[model] var _description: String = ""
+  @inline def description: String = _description
+
+  def withDescription(description: String): this.type = {
+    this._description = description
+    this
+  }
+
+}
+
+/**
+  *
+  */
 trait VersionedArchimateObject extends ArchimateObject {
 
   private[model] var _version: Long = -1L

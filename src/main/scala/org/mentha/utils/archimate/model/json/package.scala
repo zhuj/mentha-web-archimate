@@ -73,6 +73,7 @@ package object json {
 
     val `tp` = "_tp"
     val `name` = "name"
+    val `desc` = "desc"
     val `props` = "props"
 
     val `rel` = "rel"
@@ -135,6 +136,11 @@ package object json {
       case _ =>
     }
     obj match {
+      case n: DescribedArchimateObject =>
+        (json \ names.`desc`).validate[String].foreach { name => n.withDescription(name) }
+      case _ =>
+    }
+    obj match {
       case v: VersionedArchimateObject =>
         (json \ names.`version`).validate[Long].foreach { version => v.withVersion(version) }
       case _ =>
@@ -167,6 +173,11 @@ package object json {
       .collect { case n: NamedArchimateObject => n.name }
       .filterNot { _.isEmpty }
       .foreach { name => builder += (names.`name` -> name) }
+
+    Some(obj)
+      .collect { case n: DescribedArchimateObject => n.description }
+      .filterNot { _.isEmpty }
+      .foreach { name => builder += (names.`desc` -> name) }
 
     Some(obj)
       .collect { case v: VersionedArchimateObject => v.version }

@@ -8,8 +8,9 @@
 
   <relationship key="c" name="CompositionRelationship" kind="Structural" derivation-strength="7">
     <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945990"/>
-    <summ>Indicates that an element consists of one or more other concepts.</summ>
-    <info>The composition relationship indicates that an element consists of one or more other concepts.</info>
+    <summ>Indicates that an element consists of one or more other concepts (elements are *part of* the container).</summ>
+    <info>The composition relationship indicates that an element *consists of* one or more other elements (elements are *part of* the container).</info>
+    <info>Composed elements exist only within its container, the relation describes how the container splits into its parts.</info>
     <info>The usual interpretation of a composition relationship is that the whole or part of the source element is composed of the whole of the target element.</info>
     <text>The composition relationship has been inspired by the composition relationship in UML class diagrams. In contrast to the aggregation relationship, the composed concept can be part of only one composition.</text>
     <text>A composition relationship is always allowed between two instances of the same element type.</text>
@@ -19,8 +20,9 @@
 
   <relationship key="g" name="AggregationRelationship" kind="Structural" derivation-strength="6">
     <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489945991"/>
-    <summ>Indicates that an element consists of one or more other concepts.</summ>
-    <info>The aggregation relationship indicates that an element consists of one or more other concepts.</info>
+    <summ>Indicates that an element consists of one or more other concepts (elements are *grouped/aggregated* by the container).</summ>
+    <info>The aggregation relationship indicates that an element *groups* a number of other elements (elements are *grouped/aggregated* by the container).</info>
+    <info>Grouped elements are independent/separate, they could exists without the group.</info>
     <info>The usual interpretation of an aggregation relationship is that the whole or part of the source element aggregates the whole of the target element.</info>
     <text>The aggregation relationship has been inspired by the aggregation relationship in UML class diagrams. In contrast to the composition relationship, an object can be part of more than one aggregation.</text>
     <text>An aggregation relationship is always allowed between two instances of the same element type.</text>

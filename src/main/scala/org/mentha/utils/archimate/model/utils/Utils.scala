@@ -6,6 +6,7 @@ import scala.annotation.tailrec
 
 object Utils {
 
+  // TODO: comment me
   // TODO: optimize me
   def backwardDependencies[V <: Vertex, E <: V with Edge[V]](v: V, edges: Iterable[E]): Set[V] = {
     @tailrec def core(layer: Set[V], visited: Set[V]): Set[V] = {

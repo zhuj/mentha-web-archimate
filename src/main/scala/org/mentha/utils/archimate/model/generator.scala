@@ -213,7 +213,11 @@ object generator {
         val writer = new PrintWriter(streams(layer))
 
         writer.println("")
-        writer.println(s"  implicit class Implicit${name}(src: ${name}) {")
+        writer.println(s"  implicit class Implicit${name}(src: ${name})(implicit val model: Model) {")
+
+        writer.println("")
+        writer.println(s"    def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)")
+        writer.println("")
 
         val localRels = relsMap(name)
           .flatMap { case (_, dst, rs, der) => rs.map { r => (r, dst, der.contains(r)) } }
@@ -237,7 +241,7 @@ object generator {
                   if (der) { writer.print("@derived ") }
                   writer.print(s"def `${lastPart}`")
 
-                  writer.print(s"(dst: ${dst})(implicit model: Model): ${rname} = _${constructor}(src, dst)")
+                  writer.print(s"(dst: ${dst}): ${rname} = _${constructor}(src, dst)")
                   if (params.nonEmpty) {
                     writer.print("(")
                     writer.print(params.reverse.mkString(", "))
@@ -493,11 +497,79 @@ object generator {
     }
   }
 
+  private def mkClientHelp(): Unit = {
+    import play.api.libs.json._
+
+    // elements
+    {
+      val json = Json.toJsObject(
+        elements.map {
+          case (name, (layer, parent, el)) => StringUtils.uncapitalize(name) -> Json.obj(
+            "name" -> name,
+            "layer" -> layer,
+            "help" -> Json.obj(
+              "summ" -> (el \ "summ").map { _.text },
+              "info" -> (el \ "info").map { _.text },
+              //"text" -> (el \ "text").map { _.text },
+            )
+          )
+        }.toMap
+      )
+
+      val stream = new StringBuilderWriter(4096)
+      val writer = new PrintWriter(stream)
+
+      writer.println("export const elementMeta = (")
+      writer.println(json.toString())
+      writer.println(");")
+
+      writer.flush()
+      FileUtils.write(
+        new java.io.File(s"client/src/meta/elements.js"),
+        stream.toString,
+        "UTF-8"
+      )
+    }
+
+    // relations
+    {
+      val json = Json.toJsObject(
+        relationships.map {
+          case (name, (kind, el)) => StringUtils.uncapitalize(name) -> Json.obj(
+            "name" -> name,
+            "kind" -> kind,
+            "help" -> Json.obj(
+              "summ" -> (el \ "summ").map { _.text },
+              "info" -> (el \ "info").map { _.text },
+              //"text" -> (el \ "text").map { _.text },
+            )
+          )
+        }.toMap
+      )
+
+      val stream = new StringBuilderWriter(4096)
+      val writer = new PrintWriter(stream)
+
+      writer.println("export const relationMeta = (")
+      writer.println(json.toString())
+      writer.println(");")
+
+      writer.flush()
+      FileUtils.write(
+        new java.io.File(s"client/src/meta/relations.js"),
+        stream.toString,
+        "UTF-8"
+      )
+    }
+
+
+  }
 
 
   def main(args: Array[String]): Unit = {
     mkElements()
     mkRelationships()
+    mkClientHelp()
   }
 
 }

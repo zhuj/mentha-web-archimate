@@ -238,6 +238,16 @@ package object dsl {
     def edge[T <: Relationship](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
     def notes(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
     def connect(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
+
+    def connect(left: ViewObject, right: Concept): ViewConnection = connect(left, view.attach(right))
+    def connect(left: Concept, right: ViewObject): ViewConnection = connect(view.attach(left), right)
+    def connect(left: Concept, right: Concept): ViewConnection = connect(view.attach(left), view.attach(right))
+
+    def layout(): Unit = {
+      val l = new org.mentha.utils.archimate.model.view.layout.SpringLayout(view)
+      l.layout(1050)
+    }
+
   }
 
   @inline def $[T <: Concept](t: ViewObject with ViewConcept[T]): T = t.concept

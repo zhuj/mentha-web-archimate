@@ -43,7 +43,7 @@
     "react-dnd-html5-backend": "^2.4.0",
     "react-tap-event-plugin": "^2.0.1",
     "material-ui": "^1.0.0-beta.6",
-    "material-ui-icons":"^1.0.0-beta.5",
+    "material-ui-icons": "^1.0.0-beta.5",
     "redux": "^3.7.2",
     "redux-form": "^7.0.3",
     "redux-saga": "^0.15.6",
