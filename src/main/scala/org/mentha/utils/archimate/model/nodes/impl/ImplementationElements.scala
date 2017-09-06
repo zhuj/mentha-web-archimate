@@ -79,34 +79,34 @@ final class Gap extends PassiveStructureElement with ImplementationElement {
 object ImplementationElements {
 
   case object workPackage extends ElementMeta[WorkPackage] {
-    override def key: String = "iwp"
-    override def name: String = "workPackage"
-    override def layerObject: LayerObject = ImplementationLayer
-    override def newInstance(): WorkPackage = new WorkPackage
+    override final def key: String = "iwp"
+    override final def name: String = "workPackage"
+    override final def layerObject: LayerObject = ImplementationLayer
+    override final def newInstance(): WorkPackage = new WorkPackage
   }
   case object deliverable extends ElementMeta[Deliverable] {
-    override def key: String = "idl"
-    override def name: String = "deliverable"
-    override def layerObject: LayerObject = ImplementationLayer
-    override def newInstance(): Deliverable = new Deliverable
+    override final def key: String = "idl"
+    override final def name: String = "deliverable"
+    override final def layerObject: LayerObject = ImplementationLayer
+    override final def newInstance(): Deliverable = new Deliverable
   }
   case object implementationEvent extends ElementMeta[ImplementationEvent] {
-    override def key: String = "iev"
-    override def name: String = "implementationEvent"
-    override def layerObject: LayerObject = ImplementationLayer
-    override def newInstance(): ImplementationEvent = new ImplementationEvent
+    override final def key: String = "iev"
+    override final def name: String = "implementationEvent"
+    override final def layerObject: LayerObject = ImplementationLayer
+    override final def newInstance(): ImplementationEvent = new ImplementationEvent
   }
   case object plateau extends ElementMeta[Plateau] {
-    override def key: String = "ipl"
-    override def name: String = "plateau"
-    override def layerObject: LayerObject = ImplementationLayer
-    override def newInstance(): Plateau = new Plateau
+    override final def key: String = "ipl"
+    override final def name: String = "plateau"
+    override final def layerObject: LayerObject = ImplementationLayer
+    override final def newInstance(): Plateau = new Plateau
   }
   case object gap extends ElementMeta[Gap] {
-    override def key: String = "iga"
-    override def name: String = "gap"
-    override def layerObject: LayerObject = ImplementationLayer
-    override def newInstance(): Gap = new Gap
+    override final def key: String = "iga"
+    override final def name: String = "gap"
+    override final def layerObject: LayerObject = ImplementationLayer
+    override final def newInstance(): Gap = new Gap
   }
 
   val implementationElements: Seq[ElementMeta[Element]] = Seq(workPackage, deliverable, implementationEvent, plateau, gap)

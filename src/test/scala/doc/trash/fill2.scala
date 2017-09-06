@@ -67,7 +67,7 @@ object fill2 extends MkModel {
         val e = model.add { meta.newInstance().asInstanceOf[Element] withName(meta.name) }
         val x = (idx * WE) / 2.0 - 0.5 * width
         val y = yb + (idx % 2) * HE
-        e -> view.add { new ViewNodeConcept[Element](e) withPosition(Point(x, y)) withSize(Size(W, H)) }
+        e -> view.add { new ViewNodeConcept[Element](e) withPosition(Vector(x, y)) withSize(Size(W, H)) }
       }
     }
 

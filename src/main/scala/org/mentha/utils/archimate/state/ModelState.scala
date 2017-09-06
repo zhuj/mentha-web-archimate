@@ -298,9 +298,9 @@ object ModelState {
 
     sealed trait PlaceViewObjectCommand extends ViewObjectCommand with Mod[ViewObject] {}
 
-    case class PlaceViewNode(viewId: ID, id: ID, position: Option[Point], size: Option[Size], params: JsonObject) extends PlaceViewObjectCommand {}
+    case class PlaceViewNode(viewId: ID, id: ID, position: Option[Vector], size: Option[Size], params: JsonObject) extends PlaceViewObjectCommand {}
 
-    case class PlaceViewEdge(viewId: ID, id: ID, points: Option[Seq[Point]], params: JsonObject) extends PlaceViewObjectCommand {}
+    case class PlaceViewEdge(viewId: ID, id: ID, points: Option[Seq[Vector]], params: JsonObject) extends PlaceViewObjectCommand {}
 
     case class CompositeCommand(commands: Seq[Command]) extends Command {}
 

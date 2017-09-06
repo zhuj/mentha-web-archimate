@@ -71,24 +71,24 @@ final class RealizationRelationship(source: Concept, target: Concept)
 object StructuralRelationships {
 
   case object compositionRelationship extends RelationshipMeta[CompositionRelationship] {
-    override def key: Char = 'c'
-    override def name: String = "compositionRelationship"
-    override def newInstance(source: Concept, target: Concept): CompositionRelationship = new CompositionRelationship(source, target)
+    override final def key: Char = 'c'
+    override final def name: String = "compositionRelationship"
+    override final def newInstance(source: Concept, target: Concept): CompositionRelationship = new CompositionRelationship(source, target)
   }
   case object assignmentRelationship extends RelationshipMeta[AssignmentRelationship] {
-    override def key: Char = 'i'
-    override def name: String = "assignmentRelationship"
-    override def newInstance(source: Concept, target: Concept): AssignmentRelationship = new AssignmentRelationship(source, target)
+    override final def key: Char = 'i'
+    override final def name: String = "assignmentRelationship"
+    override final def newInstance(source: Concept, target: Concept): AssignmentRelationship = new AssignmentRelationship(source, target)
   }
   case object aggregationRelationship extends RelationshipMeta[AggregationRelationship] {
-    override def key: Char = 'g'
-    override def name: String = "aggregationRelationship"
-    override def newInstance(source: Concept, target: Concept): AggregationRelationship = new AggregationRelationship(source, target)
+    override final def key: Char = 'g'
+    override final def name: String = "aggregationRelationship"
+    override final def newInstance(source: Concept, target: Concept): AggregationRelationship = new AggregationRelationship(source, target)
   }
   case object realizationRelationship extends RelationshipMeta[RealizationRelationship] {
-    override def key: Char = 'r'
-    override def name: String = "realizationRelationship"
-    override def newInstance(source: Concept, target: Concept): RealizationRelationship = new RealizationRelationship(source, target)
+    override final def key: Char = 'r'
+    override final def name: String = "realizationRelationship"
+    override final def newInstance(source: Concept, target: Concept): RealizationRelationship = new RealizationRelationship(source, target)
   }
 
   val structuralRelationships: Seq[RelationshipMeta[Relationship]] = Seq(compositionRelationship, assignmentRelationship, aggregationRelationship, realizationRelationship)

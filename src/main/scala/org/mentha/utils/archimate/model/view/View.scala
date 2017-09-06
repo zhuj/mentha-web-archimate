@@ -7,9 +7,14 @@ import scala.reflect.ClassTag
 
 object View {
 
-  private[model] val defaultPosition = Point(0, 0)
+  private[model] val defaultPosition = Vector(0, 0)
   private[model] val defaultSize = Size(120, 40)
 
+}
+
+sealed trait PlanarObject {
+  def position: Vector
+  def size: Size
 }
 
 sealed abstract class ViewObject
@@ -26,13 +31,13 @@ sealed abstract class ViewNode
   extends ViewObject {
 
   // position of the center of the box of the node
-  private[model] var _position: Point = View.defaultPosition
-  @inline def position: Point = _position
-  def withPosition(position: Point): this.type = {
+  private[model] var _position: Vector = View.defaultPosition
+  @inline def position: Vector = _position
+  def withPosition(position: Vector): this.type = {
     this._position = position
     this
   }
-  def withPosition(opt: Option[Point]): this.type = {
+  def withPosition(opt: Option[Vector]): this.type = {
     for { position <- opt } { withPosition(position) }
     this
   }
@@ -56,13 +61,13 @@ sealed abstract class ViewEdge
     with Edge[ViewObject] {
 
   // bend points
-  private[model] var _points: Seq[Point] = Nil
-  @inline def points: Seq[Point] = _points
-  def withPoints(points: Seq[Point]): this.type = {
+  private[model] var _points: Seq[Vector] = Nil
+  @inline def points: Seq[Vector] = _points
+  def withPoints(points: Seq[Vector]): this.type = {
     this._points = points
     this
   }
-  def withPoints(opt: Option[Seq[Point]]): this.type = {
+  def withPoints(opt: Option[Seq[Vector]]): this.type = {
     for { points <- opt } { withPoints(points) }
     this
   }
@@ -72,13 +77,13 @@ sealed abstract class ViewEdge
     super.isDeleted || (source.isDeleted || target.isDeleted)
   }
 
-  override def position: Point = Planar.middle(
+  override def position: Vector = Vector.middle(
     source.position,
     points,
     target.position
   )
 
-  override def size: Size = Planar.size(
+  override def size: Size = Size.size(
     source.position,
     points,
     target.position

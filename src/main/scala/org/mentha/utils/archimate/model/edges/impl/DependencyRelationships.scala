@@ -64,19 +64,19 @@ final class ServingRelationship(source: Concept, target: Concept)
 object DependencyRelationships {
 
   case object influenceRelationship extends RelationshipMeta[InfluenceRelationship] {
-    override def key: Char = 'n'
-    override def name: String = "influenceRelationship"
-    override def newInstance(source: Concept, target: Concept): InfluenceRelationship = new InfluenceRelationship(source, target)()
+    override final def key: Char = 'n'
+    override final def name: String = "influenceRelationship"
+    override final def newInstance(source: Concept, target: Concept): InfluenceRelationship = new InfluenceRelationship(source, target)()
   }
   case object accessRelationship extends RelationshipMeta[AccessRelationship] {
-    override def key: Char = 'a'
-    override def name: String = "accessRelationship"
-    override def newInstance(source: Concept, target: Concept): AccessRelationship = new AccessRelationship(source, target)()
+    override final def key: Char = 'a'
+    override final def name: String = "accessRelationship"
+    override final def newInstance(source: Concept, target: Concept): AccessRelationship = new AccessRelationship(source, target)()
   }
   case object servingRelationship extends RelationshipMeta[ServingRelationship] {
-    override def key: Char = 'v'
-    override def name: String = "servingRelationship"
-    override def newInstance(source: Concept, target: Concept): ServingRelationship = new ServingRelationship(source, target)
+    override final def key: Char = 'v'
+    override final def name: String = "servingRelationship"
+    override final def newInstance(source: Concept, target: Concept): ServingRelationship = new ServingRelationship(source, target)
   }
 
   val dependencyRelationships: Seq[RelationshipMeta[Relationship]] = Seq(influenceRelationship, accessRelationship, servingRelationship)
