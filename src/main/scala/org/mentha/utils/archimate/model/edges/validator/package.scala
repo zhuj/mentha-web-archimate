@@ -1,7 +1,6 @@
 package org.mentha.utils.archimate.model.edges
 
 import org.mentha.utils.archimate.model._
-import org.mentha.utils.archimate.model.edges._
 import org.mentha.utils.archimate.model.edges.impl.OtherRelationships
 import org.mentha.utils.archimate.model.nodes._
 
@@ -22,7 +21,7 @@ package object validator {
     (rel == OtherRelationships.associationRelationship) || {
       (src, dst) match {
         case (s: EMeta, d: EMeta) => validate(s, d, rel)
-        case (_: RCMeta, _: RCMeta) => true
+        case (s, d) if s.isInstanceOf[RCMeta] || d.isInstanceOf[RCMeta] => true
         case _ => false
       }
     }

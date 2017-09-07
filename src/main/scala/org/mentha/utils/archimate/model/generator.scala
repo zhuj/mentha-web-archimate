@@ -194,6 +194,13 @@ object generator {
         writer.println()
       }
 
+      writer.println()
+      writer.println(s"  import org.mentha.utils.archimate.model.edges.RelationshipMeta")
+      writer.println(s"  def andJunction(relationship: RelationshipMeta[Relationship])(implicit model: Model): Junction = model.add(new AndJunction(relationship))")
+      writer.println(s"  def orJunction(relationship: RelationshipMeta[Relationship])(implicit model: Model): Junction = model.add(new OrJunction(relationship))")
+      writer.println()
+
+
       writer.println("}")
 
       FileUtils.write(
@@ -228,52 +235,50 @@ object generator {
           } }
           .groupBy { case (verb, _, _, _) => verb }
 
-        for { (verb, seq) <- localRels } {
-
-          val constructor = verb.replaceAll("-\\$[^-]*\\$-", "-").replace('-', '_')
-
-          def _process_parts(parts: List[String], params: List[String]): Unit = {
-            val prefix = " " * (4 + 2 * params.size)
-            parts match {
-              case lastPart :: Nil => {
-                for { (_, rname, dst, der) <- seq.sortBy { case (_,_,_,der) => der } } {
-                  writer.print(prefix)
-                  if (der) { writer.print("@derived ") }
-                  writer.print(s"def `${lastPart}`")
-
-                  writer.print(s"(dst: ${dst}): ${rname} = _${constructor}(src, dst)")
-                  if (params.nonEmpty) {
-                    writer.print("(")
-                    writer.print(params.reverse.mkString(", "))
-                    writer.print(")")
-                  }
-                  writer.print("(model)")
-                  writer.println()
-                }
-              }
-              case middlePart :: tail => {
-                val pts = middlePart.split("-\\$[^:]*[:]", 2)
-                writer.print(prefix)
-                val param = "$"+params.size
-                writer.print(s"def `${pts(0)}`")
-                writer.println(s"(${param}: ${pts(1)}) = new {")
-                _process_parts(tail, param :: params)
-                writer.print(prefix)
-                writer.println("}")
-              }
-              case _ => {
-              }
-            }
-          }
-
-          //val parts = verb.split("-\\$[^-]*\\$-")
-          val parts = verb.split("\\$-")
-          _process_parts(parts.toList, List())
-          writer.println()
-        }
+        writeDslVerbs(writer, localRels)
 
         writer.println("  }")
         writer.flush()
+      }
+
+      {
+        val stream = dsl_stream("Junctions")
+        val writer = new PrintWriter(stream)
+
+        writer.println("")
+        writer.println(s"  implicit class ImplicitJunction(src: Junction)(implicit val model: Model) {")
+
+        writer.println("")
+        writer.println(s"    def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)")
+        writer.println("")
+
+        val localRels = if (false) {
+          rels
+            .flatMap { case (_, dst, rs, _) => rs.map { r => (r, dst) } }
+            .flatMap { case (r, dst) => {
+              val rname = relationshipKeys(r)
+              val (_, rel) = relationships(rname)
+              (rel \ "verb").map { verb => (verb.text, rname, dst, false) }
+            } }
+            .groupBy { case (verb, _, _, _) => verb }
+        } else {
+          relationships
+            .flatMap { case (rname, (_, rel)) => (rel \ "verb").map { verb => (verb.text, rname, "Concept", false) } }.toSeq
+            .groupBy { case (verb, _, _, _) => verb }
+        }
+
+        writeDslVerbs(writer, localRels)
+
+        writer.println("  }")
+
+        writer.println("}")
+        writer.flush()
+
+        FileUtils.write(
+          new java.io.File(s"src/main/scala/org/mentha/utils/archimate/model/nodes/dsl/Junctions.scala"),
+          stream.toString,
+          "UTF-8"
+        )
       }
 
       for {(name, stream) <- streams} {
@@ -287,6 +292,56 @@ object generator {
           "UTF-8"
         )
       }
+    }
+  }
+
+  private def writeDslVerbs(writer: PrintWriter, localRels: Map[String, Seq[(String, String, String, Boolean)]]): Unit = {
+    for { (verb, seq) <- localRels } {
+      val constructor = verb.replaceAll("-\\$[^-]*\\$-", "-").replace('-', '_')
+      def _process_parts(parts: List[String], params: List[String]): Unit = {
+        val prefix = " " * (4 + 2 * params.size)
+        parts match {
+          case lastPart :: Nil => {
+            val rname = seq.iterator.next()._2
+
+            def writeMethod(dst: String, der: Boolean) = {
+              writer.print(prefix)
+              if (der) { writer.print("@derived ") }
+              writer.print(s"def `${lastPart}`")
+              writer.print(s"(dst: ${dst}): ${rname} = _${constructor}(src, dst)")
+              if (params.nonEmpty) {
+                writer.print("(")
+                writer.print(params.reverse.mkString(", "))
+                writer.print(")")
+              }
+              writer.print("(model)")
+              writer.println()
+            }
+
+            writeMethod("Junction", der = false)
+            for {(_, _, dst, der) <- seq.sortBy { case (_, _, _, der) => der } } {
+              writeMethod(dst, der)
+            }
+          }
+          case middlePart :: tail => {
+            val pts = middlePart.split("-\\$[^:]*[:]", 2)
+            writer.print(prefix)
+            val param = "$" + params.size
+            writer.print(s"def `${pts(0)}`")
+            writer.println(s"(${param}: ${pts(1)}) = new {")
+            _process_parts(tail, param :: params)
+            writer.print(prefix)
+            writer.println("}")
+          }
+          case _ => {
+          }
+        }
+      }
+
+      //val parts = verb.split("-\\$[^-]*\\$-")
+      val parts = verb.split("\\$-")
+      _process_parts(parts.toList, List())
+      writer.println()
     }
   }
 

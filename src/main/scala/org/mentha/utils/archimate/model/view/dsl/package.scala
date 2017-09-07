@@ -243,9 +243,41 @@ package object dsl {
     def connect(left: Concept, right: ViewObject): ViewConnection = connect(view.attach(left), right)
     def connect(left: Concept, right: Concept): ViewConnection = connect(view.attach(left), view.attach(right))
 
+    def resizeNodesToTitle(): Unit = {
+      for (node <- view.nodes) {
+        val text = node match {
+          case n: ViewNodeConcept[_] => n.concept match {
+            case e: Element => e.name.trim
+            case _ => ""
+          }
+          case n: ViewNotes => n.text.trim
+          case _ => ""
+        }
+
+        node.withSize {
+          if (text.isEmpty) {
+            Size( width = 10, height = 10 )
+          } else {
+            val strings = text.split('\n')
+            val height: Int = 20 + strings.length * 20
+            val width: Int = 20 + strings.map {
+              _.trim.collect {
+                case c if c.isDigit | c.isUpper => 8
+                case _ => 5
+              }.sum
+            }.max
+
+            Size(
+              width = width + { if (width % 40 <= 0) 0 else 40 },
+              height = height + { if (height % 40 <= 0) 0 else 40 }
+            )
+          }
+        }
+      }
+    }
+
     def layout(): Unit = {
-      val l = new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayout(view)
-      l.layout(1050)
+      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayout(view).layout()
     }
 
   }

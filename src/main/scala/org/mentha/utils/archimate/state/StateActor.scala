@@ -47,6 +47,7 @@ object StateActor {
   */
 class StateActor(val modelId: String) extends PersistentActor with ActorLogging {
 
+  private val debug = false
   private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
   override def recovery: Recovery = Recovery.create(SnapshotSelectionCriteria.Latest)
@@ -71,7 +72,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       changes += 1
     }
     case RecoveryCompleted => {
-      if (changes > 0) { saveSnapshot(ModelState.toJson(state)) }
+      if (changes > 0) { if (!debug) saveSnapshot(ModelState.toJson(state)) }
       changes = 0
     }
   }
@@ -83,7 +84,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           case Success(response) => {
             dispatchAll(response, user)
             if (!changeSet.simple) {
-              //saveSnapshot(ModelState.toJson(state))
+              if (!debug) saveSnapshot(ModelState.toJson(state))
               changes = 0
             } else {
               changes += 1
@@ -91,7 +92,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           }
           case Failure(error) => {
             execute(user, Left(changeSet.command), error)
-            //saveSnapshot(ModelState.toJson(state))
+            if (!debug) saveSnapshot(ModelState.toJson(state))
             changes = 0
           }
         }

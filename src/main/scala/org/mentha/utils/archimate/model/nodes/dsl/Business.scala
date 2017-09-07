@@ -13,14 +13,17 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessActor): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessActor): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
     @derived def `aggregates`(dst: BusinessInterface): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -52,10 +55,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessActor): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: Artifact): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -65,6 +70,7 @@ object Business {
       @derived def `of`(dst: Representation): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationCollaboration): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationComponent): TriggeringRelationship = _triggers(src, dst)(model)
@@ -101,6 +107,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationCollaboration): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationComponent): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -136,6 +143,7 @@ object Business {
       @derived def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
+    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
@@ -146,6 +154,7 @@ object Business {
     @derived def `assigned-to`(dst: BusinessService): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -158,6 +167,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Artifact): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
@@ -166,6 +176,7 @@ object Business {
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -177,6 +188,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Artifact): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
@@ -191,14 +203,17 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessRole): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessRole): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
     @derived def `aggregates`(dst: BusinessInterface): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -230,10 +245,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessRole): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: Artifact): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -243,6 +260,7 @@ object Business {
       @derived def `of`(dst: Representation): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationCollaboration): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationComponent): TriggeringRelationship = _triggers(src, dst)(model)
@@ -279,6 +297,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationCollaboration): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationComponent): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -314,6 +333,7 @@ object Business {
       @derived def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
+    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
@@ -324,6 +344,7 @@ object Business {
     @derived def `assigned-to`(dst: BusinessService): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -336,6 +357,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Artifact): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
@@ -344,6 +366,7 @@ object Business {
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -355,6 +378,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Artifact): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
@@ -369,16 +393,19 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessCollaboration): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessActor): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessCollaboration): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessRole): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
     @derived def `aggregates`(dst: BusinessInterface): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -410,10 +437,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessCollaboration): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: Artifact): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -423,6 +452,7 @@ object Business {
       @derived def `of`(dst: Representation): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationCollaboration): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationComponent): TriggeringRelationship = _triggers(src, dst)(model)
@@ -459,6 +489,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationCollaboration): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationComponent): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -494,6 +525,7 @@ object Business {
       @derived def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
+    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
@@ -504,6 +536,7 @@ object Business {
     @derived def `assigned-to`(dst: BusinessService): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -516,6 +549,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Artifact): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
@@ -524,6 +558,7 @@ object Business {
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -535,6 +570,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Artifact): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
@@ -549,12 +585,15 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInterface): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessInterface): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: BusinessActor): ServingRelationship = _serves(src, dst)(model)
@@ -586,10 +625,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessInterface): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: Artifact): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -599,6 +640,7 @@ object Business {
       @derived def `of`(dst: Representation): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationCollaboration): TriggeringRelationship = _triggers(src, dst)(model)
     @derived def `triggers`(dst: ApplicationComponent): TriggeringRelationship = _triggers(src, dst)(model)
@@ -635,6 +677,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationCollaboration): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationComponent): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -670,10 +713,12 @@ object Business {
       @derived def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
+    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: BusinessService): AssignmentRelationship = _assigned_to(src, dst)(model)
     def `assigned-to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -686,6 +731,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Artifact): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
@@ -694,6 +740,7 @@ object Business {
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -704,6 +751,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Artifact): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
@@ -718,16 +766,19 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessFunction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessProcess): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessFunction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessInteraction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessProcess): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -759,10 +810,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessProcess): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Contract): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -772,6 +825,7 @@ object Business {
       @derived def `of`(dst: Material): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessEvent): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessFunction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessInteraction): TriggeringRelationship = _triggers(src, dst)(model)
@@ -808,6 +862,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessEvent): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessFunction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessInteraction): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -844,6 +899,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -856,6 +912,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Contract): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
@@ -864,6 +921,7 @@ object Business {
     @derived def `reads`(dst: DataObject): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: BusinessService): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Capability): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
@@ -874,6 +932,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Contract): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
@@ -888,16 +947,19 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessFunction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessProcess): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessFunction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessInteraction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessProcess): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -929,10 +991,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessFunction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Contract): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -942,6 +1006,7 @@ object Business {
       @derived def `of`(dst: Material): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessEvent): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessFunction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessInteraction): TriggeringRelationship = _triggers(src, dst)(model)
@@ -978,6 +1043,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessEvent): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessFunction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessInteraction): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -1014,6 +1080,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1026,6 +1093,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Contract): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
@@ -1034,6 +1102,7 @@ object Business {
     @derived def `reads`(dst: DataObject): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: BusinessService): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Capability): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
@@ -1044,6 +1113,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Contract): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
@@ -1058,16 +1128,19 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessFunction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessInteraction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessProcess): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessFunction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessInteraction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessProcess): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -1099,10 +1172,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessInteraction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Contract): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -1112,6 +1187,7 @@ object Business {
       @derived def `of`(dst: Material): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessEvent): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessFunction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessInteraction): TriggeringRelationship = _triggers(src, dst)(model)
@@ -1148,6 +1224,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessEvent): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessFunction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessInteraction): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -1184,6 +1261,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1196,6 +1274,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Contract): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
@@ -1204,6 +1283,7 @@ object Business {
     @derived def `reads`(dst: DataObject): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: BusinessService): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Capability): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
@@ -1214,6 +1294,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Contract): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
@@ -1228,22 +1309,27 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessEvent): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessEvent): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessEvent): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Contract): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Representation): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessEvent): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessFunction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessInteraction): TriggeringRelationship = _triggers(src, dst)(model)
@@ -1280,6 +1366,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessEvent): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessFunction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessInteraction): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -1316,6 +1403,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1328,11 +1416,13 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Contract): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -1340,6 +1430,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Contract): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
@@ -1351,12 +1442,15 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessService): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessService): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: ApplicationFunction): ServingRelationship = _serves(src, dst)(model)
@@ -1388,10 +1482,12 @@ object Business {
     @derived def `serves`(dst: TechnologyInterface): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessService): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Contract): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -1401,6 +1497,7 @@ object Business {
       @derived def `of`(dst: Material): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
+    def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessEvent): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: BusinessService): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
@@ -1437,6 +1534,7 @@ object Business {
     @derived def `triggers`(dst: TechnologyService): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessEvent): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: BusinessService): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -1473,6 +1571,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1485,6 +1584,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Contract): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
@@ -1493,6 +1593,7 @@ object Business {
     @derived def `reads`(dst: DataObject): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Capability): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
@@ -1502,6 +1603,7 @@ object Business {
     @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Contract): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
@@ -1516,19 +1618,23 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessObject): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Contract): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessObject): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Contract): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessObject): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Contract): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1541,6 +1647,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -1557,19 +1664,23 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessObject): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Contract): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessObject): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Contract): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: BusinessObject): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Contract): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1582,6 +1693,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -1598,16 +1710,20 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Grouping): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Representation): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Grouping): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Representation): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Representation): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1620,6 +1736,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: BusinessObject): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Contract): RealizationRelationship = _realizes(src, dst)(model)
@@ -1638,6 +1755,7 @@ object Business {
 
     def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
 
+    def `composes`(dst: Junction): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: ApplicationService): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: Artifact): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: BusinessObject): CompositionRelationship = _composes(src, dst)(model)
@@ -1650,6 +1768,7 @@ object Business {
     def `composes`(dst: Representation): CompositionRelationship = _composes(src, dst)(model)
     def `composes`(dst: TechnologyService): CompositionRelationship = _composes(src, dst)(model)
 
+    def `aggregates`(dst: Junction): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: ApplicationService): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: Artifact): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: BusinessObject): AggregationRelationship = _aggregates(src, dst)(model)
@@ -1662,6 +1781,7 @@ object Business {
     def `aggregates`(dst: Representation): AggregationRelationship = _aggregates(src, dst)(model)
     def `aggregates`(dst: TechnologyService): AggregationRelationship = _aggregates(src, dst)(model)
 
+    def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationCollaboration): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: ApplicationComponent): ServingRelationship = _serves(src, dst)(model)
@@ -1693,10 +1813,12 @@ object Business {
     @derived def `serves`(dst: TechnologyProcess): ServingRelationship = _serves(src, dst)(model)
     @derived def `serves`(dst: TechnologyService): ServingRelationship = _serves(src, dst)(model)
 
+    def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Product): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `accesses`($0: AccessType) = new {
+      def `of`(dst: Junction): AccessRelationship = _accesses_of(src, dst)($0)(model)
       def `of`(dst: Grouping): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: Artifact): AccessRelationship = _accesses_of(src, dst)($0)(model)
       @derived def `of`(dst: BusinessObject): AccessRelationship = _accesses_of(src, dst)($0)(model)
@@ -1707,6 +1829,7 @@ object Business {
     }
 
     def `flows`($0: String) = new {
+      def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationCollaboration): FlowRelationship = _flows_to(src, dst)($0)(model)
       @derived def `to`(dst: ApplicationComponent): FlowRelationship = _flows_to(src, dst)($0)(model)
@@ -1745,6 +1868,7 @@ object Business {
     }
 
     def `influences`($0: String) = new {
+      def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -1757,6 +1881,7 @@ object Business {
       @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
+    def `reads`(dst: Junction): AccessRelationship = _reads(src, dst)(model)
     def `reads`(dst: Grouping): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Artifact): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: BusinessObject): AccessRelationship = _reads(src, dst)(model)
@@ -1765,6 +1890,7 @@ object Business {
     @derived def `reads`(dst: Material): AccessRelationship = _reads(src, dst)(model)
     @derived def `reads`(dst: Representation): AccessRelationship = _reads(src, dst)(model)
 
+    def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
@@ -1803,6 +1929,7 @@ object Business {
     @derived def `realizes`(dst: TechnologyProcess): RealizationRelationship = _realizes(src, dst)(model)
     @derived def `realizes`(dst: TechnologyService): RealizationRelationship = _realizes(src, dst)(model)
 
+    def `writes`(dst: Junction): AccessRelationship = _writes(src, dst)(model)
     def `writes`(dst: Grouping): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: Artifact): AccessRelationship = _writes(src, dst)(model)
     @derived def `writes`(dst: BusinessObject): AccessRelationship = _writes(src, dst)(model)

@@ -26,27 +26,26 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     .filter { _._2.nonEmpty }
     .toList
 
-  private val SPRING_LENGTH = 0.75d
+  private val SPRING_LENGTH = 0.85d
 
-  private val SPRING_COEFFICIENT = 2.75e-1d
-  private val REPULSION_COEFFICIENT = 1.0e-1d
+  private val LAYER_COEFFICIENT = 3.25e-1d
+  private val SPRING_COEFFICIENT = 2.65e-1d
+  private val REPULSION_COEFFICIENT = 1.5e-2d
 
   override val barnesHutCore = new BarnesHut(
-    d => -REPULSION_COEFFICIENT / sqr(0.5d * d),
-    reducer = SPRING_LENGTH
+    d => -REPULSION_COEFFICIENT / sqr(0.5 * d),
+    reducerLength = 0.01,
+    reducerBounds = 0.40
   )
 
-  private def computeLayers(quadTree: QuadTree.Quad) = {
+  private def withLayers(action: (NodeWrapper, Double) => Unit) = {
     def compute(list: List[(LayerObject, Seq[NodeWrapper])]): Unit = {
-      val border_Y = list.head._2.map { _.bounds.max_Y }.max + SPRING_LENGTH
+      val border_Y = list.head._2.map { _.bounds.max_Y }.max + 2 * SPRING_LENGTH
       for { t <- list.tail; n <- t._2 } {
         val displacement = n.bounds.min_Y - border_Y
-        if (displacement < 0) {
-          n.force += Vector(x = 0, y = -SPRING_COEFFICIENT * springCoeff(displacement))
-        }
+        if (displacement < 0) { action(n, displacement) }
       }
     }
-
     @tailrec def core(list: List[(LayerObject, Seq[NodeWrapper])]): Unit = {
       if (list.nonEmpty) {
         compute(list)
@@ -56,8 +55,18 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     core(layeredNodesList)
   }
 
+  private def computeLayers(quadTree: QuadTree.Quad) = {
+    withLayers { (n, displacement) =>
+      n.force += Vector(x = 0, y = -LAYER_COEFFICIENT * springCoeff(displacement))
+    }
+  }
+
   private def springCoeff(displacement: Double) = {
-    if (displacement < 0.0) { sqr(displacement) * displacement } else displacement
+    if (displacement < 0.0) {
+      sqr(displacement - 0.1) * displacement
+    } else {
+      displacement
+    }
   }
 
   private def computeSprings(quadTree: QuadTree.Quad) = for { edge <- edgesSeq } {
@@ -68,7 +77,7 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     if (null != lt && null != ls && lt != ls) {
 
       val d = edge.target.mass.center - edge.source.mass.center
-      val l = 0.2 * Math.abs(d.x) + 0.8 * Math.abs(d.y)
+      val l = 0.45 * Math.abs(d.x) + 0.55 * Math.abs(d.y)
       val displacement = l - SPRING_LENGTH
       if (Math.abs(displacement) > MIN_DISTANCE) {
         val coeff = SPRING_COEFFICIENT * 0.5 * springCoeff(displacement)
@@ -79,10 +88,10 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
 
     } else {
 
-      val d0 = edge.target.mass.center - edge.source.mass.center
-      val d = if (false) d0 else Vector(
-        x = d0.x - math.signum(d0.x) * 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
-        y = d0.y - math.signum(d0.y) * 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
+      val d = reduce(
+        vector = edge.target.mass.center - edge.source.mass.center,
+        x = 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
+        y = 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
       )
 
       val l = math.sqrt(l2(d))
@@ -96,8 +105,12 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
 
     }
 
+  }
 
 
+  override private[layout] def step(): Unit = {
+    withLayers { (n, displacement) => n.move(Vector(0, -0.1 * displacement)) }
+    super.step()
   }
 
   override def computeForces(quadTree: QuadTree.Quad): Unit = {
