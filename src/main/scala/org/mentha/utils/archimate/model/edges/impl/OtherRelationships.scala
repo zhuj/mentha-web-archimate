@@ -37,14 +37,14 @@ final class SpecializationRelationship(source: Concept, target: Concept)
 object OtherRelationships {
 
   case object associationRelationship extends RelationshipMeta[AssociationRelationship] {
-    override def key: Char = 'o'
-    override def name: String = "associationRelationship"
-    override def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)
+    override final def key: Char = 'o'
+    override final def name: String = "associationRelationship"
+    override final def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)
   }
   case object specializationRelationship extends RelationshipMeta[SpecializationRelationship] {
-    override def key: Char = 's'
-    override def name: String = "specializationRelationship"
-    override def newInstance(source: Concept, target: Concept): SpecializationRelationship = new SpecializationRelationship(source, target)
+    override final def key: Char = 's'
+    override final def name: String = "specializationRelationship"
+    override final def newInstance(source: Concept, target: Concept): SpecializationRelationship = new SpecializationRelationship(source, target)
   }
 
   val otherRelationships: Seq[RelationshipMeta[Relationship]] = Seq(associationRelationship, specializationRelationship)

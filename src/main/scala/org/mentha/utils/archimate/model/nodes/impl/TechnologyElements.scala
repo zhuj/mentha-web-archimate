@@ -196,82 +196,82 @@ final class Artifact extends PassiveStructureElement with TechnologyElement {
 object TechnologyElements {
 
   case object node extends ElementMeta[Node] {
-    override def key: String = "tnd"
-    override def name: String = "node"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): Node = new Node
+    override final def key: String = "tnd"
+    override final def name: String = "node"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): Node = new Node
   }
   case object device extends ElementMeta[Device] {
-    override def key: String = "tdv"
-    override def name: String = "device"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): Device = new Device
+    override final def key: String = "tdv"
+    override final def name: String = "device"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): Device = new Device
   }
   case object systemSoftware extends ElementMeta[SystemSoftware] {
-    override def key: String = "tss"
-    override def name: String = "systemSoftware"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): SystemSoftware = new SystemSoftware
+    override final def key: String = "tss"
+    override final def name: String = "systemSoftware"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): SystemSoftware = new SystemSoftware
   }
   case object technologyCollaboration extends ElementMeta[TechnologyCollaboration] {
-    override def key: String = "tcl"
-    override def name: String = "technologyCollaboration"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyCollaboration = new TechnologyCollaboration
+    override final def key: String = "tcl"
+    override final def name: String = "technologyCollaboration"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyCollaboration = new TechnologyCollaboration
   }
   case object technologyInterface extends ElementMeta[TechnologyInterface] {
-    override def key: String = "tif"
-    override def name: String = "technologyInterface"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyInterface = new TechnologyInterface
+    override final def key: String = "tif"
+    override final def name: String = "technologyInterface"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyInterface = new TechnologyInterface
   }
   case object path extends ElementMeta[Path] {
-    override def key: String = "tph"
-    override def name: String = "path"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): Path = new Path
+    override final def key: String = "tph"
+    override final def name: String = "path"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): Path = new Path
   }
   case object communicationNetwork extends ElementMeta[CommunicationNetwork] {
-    override def key: String = "tcn"
-    override def name: String = "communicationNetwork"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): CommunicationNetwork = new CommunicationNetwork
+    override final def key: String = "tcn"
+    override final def name: String = "communicationNetwork"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): CommunicationNetwork = new CommunicationNetwork
   }
   case object technologyFunction extends ElementMeta[TechnologyFunction] {
-    override def key: String = "tfn"
-    override def name: String = "technologyFunction"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyFunction = new TechnologyFunction
+    override final def key: String = "tfn"
+    override final def name: String = "technologyFunction"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyFunction = new TechnologyFunction
   }
   case object technologyProcess extends ElementMeta[TechnologyProcess] {
-    override def key: String = "tpr"
-    override def name: String = "technologyProcess"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyProcess = new TechnologyProcess
+    override final def key: String = "tpr"
+    override final def name: String = "technologyProcess"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyProcess = new TechnologyProcess
   }
   case object technologyInteraction extends ElementMeta[TechnologyInteraction] {
-    override def key: String = "tia"
-    override def name: String = "technologyInteraction"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyInteraction = new TechnologyInteraction
+    override final def key: String = "tia"
+    override final def name: String = "technologyInteraction"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyInteraction = new TechnologyInteraction
   }
   case object technologyEvent extends ElementMeta[TechnologyEvent] {
-    override def key: String = "tev"
-    override def name: String = "technologyEvent"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyEvent = new TechnologyEvent
+    override final def key: String = "tev"
+    override final def name: String = "technologyEvent"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyEvent = new TechnologyEvent
   }
   case object technologyService extends ElementMeta[TechnologyService] {
-    override def key: String = "tsv"
-    override def name: String = "technologyService"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): TechnologyService = new TechnologyService
+    override final def key: String = "tsv"
+    override final def name: String = "technologyService"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): TechnologyService = new TechnologyService
   }
   case object artifact extends ElementMeta[Artifact] {
-    override def key: String = "taf"
-    override def name: String = "artifact"
-    override def layerObject: LayerObject = TechnologyLayer
-    override def newInstance(): Artifact = new Artifact
+    override final def key: String = "taf"
+    override final def name: String = "artifact"
+    override final def layerObject: LayerObject = TechnologyLayer
+    override final def newInstance(): Artifact = new Artifact
   }
 
   val technologyElements: Seq[ElementMeta[Element]] = Seq(node, device, systemSoftware, technologyCollaboration, technologyInterface, path, communicationNetwork, technologyFunction, technologyProcess, technologyInteraction, technologyEvent, technologyService, artifact)

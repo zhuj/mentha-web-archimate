@@ -73,6 +73,7 @@ package object json {
 
     val `tp` = "_tp"
     val `name` = "name"
+    val `desc` = "desc"
     val `props` = "props"
 
     val `rel` = "rel"
@@ -95,16 +96,16 @@ package object json {
     val `invalid` = "invalid"
   }
 
-  implicit val pointWrites: Writes[Point] = new Writes[Point] {
-    override def writes(o: Point): JsonValue = Json.obj(
+  implicit val pointWrites: Writes[Vector] = new Writes[Vector] {
+    override def writes(o: Vector): JsonValue = Json.obj(
       "x" -> Math.floor(o.x),
       "y" -> Math.floor(o.y)
     )
   }
-  implicit val pointReads: Reads[Point] = Json.reads[Point]
+  implicit val pointReads: Reads[Vector] = Json.reads[Vector]
 
-  def readPoint(json: JsonObject): Point = json.as[Point]
-  def readPoints(json: JsonArray): List[Point] = json.as[List[Point]]
+  def readPoint(json: JsonObject): Vector = json.as[Vector]
+  def readPoints(json: JsonArray): List[Vector] = json.as[List[Vector]]
 
   implicit val sizeWrites: Writes[Size] = Json.writes[Size]
   implicit val sizeReads: Reads[Size] = Json.reads[Size]
@@ -132,6 +133,11 @@ package object json {
     obj match {
       case n: NamedArchimateObject =>
         (json \ names.`name`).validate[String].foreach { name => n.withName(name) }
+      case _ =>
+    }
+    obj match {
+      case n: DescribedArchimateObject =>
+        (json \ names.`desc`).validate[String].foreach { name => n.withDescription(name) }
       case _ =>
     }
     obj match {
@@ -167,6 +173,11 @@ package object json {
       .collect { case n: NamedArchimateObject => n.name }
       .filterNot { _.isEmpty }
       .foreach { name => builder += (names.`name` -> name) }
+
+    Some(obj)
+      .collect { case n: DescribedArchimateObject => n.description }
+      .filterNot { _.isEmpty }
+      .foreach { name => builder += (names.`desc` -> name) }
 
     Some(obj)
       .collect { case v: VersionedArchimateObject => v.version }
@@ -352,13 +363,13 @@ package object json {
   }
 
   private[json] def fillPosAndSize[T <: ViewNode](res: T, json: JsonValue): T = {
-    (json \ names.`pos`).validate[Point].foreach { pt => res.withPosition(pt) }
+    (json \ names.`pos`).validate[Vector].foreach { pt => res.withPosition(pt) }
     (json \ names.`size`).validate[Size].foreach { sz => res.withSize(sz) }
     res
   }
 
   private[json] def fillPoints[T <: ViewEdge](res: T, json: JsonValue): T = {
-    (json \ names.`points`).validate[Seq[Point]].foreach { pts => res.withPoints(pts) }
+    (json \ names.`points`).validate[Seq[Vector]].foreach { pts => res.withPoints(pts) }
     res
   }
 

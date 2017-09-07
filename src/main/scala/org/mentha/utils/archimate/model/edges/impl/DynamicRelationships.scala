@@ -41,14 +41,14 @@ final class TriggeringRelationship(source: Concept, target: Concept)
 object DynamicRelationships {
 
   case object flowRelationship extends RelationshipMeta[FlowRelationship] {
-    override def key: Char = 'f'
-    override def name: String = "flowRelationship"
-    override def newInstance(source: Concept, target: Concept): FlowRelationship = new FlowRelationship(source, target)()
+    override final def key: Char = 'f'
+    override final def name: String = "flowRelationship"
+    override final def newInstance(source: Concept, target: Concept): FlowRelationship = new FlowRelationship(source, target)()
   }
   case object triggeringRelationship extends RelationshipMeta[TriggeringRelationship] {
-    override def key: Char = 't'
-    override def name: String = "triggeringRelationship"
-    override def newInstance(source: Concept, target: Concept): TriggeringRelationship = new TriggeringRelationship(source, target)
+    override final def key: Char = 't'
+    override final def name: String = "triggeringRelationship"
+    override final def newInstance(source: Concept, target: Concept): TriggeringRelationship = new TriggeringRelationship(source, target)
   }
 
   val dynamicRelationships: Seq[RelationshipMeta[Relationship]] = Seq(flowRelationship, triggeringRelationship)

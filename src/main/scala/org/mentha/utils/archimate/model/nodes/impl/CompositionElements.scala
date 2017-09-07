@@ -37,16 +37,16 @@ final class Location extends CompositeElement with CompositionElement {
 object CompositionElements {
 
   case object grouping extends ElementMeta[Grouping] {
-    override def key: String = "cgr"
-    override def name: String = "grouping"
-    override def layerObject: LayerObject = CompositionLayer
-    override def newInstance(): Grouping = new Grouping
+    override final def key: String = "cgr"
+    override final def name: String = "grouping"
+    override final def layerObject: LayerObject = CompositionLayer
+    override final def newInstance(): Grouping = new Grouping
   }
   case object location extends ElementMeta[Location] {
-    override def key: String = "clo"
-    override def name: String = "location"
-    override def layerObject: LayerObject = CompositionLayer
-    override def newInstance(): Location = new Location
+    override final def key: String = "clo"
+    override final def name: String = "location"
+    override final def layerObject: LayerObject = CompositionLayer
+    override final def newInstance(): Location = new Location
   }
 
   val compositionElements: Seq[ElementMeta[Element]] = Seq(grouping, location)

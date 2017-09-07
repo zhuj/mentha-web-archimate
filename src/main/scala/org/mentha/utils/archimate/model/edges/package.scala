@@ -38,9 +38,9 @@ package object edges {
   @inline def _reads_and_writes(src: Concept, dst: Concept)(implicit model: Model): AccessRelationship = _accesses(src, dst)(ReadWriteAccess)(model)
   @inline def _accesses_of(src: Concept, dst: Concept)(accessType: AccessType)(implicit model: Model): AccessRelationship = _accesses(src, dst)(accessType)(model)
 
-  // Association Relationship (any concepts)
-  implicit class AssociationRelations(val src: Concept)(implicit val model: Model) {
-    @inline def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
-  }
+//  // Association Relationship (any concepts)
+//  implicit class AssociationRelations(val src: Concept)(implicit val model: Model) {
+//    @inline def `associated with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
+//  }
 
 }

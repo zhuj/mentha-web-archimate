@@ -11,10 +11,10 @@ ext {
     scalaLibVersion = "2.12"
     scalaVersion = "${scalaLibVersion}.3"
     zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
-    slf4j = "1.7.13"
+    slf4j = "1.7.25"
     akkaVersion = "2.5.4"
-    akkaHttpVersion = "10.0.9"
-    playVersion = "2.6.2"
+    akkaHttpVersion = "10.0.10"
+    playVersion = "2.6.3"
 }
 
 repositories {
@@ -66,8 +66,8 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4j}"
     compile "org.slf4j:slf4j-log4j12:${slf4j}"
 
-    testCompile 'net.sf.saxon:Saxon-HE:9.7.0-18'
-    testCompile "org.jsoup:jsoup:1.10.2"
+//    testCompile 'net.sf.saxon:Saxon-HE:9.7.0-18'
+//    testCompile "org.jsoup:jsoup:1.10.2"
 
     testCompile "junit:junit:4.12"
     testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.1"

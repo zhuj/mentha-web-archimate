@@ -57,19 +57,19 @@ package object dsl {
     /** places the element between the given element + shifted to the given direction */
     def place(dir: directions.Type, v1: ViewObject, v2: ViewObject)(implicit space: Size): T = node.withPosition(
       dir match {
-        case directions.Up => Point(
+        case directions.Up => Vector(
           x = geometry.x(v1, v2),
           y = geometry.y(v1, v2) - (geometry.h(v1, v2) + node.size.height) / 2 - space.height
         )
-        case directions.Down => Point(
+        case directions.Down => Vector(
           x = geometry.x(v1, v2),
           y = geometry.y(v1, v2) + (geometry.h(v1, v2) + node.size.height) / 2 + space.height
         )
-        case directions.Left => Point(
+        case directions.Left => Vector(
           x = geometry.x(v1, v2) - (geometry.w(v1, v2) + node.size.width) / 2 - space.width,
           y = geometry.y(v1, v2)
         )
-        case directions.Right => Point(
+        case directions.Right => Vector(
           x = geometry.x(v1, v2) + (geometry.w(v1, v2) + node.size.width) / 2 + space.width,
           y = geometry.y(v1, v2)
         )
@@ -78,7 +78,7 @@ package object dsl {
 
     /** places the element in the intersection of vertical and horizontal position of the given elements */
     def place(vx: ViewObject, vy: ViewObject)(implicit space: Size): T = node.withPosition(
-      Point(
+      Vector(
         x = vx.position.x,
         y = vy.position.y
       )
@@ -87,19 +87,19 @@ package object dsl {
 
     def move(dir: directions.Type, amount: Double = 1.0)(implicit space: Size): T = node.withPosition(
       dir match {
-        case directions.Up => Point(
+        case directions.Up => Vector(
           x = node.position.x,
           y = node.position.y - (node.size.height + space.height) * amount
         )
-        case directions.Down => Point(
+        case directions.Down => Vector(
           x = node.position.x,
           y = node.position.y + (node.size.height + space.height) * amount
         )
-        case directions.Left => Point(
+        case directions.Left => Vector(
           x = node.position.x - (node.size.width + space.width) * amount,
           y = node.position.y
         )
-        case directions.Right => Point(
+        case directions.Right => Vector(
           x = node.position.x + (node.size.width + space.width) * amount,
           y = node.position.y
         )
@@ -125,7 +125,7 @@ package object dsl {
         y1 = Math.max(y1, el.position.y + el.size.height / 2)
       }
 
-      node withPosition { Point( (x0+x1)/2, (y0+y1)/2 - 0.15*space.height ) } withSize { Size((x1-x0) + 0.5*space.width, (y1-y0) + 0.75*space.height) }
+      node withPosition { Vector( (x0+x1)/2, (y0+y1)/2 - 0.15*space.height ) } withSize { Size((x1-x0) + 0.5*space.width, (y1-y0) + 0.75*space.height) }
     }
   }
 
@@ -153,13 +153,13 @@ package object dsl {
   implicit class ImplicitViewEdge[+T <: ViewEdge](edge: T) {
 
     def points(route: (Double, Double)*): T = edge.withPoints {
-      route.map { case (x, y) => Point(x, y) }
+      route.map { case (x, y) => Vector(x, y) }
     }
 
     def route(route: (Double, Double)*): T = edge.withPoints {
-      route.foldLeft((edge.source.position, List[Point]())) {
+      route.foldLeft((edge.source.position, List[Vector]())) {
         case ((sp, seq), (x, y)) => {
-          val p = Point(sp.x + x, sp.y + y)
+          val p = Vector(sp.x + x, sp.y + y)
           (p, p :: seq)
         }
       } match {
@@ -182,7 +182,7 @@ package object dsl {
 
         edge.withPoints(
           levels.zipWithIndex.map {
-            case (lvl, idx) => Point(
+            case (lvl, idx) => Vector(
               geometry.x(edge.source, edge.target, (1.0 + idx) / l) + rx*lvl,
               geometry.y(edge.source, edge.target, (1.0 + idx) / l) + ry*lvl
             )
@@ -238,6 +238,48 @@ package object dsl {
     def edge[T <: Relationship](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
     def notes(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
     def connect(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
+
+    def connect(left: ViewObject, right: Concept): ViewConnection = connect(left, view.attach(right))
+    def connect(left: Concept, right: ViewObject): ViewConnection = connect(view.attach(left), right)
+    def connect(left: Concept, right: Concept): ViewConnection = connect(view.attach(left), view.attach(right))
+
+    def resizeNodesToTitle(): Unit = {
+      for (node <- view.nodes) {
+        val text = node match {
+          case n: ViewNodeConcept[_] => n.concept match {
+            case e: Element => e.name.trim
+            case _ => ""
+          }
+          case n: ViewNotes => n.text.trim
+          case _ => ""
+        }
+
+        node.withSize {
+          if (text.isEmpty) {
+            Size( width = 10, height = 10 )
+          } else {
+            val strings = text.split('\n')
+            val height: Int = 20 + strings.length * 20
+            val width: Int = 20 + strings.map {
+              _.trim.collect {
+                case c if c.isDigit | c.isUpper => 8
+                case _ => 5
+              }.sum
+            }.max
+
+            Size(
+              width = width + { if (width % 40 <= 0) 0 else 40 },
+              height = height + { if (height % 40 <= 0) 0 else 40 }
+            )
+          }
+        }
+      }
+    }
+
+    def layout(): Unit = {
+      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayout(view).layout()
+    }
+
   }
 
   @inline def $[T <: Concept](t: ViewObject with ViewConcept[T]): T = t.concept

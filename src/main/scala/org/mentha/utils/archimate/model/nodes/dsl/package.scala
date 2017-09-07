@@ -186,4 +186,9 @@ package object dsl {
   /** Composition: A place or position where structure elements can be located or behavior can be performed */
   def location(implicit model: Model): Location = model.add(new Location)
 
+
+  import org.mentha.utils.archimate.model.edges.RelationshipMeta
+  def andJunction(relationship: RelationshipMeta[Relationship])(implicit model: Model): Junction = model.add(new AndJunction(relationship))
+  def orJunction(relationship: RelationshipMeta[Relationship])(implicit model: Model): Junction = model.add(new OrJunction(relationship))
+
 }

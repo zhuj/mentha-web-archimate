@@ -52,22 +52,22 @@ final class CourseOfAction extends BehaviorElement with StrategyElement {
 object StrategyElements {
 
   case object resource extends ElementMeta[Resource] {
-    override def key: String = "srs"
-    override def name: String = "resource"
-    override def layerObject: LayerObject = StrategyLayer
-    override def newInstance(): Resource = new Resource
+    override final def key: String = "srs"
+    override final def name: String = "resource"
+    override final def layerObject: LayerObject = StrategyLayer
+    override final def newInstance(): Resource = new Resource
   }
   case object capability extends ElementMeta[Capability] {
-    override def key: String = "scb"
-    override def name: String = "capability"
-    override def layerObject: LayerObject = StrategyLayer
-    override def newInstance(): Capability = new Capability
+    override final def key: String = "scb"
+    override final def name: String = "capability"
+    override final def layerObject: LayerObject = StrategyLayer
+    override final def newInstance(): Capability = new Capability
   }
   case object courseOfAction extends ElementMeta[CourseOfAction] {
-    override def key: String = "sca"
-    override def name: String = "courseOfAction"
-    override def layerObject: LayerObject = StrategyLayer
-    override def newInstance(): CourseOfAction = new CourseOfAction
+    override final def key: String = "sca"
+    override final def name: String = "courseOfAction"
+    override final def layerObject: LayerObject = StrategyLayer
+    override final def newInstance(): CourseOfAction = new CourseOfAction
   }
 
   val strategyElements: Seq[ElementMeta[Element]] = Seq(resource, capability, courseOfAction)

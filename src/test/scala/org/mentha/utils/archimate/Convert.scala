@@ -104,7 +104,7 @@ object Convert extends MkModel {
       val view = model.add( dia \@ "id" ) { new View() withName( dia \@ "name" ) }
 
       def applyChildren(childs: NodeSeq, baseNode: Option[ViewNode]): Unit = {
-        val base = baseNode map { n => Point(n.position.x - n.size.width/2, n.position.y - n.size.height/2) } getOrElse { Point(0, 0) }
+        val base = baseNode map { n => Vector(n.position.x - n.size.width/2, n.position.y - n.size.height/2) } getOrElse { Vector(0, 0) }
         for {child <- childs} {
 
           val chType = child \@ "{http://www.w3.org/2001/XMLSchema-instance}type"
@@ -114,7 +114,7 @@ object Convert extends MkModel {
             Size(100, 40)
           }
           val lt = Try {
-            (child \ "bounds") map { v => Point(java.lang.Double.parseDouble(v \@ "x") + base.x, java.lang.Double.parseDouble(v \@ "y") + base.y) } head
+            (child \ "bounds") map { v => Vector(java.lang.Double.parseDouble(v \@ "x") + base.x, java.lang.Double.parseDouble(v \@ "y") + base.y) } head
           } getOrElse {
             base
           }
@@ -204,7 +204,7 @@ object Convert extends MkModel {
             val w = (1.0+i) / (1.0+size)
             val x = w*(startX + source.position.x) + (1.0-w)*(endX + target.position.x)
             val y = w*(startY + source.position.y) + (1.0-w)*(endY + target.position.y)
-            Point(x, y)
+            Vector(x, y)
           }
         }
 

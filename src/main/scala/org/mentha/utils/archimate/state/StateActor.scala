@@ -47,6 +47,7 @@ object StateActor {
   */
 class StateActor(val modelId: String) extends PersistentActor with ActorLogging {
 
+  private val debug = false
   private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
   override def recovery: Recovery = Recovery.create(SnapshotSelectionCriteria.Latest)
@@ -59,10 +60,21 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private[state] def prepare(command: ModelState.Command): Try[ModelState.ChangeSet] = Try { state.prepare(command) }
   private[state] def commit(changeSet: ModelState.ChangeSet): Try[ModelState.Response] = changeSet.commit(state)
 
+  private var changes: Int = 0
+
   override def receiveRecover: Receive = {
-    case RecoveryCompleted => saveSnapshot(ModelState.toJson(state))
-    case SnapshotOffer(_, json: String) => setState(ModelState.fromJson(id = modelId, jsonString = json))
-    case e: ModelState.ChangeSet => commit(e)
+    case SnapshotOffer(md, json: String) => {
+      setState(ModelState.fromJson(id = modelId, jsonString = json))
+      deleteMessages(md.sequenceNr)
+    }
+    case e: ModelState.ChangeSet => {
+      commit(e)
+      changes += 1
+    }
+    case RecoveryCompleted => {
+      if (changes > 0) { if (!debug) saveSnapshot(ModelState.toJson(state)) }
+      changes = 0
+    }
   }
 
   private[state] def execute(user: ActorRef, changeSet: ModelState.ChangeSet): Unit = {
@@ -72,15 +84,16 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           case Success(response) => {
             dispatchAll(response, user)
             if (!changeSet.simple) {
-              saveSnapshot(ModelState.toJson(state))
+              if (!debug) saveSnapshot(ModelState.toJson(state))
+              changes = 0
+            } else {
+              changes += 1
             }
-            // TODO: if (lastSequenceNr != 0 && lastSequenceNr % snapshotInterval == 0) {
-            // TODO:   saveSnapshot(ModelState.toJson(state))
-            // TODO: }
           }
           case Failure(error) => {
             execute(user, Left(changeSet.command), error)
-            saveSnapshot(ModelState.toJson(state))
+            if (!debug) saveSnapshot(ModelState.toJson(state))
+            changes = 0
           }
         }
       }

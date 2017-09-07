@@ -191,82 +191,82 @@ final class Product extends CompositeElement with BusinessElement {
 object BusinessElements {
 
   case object businessActor extends ElementMeta[BusinessActor] {
-    override def key: String = "bac"
-    override def name: String = "businessActor"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessActor = new BusinessActor
+    override final def key: String = "bac"
+    override final def name: String = "businessActor"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessActor = new BusinessActor
   }
   case object businessRole extends ElementMeta[BusinessRole] {
-    override def key: String = "bro"
-    override def name: String = "businessRole"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessRole = new BusinessRole
+    override final def key: String = "bro"
+    override final def name: String = "businessRole"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessRole = new BusinessRole
   }
   case object businessCollaboration extends ElementMeta[BusinessCollaboration] {
-    override def key: String = "bcl"
-    override def name: String = "businessCollaboration"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessCollaboration = new BusinessCollaboration
+    override final def key: String = "bcl"
+    override final def name: String = "businessCollaboration"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessCollaboration = new BusinessCollaboration
   }
   case object businessInterface extends ElementMeta[BusinessInterface] {
-    override def key: String = "bif"
-    override def name: String = "businessInterface"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessInterface = new BusinessInterface
+    override final def key: String = "bif"
+    override final def name: String = "businessInterface"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessInterface = new BusinessInterface
   }
   case object businessProcess extends ElementMeta[BusinessProcess] {
-    override def key: String = "bpr"
-    override def name: String = "businessProcess"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessProcess = new BusinessProcess
+    override final def key: String = "bpr"
+    override final def name: String = "businessProcess"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessProcess = new BusinessProcess
   }
   case object businessFunction extends ElementMeta[BusinessFunction] {
-    override def key: String = "bfn"
-    override def name: String = "businessFunction"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessFunction = new BusinessFunction
+    override final def key: String = "bfn"
+    override final def name: String = "businessFunction"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessFunction = new BusinessFunction
   }
   case object businessInteraction extends ElementMeta[BusinessInteraction] {
-    override def key: String = "bia"
-    override def name: String = "businessInteraction"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessInteraction = new BusinessInteraction
+    override final def key: String = "bia"
+    override final def name: String = "businessInteraction"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessInteraction = new BusinessInteraction
   }
   case object businessEvent extends ElementMeta[BusinessEvent] {
-    override def key: String = "bev"
-    override def name: String = "businessEvent"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessEvent = new BusinessEvent
+    override final def key: String = "bev"
+    override final def name: String = "businessEvent"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessEvent = new BusinessEvent
   }
   case object businessService extends ElementMeta[BusinessService] {
-    override def key: String = "bsv"
-    override def name: String = "businessService"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessService = new BusinessService
+    override final def key: String = "bsv"
+    override final def name: String = "businessService"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessService = new BusinessService
   }
   case object businessObject extends ElementMeta[BusinessObject] {
-    override def key: String = "bob"
-    override def name: String = "businessObject"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): BusinessObject = new BusinessObject
+    override final def key: String = "bob"
+    override final def name: String = "businessObject"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): BusinessObject = new BusinessObject
   }
   case object contract extends ElementMeta[Contract] {
-    override def key: String = "bco"
-    override def name: String = "contract"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): Contract = new Contract
+    override final def key: String = "bco"
+    override final def name: String = "contract"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): Contract = new Contract
   }
   case object representation extends ElementMeta[Representation] {
-    override def key: String = "bre"
-    override def name: String = "representation"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): Representation = new Representation
+    override final def key: String = "bre"
+    override final def name: String = "representation"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): Representation = new Representation
   }
   case object product extends ElementMeta[Product] {
-    override def key: String = "bpr"
-    override def name: String = "product"
-    override def layerObject: LayerObject = BusinessLayer
-    override def newInstance(): Product = new Product
+    override final def key: String = "bpr"
+    override final def name: String = "product"
+    override final def layerObject: LayerObject = BusinessLayer
+    override final def newInstance(): Product = new Product
   }
 
   val businessElements: Seq[ElementMeta[Element]] = Seq(businessActor, businessRole, businessCollaboration, businessInterface, businessProcess, businessFunction, businessInteraction, businessEvent, businessService, businessObject, contract, representation, product)
