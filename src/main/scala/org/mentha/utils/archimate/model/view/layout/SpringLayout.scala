@@ -11,7 +11,7 @@ class SpringLayout(view: View) extends ForceBasedLayout(view) {
 
   override val barnesHutCore = new BarnesHut( d => -REPULSION_COEFFICIENT / sqr(0.5d * d) )
 
-  def computeSprings(quadTree: QuadTree.Quad) = for { edge <- edgesSeq } {
+  def computeSprings(quadTree: QuadTree.Quad, temperature: Double) = for {edge <- edgesSeq } {
     val d = edge.target.mass.center - edge.source.mass.center
     val l = math.sqrt(l2(d))
     val displacement = l - SPRING_LENGTH
@@ -26,9 +26,9 @@ class SpringLayout(view: View) extends ForceBasedLayout(view) {
 
   }
 
-  override def computeForces(quadTree: QuadTree.Quad): Unit = {
-    computeSprings(quadTree)
-    computeRepulsion(quadTree)
+  override def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit = {
+    computeSprings(quadTree, temperature)
+    computeRepulsion(quadTree, temperature)
     computeGravityToCenter(quadTree)
   }
 

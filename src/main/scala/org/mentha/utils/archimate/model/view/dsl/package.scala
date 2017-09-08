@@ -227,6 +227,7 @@ package object dsl {
     }
   }
 
+
   def in(view: View) = new {
 
     // TODO: def apply[T <: NodeConcept: ClassTag](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
@@ -243,7 +244,17 @@ package object dsl {
     def connect(left: Concept, right: ViewObject): ViewConnection = connect(view.attach(left), right)
     def connect(left: Concept, right: Concept): ViewConnection = connect(view.attach(left), view.attach(right))
 
-    def resizeNodesToTitle(): Unit = {
+    def add(concept: Concept): this.type = {
+      view.attach(concept)
+      this
+    }
+
+    def connectNotes(concept: Concept)(text: String): this.type = {
+      connect(concept, notes(text))
+      this
+    }
+
+    def resizeNodesToTitle(): this.type = {
       for (node <- view.nodes) {
         val text = node match {
           case n: ViewNodeConcept[_] => n.concept match {
@@ -274,10 +285,13 @@ package object dsl {
           }
         }
       }
+      this
     }
 
-    def layout(): Unit = {
+    def layout(resize: Boolean = true): this.type = {
+      if (resize) { resizeNodesToTitle() }
       new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayout(view).layout()
+      this
     }
 
   }

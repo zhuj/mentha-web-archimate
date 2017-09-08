@@ -3,6 +3,8 @@ package org.mentha.utils.archimate.model.view.layout
 import org.mentha.utils.archimate.model.view._
 import org.mentha.utils.archimate.model._
 
+import scala.util.Random
+
 abstract class ForceBasedLayout(view: View) {
 
   @inline private[layout] final def sqr(d: Double): Double = d*d
@@ -28,6 +30,10 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] class NodeWrapper(val node: ViewNode) extends Vertex with Body {
 
+    private val width = node.size.width * SIZE_NORMALIZER
+    private val height = node.size.height * SIZE_NORMALIZER
+    private val massValue = Math.pow(width * height, 0.4)
+
     var _mass: Mass = _
     @inline override def mass: Mass = _mass
 
@@ -38,14 +44,14 @@ abstract class ForceBasedLayout(view: View) {
     var velocity: Vector = Vector.ZERO
 
     @inline def place(position: Vector): Unit = {
-      _bounds = Bounds(
-        position,
-        node.size.width * SIZE_NORMALIZER,
-        node.size.height * SIZE_NORMALIZER
-      )
       _mass = Mass(
         center = position,
-        value = Math.pow(_bounds.width * _bounds.height, 0.4)
+        value = massValue
+      )
+      _bounds = Bounds(
+        position = position,
+        width = width,
+        height = height
       )
     }
 
@@ -59,6 +65,7 @@ abstract class ForceBasedLayout(view: View) {
   private[layout] val nodesSeqPar = nodesSeq.par
 
   private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
+    // TODO: do smth with associations to relationships
     override val source: NodeWrapper = nodesMap(edge.source.id)
     override val target: NodeWrapper = nodesMap(edge.target.id)
   }
@@ -101,7 +108,7 @@ abstract class ForceBasedLayout(view: View) {
             Vector.random * (body.mass.value * quad.mass.value * force(MIN_DISTANCE_2) / 1.0)
           } else if (distance2 < MAX_DISTANCE_2) {
             // calculate the real force
-            val distance = math.sqrt(distance2) // TODO: use node bounds
+            val distance = Math.sqrt(distance2)
             displacement * (body.mass.value * quad.mass.value * force(distance) / distance)
           } else {
             // object are too far, ignore
@@ -124,38 +131,42 @@ abstract class ForceBasedLayout(view: View) {
   private[layout] val MAX_VELOCITY_2 = sqr(MAX_VELOCITY)
 
   def barnesHutCore: BarnesHut
-  def computeForces(quadTree: QuadTree.Quad): Unit
+  def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit
 
-  private[layout] def computeRepulsion(quadTree: QuadTree.Quad) = {
+  private[layout] def computeRepulsion(quadTree: QuadTree.Quad, temperature: Double) = {
     nodesSeqPar.foreach { node =>
-      node.force += barnesHutCore.calculateForce(node, quadTree)
+      node.force += barnesHutCore.calculateForce(node, quadTree) * (1.0d + temperature)
     }
   }
 
   private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad) = {
     nodesSeqPar.foreach { node =>
       val d2 = l2(node.mass.center /* - quadTree.mass.center */ )
-      val normalized = node.mass.center * (math.sqrt(d2) * CENTER_GRAVITY)
+      val normalized = node.mass.center * (Math.sqrt(d2) * CENTER_GRAVITY)
       node.force -= normalized
     }
   }
 
-  private[layout] def step() = {
+  private[layout] def step(temperature: Double) = {
 
     val quadTree = QuadTree(nodesSeq)
     val center = quadTree.mass.center
 
-    computeForces(quadTree)
+    computeForces(quadTree, temperature)
 
     nodesSeqPar.foreach { node =>
+
+      if (temperature > 1.0e-4) {
+        node.force += Vector.random * Random.nextGaussian() * temperature
+      }
 
       val acceleration = node.force * (1.0d / node.mass.value)
       node.force = Vector.ZERO
 
-      node.velocity += acceleration * TIMESTEP - node.velocity * DRAG
+      node.velocity = node.velocity * (1.0d - DRAG) + acceleration * TIMESTEP
       val v2 = l2(node.velocity)
       if (v2 > MAX_VELOCITY_2) {
-        node.velocity = node.velocity * (MAX_VELOCITY / math.sqrt(v2))
+        node.velocity = node.velocity * (MAX_VELOCITY / Math.sqrt(v2))
       }
 
       node.move(node.velocity * TIMESTEP - center * 0.5)
@@ -166,10 +177,11 @@ abstract class ForceBasedLayout(view: View) {
     0.5 * node.mass.value * l2(node.velocity)
   }).sum
 
-  def layout(maxIterations: Int = 1050): Unit = {
+  def layout(maxIterations: Int = 500): Unit = {
     var it = 0
     do {
-      var i = 0; do { step(); i +=1 } while (i < 10)
+      val temperature = Math.exp(3.0 - 12.0 * it / maxIterations)
+      var i = 0; do { step(temperature); i +=1 } while (i < 10)
       it += 1
     } while (/*totalEnergy > ENERGY_CUTOFF &&*/ it < maxIterations)
     for { node <- nodesSeq } {

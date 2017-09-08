@@ -1,6 +1,8 @@
 package org.mentha.utils.archimate.model.view.layout
 
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.edges._
+import org.mentha.utils.archimate.model.edges.impl.{AssignmentRelationship, InfluenceRelationship}
 import org.mentha.utils.archimate.model.view._
 
 import scala.annotation.tailrec
@@ -28,9 +30,10 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
 
   private val SPRING_LENGTH = 0.85d
 
-  private val LAYER_COEFFICIENT = 3.25e-1d
-  private val SPRING_COEFFICIENT = 2.65e-1d
-  private val REPULSION_COEFFICIENT = 1.5e-2d
+  private val LAYER_COEFFICIENT = 0.325d
+  private val SPRING_COEFFICIENT = 0.265d
+  private val REPULSION_COEFFICIENT = 0.015d
+  private val DIRECTION_COEFFICIENT = 0.700d
 
   override val barnesHutCore = new BarnesHut(
     d => -REPULSION_COEFFICIENT / sqr(0.5 * d),
@@ -69,7 +72,45 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     }
   }
 
-  private def computeSprings(quadTree: QuadTree.Quad) = for { edge <- edgesSeq } {
+  private def computeDirections(quadTree: QuadTree.Quad, temperature: Double) = for { edge <- edgesSeq } {
+    edge.edge match {
+      case vr: ViewRelationship[_] => vr.concept match {
+        case _: DynamicRelationship => {
+          val d = reduce(
+            vector = edge.target.mass.center - edge.source.mass.center,
+            x = 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
+            y = 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
+          )
+          if (d.x < MIN_DISTANCE) {
+            val displacement = d.x - MIN_DISTANCE
+            val coeff = DIRECTION_COEFFICIENT * springCoeff(displacement) * temperature
+            val force = Vector(coeff, 0)
+            edge.source.force += force
+            edge.target.force -= force
+          }
+        }
+//        case _: AssignmentRelationship => {
+//          val d = reduce(
+//            vector = edge.target.mass.center - edge.source.mass.center,
+//            x = 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
+//            y = 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
+//          )
+//          if (d.y < MIN_DISTANCE) {
+//            val displacement = d.y - MIN_DISTANCE
+//            val coeff = DIRECTION_COEFFICIENT * springCoeff(displacement) * temperature
+//            val force = Vector(0, coeff)
+//            edge.source.force += force
+//            edge.target.force -= force
+//          }
+//        }
+        case _ =>
+      }
+      case _: ViewConnection =>
+    }
+
+  }
+
+  private def computeSprings(quadTree: QuadTree.Quad, temperature: Double) = for { edge <- edgesSeq } {
 
     val lt = layerObject(edge.target).orNull
     val ls = layerObject(edge.source).orNull
@@ -90,8 +131,8 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
 
       val d = reduce(
         vector = edge.target.mass.center - edge.source.mass.center,
-        x = 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
-        y = 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
+        x = 0.25 * (edge.source.bounds.width + edge.target.bounds.width),
+        y = 0.25 * (edge.source.bounds.height + edge.target.bounds.height)
       )
 
       val l = math.sqrt(l2(d))
@@ -108,15 +149,16 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
   }
 
 
-  override private[layout] def step(): Unit = {
-    withLayers { (n, displacement) => n.move(Vector(0, -0.1 * displacement)) }
-    super.step()
+  override private[layout] def step(temperature: Double): Unit = {
+    withLayers { (n, displacement) => n.move(Vector(0, -(0.1d + temperature) * displacement)) }
+    super.step(temperature)
   }
 
-  override def computeForces(quadTree: QuadTree.Quad): Unit = {
+  override def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit = {
     computeLayers(quadTree)
-    computeSprings(quadTree)
-    computeRepulsion(quadTree)
+    computeSprings(quadTree, temperature)
+    computeRepulsion(quadTree ,temperature)
+    computeDirections(quadTree, temperature)
     computeGravityToCenter(quadTree)
   }
 

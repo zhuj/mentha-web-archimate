@@ -129,7 +129,7 @@ export class DefaultNodeWidget extends React.Component {
 
 }
 
-const useSmooth = true;
+// const useSmooth = true;
 export class DefaultLinkWidget extends React.Component {
 
   constructor(props) {
@@ -246,45 +246,47 @@ export class DefaultLinkWidget extends React.Component {
     ];
   }
 
-  drawSimplePaths() {
-    const { link, diagram } = this.props;
-    const selected  = link.isSelected();
-    const { points } = link;
-
-    const ds = [];
-    for (let i = 0; i < points.length - 1; i++) {
-      ds.push(` M ${points[i].x} ${points[i].y} L ${points[i + 1].x} ${points[i + 1].y}`);
-    }
-
-    const dsFirst = 0, dsLast = ds.length-1;
-    return ds.map((data, index) => this.generateLink((dsFirst == index), (dsLast == index), {
-      id: `${link.id}-${index}`,
-      d: data,
-      'data-linkid': link.id,
-      'data-index': index,
-      onMouseDown: event => {
-        if (selected) {
-          // TODO: make it better
-          if (event.buttons !== 1) {
-            return;
-          } // only the left button
-
-          if (!event.shiftKey) {
-            const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
-            point.setSelected(true);
-            this.forceUpdate();
-          }
-        }
-      }
-    }));
-  }
+  // drawSimplePaths() {
+  //   const { link, diagram } = this.props;
+  //   const selected  = link.isSelected();
+  //   const { points } = link;
+  //
+  //   const ds = [];
+  //   for (let i = 0; i < points.length - 1; i++) {
+  //     ds.push(` M ${points[i].x} ${points[i].y} L ${points[i + 1].x} ${points[i + 1].y}`);
+  //   }
+  //
+  //   const dsFirst = 0, dsLast = ds.length-1;
+  //   return ds.map((data, index) => this.generateLink((dsFirst == index), (dsLast == index), {
+  //     id: `${link.id}-${index}`,
+  //     d: data,
+  //     'data-linkid': link.id,
+  //     'data-index': index,
+  //     onMouseDown: event => {
+  //       if (selected) {
+  //         // TODO: make it better
+  //         if (event.buttons !== 1) {
+  //           return;
+  //         } // only the left button
+  //
+  //         if (!event.shiftKey) {
+  //           const point = diagram.addPointIntoLink.bind(diagram)(event, link, index);
+  //           point.setSelected(true);
+  //           this.forceUpdate();
+  //         }
+  //       }
+  //     }
+  //   }));
+  // }
 
   drawLine(link) {
     const { points } = link;
 
     // render the line
-    const smooth = useSmooth; // && points.length > 2;
-    const paths = (smooth ? this.drawSmoothPaths : this.drawSimplePaths).bind(this)();
+    // const smooth = useSmooth; // && points.length > 2;
+    // const paths = (smooth ? this.drawSmoothPaths : this.drawSimplePaths).bind(this)();
+
+    const paths = this.drawSmoothPaths(this);
 
     // Render the circles for points (except the first and the last)
     if (link.isSelected()) {
@@ -310,11 +312,23 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   drawHint(link) {
-    let hint = this.getHint(link);
+    const hint = this.getHint(link);
     if (!hint) { return null; }
     return (
       <title>{hint}</title>
     );
+  }
+
+  drawTitleText(link, title, anchor, dx, offset, className) {
+    return (!title) ? null : (
+      <text textAnchor={anchor} dx={dx} dy={-4}>
+        <textPath href={`#${link.id}-path`} startOffset={offset} className={className}>{title}</textPath>
+      </text>
+    )
+  }
+
+  drawTitle(link) {
+    return null; // placeholder: use drawTitleText
   }
 
   render() {
@@ -322,6 +336,7 @@ export class DefaultLinkWidget extends React.Component {
     return (
       <g className={this.getClassName(link)}>
         {this.drawHint(link)}
+        {this.drawTitle(link)}
         {this.drawLine(link)}
       </g>
     );
