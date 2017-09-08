@@ -1,4 +1,6 @@
-var webpack = require("webpack");
+const webpack = require("webpack");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 module.exports = require('./webpack.config.js');    // inherit from the main config file
 
 // production env
@@ -8,6 +10,11 @@ module.exports.plugins.push(
       NODE_ENV: JSON.stringify('production'),
     }
   })
+);
+
+// extract css text
+module.exports.plugins.push(
+  new ExtractTextPlugin('../css/main.css')
 );
 
 // compress the js file

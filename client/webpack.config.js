@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const app_root = 'src'; // the app root folder: src, src_users, etc
 
@@ -21,7 +20,6 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    // new ExtractTextPlugin('../css/main.css')
   ],
   module: {
     rules: [
@@ -29,10 +27,6 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: ['react-hot-loader', 'babel-loader'],
-        // use: [
-        //   { loader: 'react-hot-loader' },
-        //   { loader: 'babel-loader' }
-        // ]
       },
       {
         test: /\.scss$/,

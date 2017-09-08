@@ -103,10 +103,10 @@ object Bounds {
       var max_X = Double.NegativeInfinity
       var max_Y = Double.NegativeInfinity
       for { t <- it; b = accessor(t) } {
-        min_X = math.min(min_X, b.min_X)
-        min_Y = math.min(min_Y, b.min_Y)
-        max_X = math.max(max_X, b.max_X)
-        max_Y = math.max(max_Y, b.max_Y)
+        min_X = Math.min(min_X, b.min_X)
+        min_Y = Math.min(min_Y, b.min_Y)
+        max_X = Math.max(max_X, b.max_X)
+        max_Y = Math.max(max_Y, b.max_Y)
       }
       Bounds(min_X, min_Y, max_X, max_Y)
     }

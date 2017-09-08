@@ -290,7 +290,8 @@ package object dsl {
 
     def layout(resize: Boolean = true): this.type = {
       if (resize) { resizeNodesToTitle() }
-      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayout(view).layout()
+      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayoutF(view).layout()
+//      new org.mentha.utils.archimate.model.view.layout.SimpleSpringLayoutF(view).layout()
       this
     }
 
