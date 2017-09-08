@@ -1,11 +1,12 @@
 package org.mentha.utils.archimate.model.view.layout
 
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.edges._
 import org.mentha.utils.archimate.model.view._
 
 import scala.annotation.tailrec
 
-class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
+class LayeredSpringLayoutF(view: View) extends SimpleSpringLayoutF(view) {
 
   private val layers = Seq(
     MotivationLayer,
@@ -26,17 +27,18 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     .filter { _._2.nonEmpty }
     .toList
 
-  private val SPRING_LENGTH = 0.85d
 
-  private val LAYER_COEFFICIENT = 3.25e-1d
-  private val SPRING_COEFFICIENT = 2.65e-1d
-  private val REPULSION_COEFFICIENT = 1.5e-2d
+  private val LAYER_COEFFICIENT = 0.325d
+  private val DIRECTION_COEFFICIENT = 0.900d
+
+  private val SIZE_BOUND = 0.2d
 
   override val barnesHutCore = new BarnesHut(
     d => -REPULSION_COEFFICIENT / sqr(0.5 * d),
     reducerLength = 0.01,
-    reducerBounds = 0.40
+    reducerBounds = SIZE_BOUND
   )
+
 
   private def withLayers(action: (NodeWrapper, Double) => Unit) = {
     def compute(list: List[(LayerObject, Seq[NodeWrapper])]): Unit = {
@@ -61,15 +63,30 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
     }
   }
 
-  private def springCoeff(displacement: Double) = {
-    if (displacement < 0.0) {
-      sqr(displacement - 0.1) * displacement
-    } else {
-      displacement
+  private def computeDirections(quadTree: QuadTree.Quad, temperature: Double) = {
+    val border = MIN_DISTANCE * (1.0d + temperature)
+    for {edge <- edgesSeq } {
+      edge.edge match {
+        case vr: ViewRelationship[_] => vr.concept match {
+          case _: DynamicRelationship => {
+            val d = edge.target.mass.center - edge.source.mass.center
+            if (d.x < border) {
+              val displacement = d.x - border
+              val coeff = DIRECTION_COEFFICIENT * springCoeff(displacement) * temperature
+              val force = Vector(coeff, 0)
+              edge.source.force += force
+              edge.target.force -= force
+            }
+          }
+          case _ =>
+        }
+        case _ =>
+      }
+
     }
   }
 
-  private def computeSprings(quadTree: QuadTree.Quad) = for { edge <- edgesSeq } {
+  override def computeSprings(quadTree: QuadTree.Quad, temperature: Double) = for { edge <- edgesSeq } {
 
     val lt = layerObject(edge.target).orNull
     val ls = layerObject(edge.source).orNull
@@ -81,7 +98,7 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
       val displacement = l - SPRING_LENGTH
       if (Math.abs(displacement) > MIN_DISTANCE) {
         val coeff = SPRING_COEFFICIENT * 0.5 * springCoeff(displacement)
-        val force = if (l > MIN_DISTANCE) { d * (coeff / l) } else { Vector.random * coeff }
+        val force = if (l > MIN_DISTANCE) { d * (coeff / l) } else { Vector.random(rnd) * coeff }
         edge.source.force += force
         edge.target.force -= force
       }
@@ -90,33 +107,32 @@ class LayeredSpringLayout(view: View) extends ForceBasedLayout(view) {
 
       val d = reduce(
         vector = edge.target.mass.center - edge.source.mass.center,
-        x = 0.1 * (edge.source.bounds.width + edge.target.bounds.width),
-        y = 0.1 * (edge.source.bounds.height + edge.target.bounds.height)
+        x = SIZE_BOUND * (edge.source.bounds.width + edge.target.bounds.width),
+        y = SIZE_BOUND * (edge.source.bounds.height + edge.target.bounds.height)
       )
 
       val l = math.sqrt(l2(d))
       val displacement = l - SPRING_LENGTH
       if (Math.abs(displacement) > MIN_DISTANCE) {
         val coeff = SPRING_COEFFICIENT * 0.5 * springCoeff(displacement)
-        val force = if (l > MIN_DISTANCE) { d * (coeff / l) } else { Vector.random * coeff }
+        val force = if (l > MIN_DISTANCE) { d * (coeff / l) } else { Vector.random(rnd) * coeff }
         edge.source.force += force
         edge.target.force -= force
       }
-
     }
 
   }
 
-
-  override private[layout] def step(): Unit = {
-    withLayers { (n, displacement) => n.move(Vector(0, -0.1 * displacement)) }
-    super.step()
+  override private[layout] def step(temperature: Double): Unit = {
+    withLayers { (n, displacement) => n.move(Vector(0, -temperature*displacement)) }
+    super.step(temperature)
   }
 
-  override def computeForces(quadTree: QuadTree.Quad): Unit = {
+  override def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit = {
     computeLayers(quadTree)
-    computeSprings(quadTree)
-    computeRepulsion(quadTree)
+    computeSprings(quadTree, temperature)
+    computeRepulsion(quadTree, temperature)
+    computeDirections(quadTree, temperature)
     computeGravityToCenter(quadTree)
   }
 

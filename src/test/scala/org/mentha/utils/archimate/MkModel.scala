@@ -39,8 +39,11 @@ class MkModel {
     Thread.sleep(150)
 
     if (finish) {
-      connected.foreach(_ => terminate())
       closed.foreach(_ => println("closed"))
+      connected.onComplete(_ => {
+        Thread.sleep(500)
+        terminate()
+      })
     }
   }
 

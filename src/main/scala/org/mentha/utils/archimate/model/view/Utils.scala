@@ -32,8 +32,7 @@ object Vector {
   }
 
   /** @return random unity vector */
-  def random: Vector = {
-    val rnd = new java.util.Random
+  def random(rnd: java.util.Random, length: Double = 1.0d): Vector = {
     var v1 = 0.0d
     var v2 = 0.0d
     var s = 0.0d
@@ -42,7 +41,7 @@ object Vector {
       v2 = 2 * rnd.nextDouble - 1
       s = v1 * v1 + v2 * v2
     } while ( s >= 1 || s == 0 )
-    val multiplier = 1.0d / Math.sqrt(s)
+    val multiplier = length / Math.sqrt(s)
     Vector(x = v1 * multiplier, y = v2 * multiplier)
   }
 

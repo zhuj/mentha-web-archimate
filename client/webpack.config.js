@@ -1,52 +1,50 @@
-// http://webpack.github.io/docs/configuration.html
-// http://webpack.github.io/docs/webpack-dev-server.html
-var app_root = 'src'; // the app root folder: src, src_users, etc
-var path = require('path');
-var CleanWebpackPlugin = require('clean-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
 
-// TODO: use https://github.com/postcss/autoprefixer
-// TODO: use https://github.com/postcss/postcss#plugins
+const app_root = 'src'; // the app root folder: src, src_users, etc
 
 module.exports = {
-  app_root: app_root, // the app root folder, needed by the other webpack configs
   entry: [
-    // http://gaearon.github.io/react-hot-loader/getstarted/
-    'webpack-dev-server/client?http://localhost:8080',
-    'webpack/hot/only-dev-server',
     'babel-polyfill',
     __dirname + '/' + app_root + '/index.js',
   ],
+  devtool: 'inline-source-map',
   output: {
     path: __dirname + '/public/js',
     publicPath: 'js/',
     filename: 'bundle.js',
   },
+  devServer: {
+    contentBase: __dirname + '/public',
+    hot: true,
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loaders: ['react-hot', 'babel'],
-        exclude: /node_modules/,
+        exclude: /(node_modules|bower_components)/,
+        use: ['react-hot-loader', 'babel-loader'],
       },
       {
-        // https://github.com/jtangelder/sass-loader
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass'],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+        // use: ExtractTextPlugin.extract({
+        //   fallback: 'style-loader',
+        //   use: ['css-loader', 'sass-loader']
+        // })
       },
       {
         test: /\.css$/,
-        loaders: ['style', 'css'],
+        use: ['style-loader', 'css-loader'],
+        // use: ExtractTextPlugin.extract({
+        //   fallback: 'style-loader',
+        //   use: ['css-loader']
+        // })
       }
-    ],
-  },
-  devServer: {
-    contentBase: __dirname + '/public',
-  },
-  plugins: [
-    new CleanWebpackPlugin(['css/main.css', 'js/bundle.js'], {
-      root: __dirname + '/public',
-      verbose: true,
-      dry: false, // true for simulation
-    }),
-  ],
+    ]
+  }
 };
+

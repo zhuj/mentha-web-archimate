@@ -300,7 +300,7 @@ package object json {
 
   def fillRelationship(rel: Relationship, json: JsValue): Relationship = fillArchimateObject(rel, json) match {
     case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess }; a
-    case i: InfluenceRelationship => (json \ "influences").validate[String].foreach { i.withInfluence }; i
+    case i: InfluenceRelationship => (json \ "influence").validate[String].foreach { i.withInfluence }; i
     case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlow }; f
     case r => r
   }

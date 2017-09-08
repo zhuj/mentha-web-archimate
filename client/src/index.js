@@ -7,16 +7,15 @@ import { router } from "./router.js";
 
 import blue from 'material-ui/colors/blue';
 import pink from 'material-ui/colors/pink';
-import createMuiTheme from 'material-ui/styles/theme';
-import createPalette from 'material-ui/styles/palette';
+import { createMuiTheme } from 'material-ui/styles';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const theme = createMuiTheme({
-  palette: createPalette({
+  palette: {
     primary: blue,
-    accent: pink,
+    secondary: pink,
     type: 'dark',
-  }),
+  }
 });
 
 // render the main component

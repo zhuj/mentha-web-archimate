@@ -40,13 +40,18 @@ export class ModelLinkWidget extends BaseLinkWidget {
     }
   }
 
-  getHint(node) {
-    if (!node) { return null; }
+  getConceptInfo(link) {
+    if (link) {
+      const obj = link.viewObject;
+      if (obj) {
+        return obj['.conceptInfo'];
+      }
+    }
+    return null;
+  }
 
-    let obj = node.viewObject;
-    if (!obj) { return null; }
-
-    obj = obj['.conceptInfo'];
+  getHint(link) {
+    const obj = this.getConceptInfo(link);
     if (!obj) { return null; }
 
     const meta = allMeta[obj['_tp']];
