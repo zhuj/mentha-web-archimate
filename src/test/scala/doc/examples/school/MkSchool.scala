@@ -46,6 +46,7 @@ object MkSchool {
       in { learningView("Learning: #. Basics: Learner has a Goal") }
         .add { $learnerGoalAssoc }
         .connectNotes { $learnerGoal } { "The Goal (Driver) which motivates the Learner." }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -54,6 +55,7 @@ object MkSchool {
         .add { $learnerGoalAssoc }.connectNotes { $learnerGoal } { "The motivator." }
         .add { $learnerSkillsReqAssoc }.connectNotes { $learnerSkillsReq } { "Skills, Knowledge and Experience could help." }
         .add { $learnerSkillReqInfluencesLearnerGoal }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -69,6 +71,7 @@ object MkSchool {
         .add { $learnerSkillReqInfluencesLearnerGoal }
         .add { $learningInfluencesLearnerSkillsReq }
         .connectNotes { $learning } { "Learning produces necessary Skills, Knowledge and Experience." }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -82,6 +85,7 @@ object MkSchool {
         .add { $learnerAssignedToLearning }
         .add { $learnerSkillsReqAssoc }
         .add { $learningInfluencesLearnerSkillsReq }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -92,6 +96,7 @@ object MkSchool {
       in { learningView("Learning: #. Education Overview (1)") }
         .add { $teacherAssignedToEduProcess }
         .add { $learnerAssignedToEduProcess }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -107,6 +112,7 @@ object MkSchool {
         .add { $teacherAssignedToTeaching }
         .add { $learnerAssignedToLearning }
         .add { $teachingFlowsKnowledgeToLearning }
+        .resizeNodesToTitle()
         .layout()
     }
 
@@ -117,6 +123,7 @@ object MkSchool {
         .add { $teachingFlowsKnowledgeToLearning }
         .add { $learnerSkillsReqAssoc }
         .add { $learningInfluencesLearnerSkillsReq }
+        .resizeNodesToTitle()
         .layout()
     }
   }

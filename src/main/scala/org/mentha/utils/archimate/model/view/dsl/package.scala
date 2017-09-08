@@ -237,7 +237,7 @@ package object dsl {
 
     def node[T <: NodeConcept](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
     def edge[T <: Relationship](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
-    def notes(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
+    def notes(text: String): ViewNotes = view.add { new ViewNotes withText { text } }
     def connect(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
 
     def connect(left: ViewObject, right: Concept): ViewConnection = connect(left, view.attach(right))
@@ -251,6 +251,20 @@ package object dsl {
 
     def connectNotes(concept: Concept)(text: String): this.type = {
       connect(concept, notes(text))
+      this
+    }
+
+    def placeLikeBefore(implicit model: Model): this.type = {
+      for (node <- view.nodes) {
+        val last = model.views
+          .collect { case v if v ne view => v._objects.get[ViewNode](node.id) }
+          .flatten
+          .lastOption
+        last match {
+          case Some(l) => node withPosition { l.position } withSize { l.size }
+          case _ =>
+        }
+      }
       this
     }
 
@@ -291,7 +305,6 @@ package object dsl {
     def layout(resize: Boolean = true): this.type = {
       if (resize) { resizeNodesToTitle() }
       new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayoutF(view).layout()
-//      new org.mentha.utils.archimate.model.view.layout.SimpleSpringLayoutF(view).layout()
       this
     }
 
