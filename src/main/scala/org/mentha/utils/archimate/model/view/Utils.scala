@@ -36,10 +36,11 @@ object Vector {
     var v1 = 0.0d
     var v2 = 0.0d
     var s = 0.0d
+    v2 = 2.0d * rnd.nextDouble - 1.0d
     do {
-      v1 = 2 * rnd.nextDouble - 1
-      v2 = 2 * rnd.nextDouble - 1
-      s = v1 * v1 + v2 * v2
+      v1 = v2
+      v2 = 2.0d * rnd.nextDouble - 1.0d
+      s = v1*v1 + v2*v2
     } while ( s >= 1 || s == 0 )
     val multiplier = length / Math.sqrt(s)
     Vector(x = v1 * multiplier, y = v2 * multiplier)

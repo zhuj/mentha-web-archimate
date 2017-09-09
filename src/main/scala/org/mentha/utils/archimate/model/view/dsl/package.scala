@@ -235,36 +235,69 @@ package object dsl {
     // TODO: def apply(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
     // TODO: def apply(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
 
+    // Nouns for objects
+
     def node[T <: NodeConcept](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
     def edge[T <: Relationship](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
     def notes(text: String): ViewNotes = view.add { new ViewNotes withText { text } }
-    def connect(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
+    def connection(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
 
-    def connect(left: ViewObject, right: Concept): ViewConnection = connect(left, view.attach(right))
-    def connect(left: Concept, right: ViewObject): ViewConnection = connect(view.attach(left), right)
-    def connect(left: Concept, right: Concept): ViewConnection = connect(view.attach(left), view.attach(right))
+    @inline def connection(left: ViewObject, right: Concept): ViewConnection = connection(left, view.attach(right))
+    @inline def connection(left: Concept, right: ViewObject): ViewConnection = connection(view.attach(left), right)
 
-    def add(concept: Concept): this.type = {
-      view.attach(concept)
-      this
-    }
+    // Verbs for flows
 
-    def connectNotes(concept: Concept)(text: String): this.type = {
-      connect(concept, notes(text))
-      this
-    }
-
-    def placeLikeBefore(implicit model: Model): this.type = {
-      for (node <- view.nodes) {
-        val last = model.views
-          .collect { case v if v ne view => v._objects.get[ViewNode](node.id) }
-          .flatten
-          .lastOption
-        last match {
-          case Some(l) => node withPosition { l.position } withSize { l.size }
-          case _ =>
-        }
+    def add(v: View): this.type = {
+      v._objects.values.foreach {
+        case e: ViewConcept[_] => add(e.concept)
+        case _ =>
       }
+      this
+    }
+
+    def del(concept: Concept): this.type = {
+      view._objects.values
+        .collect {
+          case n: ViewNodeConcept[_] if (concept eq n.concept) => n
+          case r: ViewRelationship[_] if (concept eq r.concept) || (concept eq r.concept.source) || (concept eq r.concept.target) => r
+        }
+        .foreach { _.markAsDeleted() }
+      this
+    }
+
+    @inline def add(concept: Concept): this.type = { view.attach(concept); this }
+    @inline def addNotes(concept: Concept)(text: String): this.type = { connection(concept, notes(text)); this }
+    @inline def connect(left: ViewObject, right: ViewObject): this.type = { connection(left, right); this }
+    @inline def connect(left: ViewObject, right: Concept): this.type = { connection(left, right); this }
+    @inline def connect(left: Concept, right: ViewObject): this.type = { connection(left, right); this }
+
+    /** Experimental API */
+    def placeLikeBefore()(implicit model: Model): this.type = {
+      val nodes = view.nodes.collect { case n: ViewNodeConcept[_] => n }.toVector
+      val conceptIds = nodes.map { _.concept.id }.toSet
+
+      val head = model
+        .views.zipWithIndex
+        .collect {
+          case (v, idx) if v ne view =>
+            val count = v.nodes.count {
+              case n: ViewNodeConcept[_] => conceptIds.contains(n.concept.id)
+              case _ => false
+            }
+            (count, idx, v)
+        }
+        .toVector
+        .sortBy { case (count, idx, _) => (-count, idx) }
+        .headOption
+
+      for {
+        (_, _, v) <- head
+        node <- nodes
+        l <- v.nodes.collectFirst { case n: ViewNodeConcept[_] if n.concept.id == node.concept.id => n }
+      } {
+        node withPosition { l.position } withSize { l.size }
+      }
+
       this
     }
 
@@ -302,9 +335,15 @@ package object dsl {
       this
     }
 
-    def layout(resize: Boolean = true): this.type = {
-      if (resize) { resizeNodesToTitle() }
+    def layout(): this.type = this.layoutLayered()
+
+    def layoutLayered(): this.type = {
       new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayoutF(view).layout()
+      this
+    }
+
+    def layoutSimple(): this.type = {
+      new org.mentha.utils.archimate.model.view.layout.SimpleSpringLayoutF(view).layout()
       this
     }
 

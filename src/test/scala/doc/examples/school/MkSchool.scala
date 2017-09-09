@@ -45,16 +45,18 @@ object MkSchool {
     {
       in { learningView("Learning: #. Basics: Learner has a Goal") }
         .add { $learnerGoalAssoc }
-        .connectNotes { $learnerGoal } { "The Goal (Driver) which motivates the Learner." }
+        .addNotes { $learnerGoal } { "The Goal (Driver) which motivates the Learner." }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
 
     {
       in { learningView("Learning: #. Basics: Skills are required") }
-        .add { $learnerGoalAssoc }.connectNotes { $learnerGoal } { "The motivator." }
-        .add { $learnerSkillsReqAssoc }.connectNotes { $learnerSkillsReq } { "Skills, Knowledge and Experience could help." }
+        .add { $learnerGoalAssoc }.addNotes { $learnerGoal } { "The motivator." }
+        .add { $learnerSkillsReqAssoc }.addNotes { $learnerSkillsReq } { "Skills, Knowledge and Experience could help." }
         .add { $learnerSkillReqInfluencesLearnerGoal }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
@@ -70,7 +72,8 @@ object MkSchool {
         .add { $learnerSkillsReqAssoc }
         .add { $learnerSkillReqInfluencesLearnerGoal }
         .add { $learningInfluencesLearnerSkillsReq }
-        .connectNotes { $learning } { "Learning produces necessary Skills, Knowledge and Experience." }
+        .addNotes { $learning } { "Learning produces necessary Skills, Knowledge and Experience." }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
@@ -85,6 +88,7 @@ object MkSchool {
         .add { $learnerAssignedToLearning }
         .add { $learnerSkillsReqAssoc }
         .add { $learningInfluencesLearnerSkillsReq }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
@@ -96,6 +100,7 @@ object MkSchool {
       in { learningView("Learning: #. Education Overview (1)") }
         .add { $teacherAssignedToEduProcess }
         .add { $learnerAssignedToEduProcess }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
@@ -112,6 +117,7 @@ object MkSchool {
         .add { $teacherAssignedToTeaching }
         .add { $learnerAssignedToLearning }
         .add { $teachingFlowsKnowledgeToLearning }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }
@@ -123,6 +129,7 @@ object MkSchool {
         .add { $teachingFlowsKnowledgeToLearning }
         .add { $learnerSkillsReqAssoc }
         .add { $learningInfluencesLearnerSkillsReq }
+        .placeLikeBefore()
         .resizeNodesToTitle()
         .layout()
     }

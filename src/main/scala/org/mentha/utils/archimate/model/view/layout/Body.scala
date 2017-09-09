@@ -108,6 +108,10 @@ object Bounds {
         max_X = Math.max(max_X, b.max_X)
         max_Y = Math.max(max_Y, b.max_Y)
       }
+      require(java.lang.Double.isFinite(min_X))
+      require(java.lang.Double.isFinite(max_X))
+      require(java.lang.Double.isFinite(min_Y))
+      require(java.lang.Double.isFinite(max_Y))
       Bounds(min_X, min_Y, max_X, max_Y)
     }
   }

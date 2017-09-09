@@ -321,7 +321,7 @@ export class DefaultLinkWidget extends React.Component {
 
   drawTitleText(link, title, anchor, dx, offset, className) {
     return (!title) ? null : (
-      <text textAnchor={anchor} dx={dx} dy={-4}>
+      <text textAnchor={anchor} dx={dx} dy={-4} className="title">
         <textPath href={`#${link.id}-path`} startOffset={offset} className={className}>{title}</textPath>
       </text>
     )
@@ -334,7 +334,7 @@ export class DefaultLinkWidget extends React.Component {
   render() {
     const { link } = this.props;
     return (
-      <g className={this.getClassName(link)}>
+      <g className={'link ' + this.getClassName(link)}>
         {this.drawHint(link)}
         {this.drawTitle(link)}
         {this.drawLine(link)}

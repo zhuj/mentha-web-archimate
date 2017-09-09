@@ -29,3 +29,10 @@ final case class Estimation(o: Double, m: Double, p: Double) {
   require(!m.isNaN && o <= m)
   require(!p.isNaN && m <= p)
 }
+
+object Estimation {
+
+
+
+
+}

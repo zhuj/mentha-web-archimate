@@ -3,7 +3,7 @@ package org.mentha.utils.archimate.model
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.edges._
-import org.mentha.utils.archimate.model.edges.impl.{AccessRelationship, FlowRelationship, InfluenceRelationship}
+import org.mentha.utils.archimate.model.edges.impl.{AccessRelationship, AssociationRelationship, FlowRelationship, InfluenceRelationship}
 import org.mentha.utils.archimate.model.hash.Hash
 import org.mentha.utils.archimate.model.view._
 
@@ -296,6 +296,7 @@ package object json {
         case a: AccessRelationship if a.access != null => Json.obj("access" -> a.access)
         case i: InfluenceRelationship if i.influence != null => Json.obj("influence" -> i.influence)
         case f: FlowRelationship if f.flow != null => Json.obj("flows" -> f.flow)
+        case f: AssociationRelationship if f.predicate != null => Json.obj("predicate" -> f.predicate)
         case _ => JsonObject.empty
       }
     }
@@ -305,6 +306,7 @@ package object json {
     case a: AccessRelationship => (json \ "access").validate[AccessType].foreach { a.withAccess }; a
     case i: InfluenceRelationship => (json \ "influence").validate[String].foreach { i.withInfluence }; i
     case f: FlowRelationship => (json \ "flows").validate[String].foreach { f.withFlow }; f
+    case f: AssociationRelationship => (json \ "predicate").validate[String].foreach { f.withPredicate }; f
     case r => r
   }
 
