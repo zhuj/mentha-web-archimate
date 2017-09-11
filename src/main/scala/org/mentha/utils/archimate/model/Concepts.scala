@@ -92,6 +92,7 @@ abstract class Relationship(val source: Concept, val target: Concept)
     if (!meta.isLinkPossible(source.meta, target.meta)) {
       builder += s"Relationship `${meta.name}` is not possible between `${source.meta.name}` and `${target.meta.name}`"
     }
+    // TODO: make sure it's recursion safe
     target.checkIncomingRelationship(this).foreach { v => builder += v }
     source.checkOutgoingRelationship(this).foreach { v => builder += v }
     builder.result()
@@ -99,20 +100,9 @@ abstract class Relationship(val source: Concept, val target: Concept)
 
   @inline override def validationErrors: List[String] = _validationErrors
 
+  private[model] var _derivation: Derivation = Derivation(this)
+  @inline def derivation: Derivation = _derivation
+
   override def meta: RelationshipMeta[Relationship]
-
-  // An association relationship is always allowed between two elements, or between a relationship and an element.
-  // No other relationship is possible between relationships.
-  override private[model] def checkIncomingRelationship(incoming: Relationship) = incoming match {
-    case _: AssociationRelationship => Nil
-    case _ => List(s"Relationship concept is not possible as a target for `${incoming.meta.name}`")
-  }
-
-  // An association relationship is always allowed between two elements, or between a relationship and an element.
-  // No other relationship is possible between relationships.
-  override private[model] def checkOutgoingRelationship(outgoing: Relationship) = outgoing match {
-    case _: AssociationRelationship => Nil
-    case _ => List(s"Relationship concept is not possible as a source for `${outgoing.meta.name}`")
-  }
 
 }

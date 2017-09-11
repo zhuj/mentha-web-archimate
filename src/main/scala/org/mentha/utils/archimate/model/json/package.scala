@@ -94,6 +94,7 @@ package object json {
     
     val `deleted` = "deleted"
     val `invalid` = "invalid"
+    val `derived` = "derived"
   }
 
   implicit val pointWrites: Writes[Vector] = new Writes[Vector] {
@@ -200,7 +201,7 @@ package object json {
       .foreach { errors => builder += (names.`invalid` -> errors) }
 
 
-    builder ++= fields
+    builder ++= fields.filter { _ != null }
 
     Json.obj(builder.result():_*)
   }
@@ -284,10 +285,12 @@ package object json {
 
   implicit val edgeConceptW = new Writes[EdgeConcept] {
 
+    val jsTrueWrapper: JsValueWrapper = true
     override def writes(o: EdgeConcept): JsValue = writeArchimateObject(
       o,
       names.`src` -> o.source.id,
-      names.`dst` -> o.target.id
+      names.`dst` -> o.target.id,
+      Some(o).collect { case r: Relationship if r.derivation.derived => names.`derived` -> jsTrueWrapper }.orNull
     ) ++ {
       o match {
         case a: AccessRelationship if a.access != null => Json.obj("access" -> a.access)
