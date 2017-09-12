@@ -36,7 +36,7 @@ object generator {
           (s \@ "concept"),
           (t \@ "concept"),
           (t \@ "relations" + t \@ "derived").filterNot(_ == association).toSet.mkString("").sorted,
-          (t \@ "derived").filterNot(_ == association).toSet
+          Set[Char]() /*(t \@ "derived").filterNot(_ == association).toSet*/ // TODO: keep only derived relations
         )
       }
     }
@@ -455,6 +455,14 @@ object generator {
 
     // validator
     {
+      val allJunctions = Seq("orJunction", "andJunction").toVector
+      val allRelationships = relationshipKeys.values.map { StringUtils.uncapitalize }.toVector
+      def expand(concept: String): Seq[String] = concept match {
+        case "junction" => allJunctions
+        case "relationship" => allRelationships
+        case _ => List(concept)
+      }
+
       val relsMap = rels
         .map { case (src, dst, r1, r2) => (
           StringUtils.uncapitalize(src),
@@ -462,7 +470,8 @@ object generator {
           r1.sorted,
           r2.mkString("").sorted
         ) }
-        .filter { case (src, dst, _, _) => (src != "junction") && (dst != "junction") }
+        .flatMap { case (src, dst, r1, r2) => expand(src).map { s => (s, dst, r1, r2)} }
+        .flatMap { case (src, dst, r1, r2) => expand(dst).map { d => (src, d, r1, r2)} }
         .groupBy { case (src, _, _, _) => src }
 
       // possible relationships
@@ -500,7 +509,10 @@ object generator {
         writer.println("  import CompositionElements._")
         writer.println()
 
-        writer.println("  type EMeta = validator.EMeta")
+        writer.println("  import RelationshipConnectors._")
+        writer.println()
+
+        writer.println("  type CMeta = validator.CMeta")
         writer.println("  type RMeta = validator.RMeta")
         writer.println("  type RSet = Set[RMeta]")
         writer.println()
@@ -515,7 +527,7 @@ object generator {
           val stream = new StringBuilderWriter(4096)
           val writer = new PrintWriter(stream)
           for {(src, items) <- relsMap} {
-            writer.println(s"  private def ${src}Data: Map[(EMeta, EMeta), (RSet, RSet)] = Map(")
+            writer.println(s"  private def ${src}Data: Map[(CMeta, CMeta), (RSet, RSet)] = Map(")
             for {(_, dst, r1, r2) <- items} {
               combinations += r1
               combinations += r2
@@ -535,7 +547,7 @@ object generator {
         writer.println(dataStream.toString)
         writer.println()
 
-        writer.println("  val data: Map[(EMeta, EMeta), (RSet, RSet)] = Seq(")
+        writer.println("  val data: Map[(CMeta, CMeta), (RSet, RSet)] = Seq(")
         for {(src, _) <- relsMap} {
           writer.println(s"   ${src}Data,")
         }
@@ -549,6 +561,40 @@ object generator {
           "UTF-8"
         )
       }
+
+      // client restrictions
+      {
+
+        val stream = new StringBuilderWriter(4096)
+        val writer = new PrintWriter(stream)
+
+        import edges.validator
+        import play.api.libs.json._
+
+
+        val json = Json.toJsObject(
+          validator.data.data.map { case ((s,d), (all, _)) => s"${s.name}-${d.name}" -> all.map { _.key }.mkString("").sorted }
+        )
+
+        writer.println("export const constraints = ({")
+
+        for {(src, items) <- relsMap} {
+          for {(_, dst, r1, r2) <- items} {
+            writer.println(s"  '${src}-${dst}': '${r1}',")
+          }
+        }
+
+        writer.println("});")
+
+        writer.flush()
+        FileUtils.write(
+          new java.io.File(s"client/src/components/view/edges/constraints.js"),
+          stream.toString,
+          "UTF-8"
+        )
+
+      }
+
     }
   }
 
@@ -616,7 +662,6 @@ object generator {
         "UTF-8"
       )
     }
-
 
   }
 

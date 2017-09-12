@@ -196,9 +196,9 @@ object Motivation {
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 
@@ -236,10 +236,10 @@ object Motivation {
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 
@@ -277,10 +277,10 @@ object Motivation {
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 

@@ -19,37 +19,9 @@ object clientGenerator {
     // writeLinks()
     // writeNodes()
     // writeNodesScss()
-    // writeLinksRestrictions()
 
   }
 
-
-
-//  private def writeLinksRestrictions(): Unit = {
-//
-//    val stream = new StringBuilderWriter(4096)
-//    val writer = new PrintWriter(stream)
-//
-//    import edges.validator
-//    import play.api.libs.json._
-//
-//    val json = Json.toJsObject(
-//      validator.data.data.map { case ((s,d), (all, _)) => s"${s.name}-${d.name}" -> all.map { _.key }.mkString("").sorted }
-//    )
-//
-//    writer.println("export const constraints = (")
-//    writer.println(json.toString())
-//    writer.println(");")
-//
-//    writer.flush()
-//    FileUtils.write(
-//      new java.io.File(s"client/src/components/view/edges/constraints.js"),
-//      stream.toString,
-//      "UTF-8"
-//    )
-//
-//
-//  }
 
 
 //  private def writeNodesScss(): Unit = {

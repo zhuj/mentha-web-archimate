@@ -33,11 +33,10 @@ export class ModelLinkWidget extends BaseLinkWidget {
   constructor(props) { super(props); }
   getBaseClassName(link) { return super.getClassName(); }
   getClassName(link) {
-    if (!!this.props.conceptInfo['invalid']) {
-      return this.getBaseClassName(link) + " invalid";
-    } else {
-      return this.getBaseClassName(link);
-    }
+    let classes = this.getBaseClassName(link);
+    if (!!this.props.conceptInfo['invalid']) { classes += " invalid"; }
+    if (!!this.props.conceptInfo['derived']) { classes += " derived"; }
+    return classes;
   }
 
   getConceptInfo(link) {

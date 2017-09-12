@@ -150,3 +150,7 @@ typings/
 .env
 
 
+# Archimate Spec files
+src/main/resources/archimate/Spec301AppendixB/*.png
+src/main/resources/archimate/Spec301AppendixB/.tmp
+src/main/resources/archimate/Spec301AppendixB/test

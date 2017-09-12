@@ -22,25 +22,25 @@ object Strategy {
     def `aggregates`(dst: Resource): AggregationRelationship = _aggregates(src, dst)(model)
 
     def `serves`(dst: Junction): ServingRelationship = _serves(src, dst)(model)
+    def `serves`(dst: Capability): ServingRelationship = _serves(src, dst)(model)
+    def `serves`(dst: CourseOfAction): ServingRelationship = _serves(src, dst)(model)
     def `serves`(dst: Grouping): ServingRelationship = _serves(src, dst)(model)
-    @derived def `serves`(dst: Capability): ServingRelationship = _serves(src, dst)(model)
-    @derived def `serves`(dst: CourseOfAction): ServingRelationship = _serves(src, dst)(model)
 
     def `specializes`(dst: Junction): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Grouping): SpecializationRelationship = _specializes(src, dst)(model)
     def `specializes`(dst: Resource): SpecializationRelationship = _specializes(src, dst)(model)
 
     def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
+    def `triggers`(dst: Capability): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
-    @derived def `triggers`(dst: Capability): TriggeringRelationship = _triggers(src, dst)(model)
-    @derived def `triggers`(dst: Resource): TriggeringRelationship = _triggers(src, dst)(model)
+    def `triggers`(dst: Resource): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
       def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: Capability): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: CourseOfAction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: Capability): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: CourseOfAction): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
     def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
@@ -49,26 +49,26 @@ object Strategy {
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Outcome): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Outcome): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: CourseOfAction): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: CourseOfAction): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 
@@ -96,38 +96,38 @@ object Strategy {
     def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Capability): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Grouping): TriggeringRelationship = _triggers(src, dst)(model)
-    @derived def `triggers`(dst: Resource): TriggeringRelationship = _triggers(src, dst)(model)
+    def `triggers`(dst: Resource): TriggeringRelationship = _triggers(src, dst)(model)
 
     def `flows`($0: String) = new {
       def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Capability): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: CourseOfAction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: CourseOfAction): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Outcome): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Outcome): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: CourseOfAction): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 
@@ -157,33 +157,33 @@ object Strategy {
 
     def `flows`($0: String) = new {
       def `to`(dst: Junction): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: Capability): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: CourseOfAction): FlowRelationship = _flows_to(src, dst)($0)(model)
       def `to`(dst: Grouping): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: Capability): FlowRelationship = _flows_to(src, dst)($0)(model)
-      @derived def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
+      def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Constraint): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Grouping): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Outcome): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
       def `in`(dst: Requirement): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Assessment): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Driver): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Goal): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Meaning): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Principle): InfluenceRelationship = _influences_in(src, dst)($0)(model)
-      @derived def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
+      def `in`(dst: Value): InfluenceRelationship = _influences_in(src, dst)($0)(model)
     }
 
     def `realizes`(dst: Junction): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Constraint): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Grouping): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Outcome): RealizationRelationship = _realizes(src, dst)(model)
+    def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
     def `realizes`(dst: Requirement): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Goal): RealizationRelationship = _realizes(src, dst)(model)
-    @derived def `realizes`(dst: Principle): RealizationRelationship = _realizes(src, dst)(model)
 
   }
 }
