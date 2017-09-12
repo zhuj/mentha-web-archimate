@@ -37,8 +37,8 @@ object MkElements extends MkModel {
         val vn1 = in(view) notes {  (el \ "info").map { _.text }.mkString("\n") } scaleWidth(4) scaleHeight (1.2) place(directions.Right, ve)
         //val vn2 = in(view) notes {  (el \ "text").map { _.text }.mkString("\n") } scaleWidth(10) scaleHeight(2.5) place(directions.Right, vn1)
 
-        in(view) connect ( ve, vn1 )
-        //in(view) connect ( vn1, vn2 )
+        in(view) connection ( ve, vn1 )
+        //in(view) connection ( vn1, vn2 )
 
       }
     }

@@ -113,6 +113,21 @@
       }
     }
 
+    g.link {
+      text {
+        > textpath {
+          font-family: Arial;
+          font-size: 10px;
+          fill: lightgray;
+        }
+        cursor: default;
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    }
 
     g.x-link {
       cursor: default;

@@ -1,6 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
-
 import { ModelLinkWidget } from '../BaseLinkWidget'
 
 export const TYPE='accessRelationship';
@@ -14,5 +12,20 @@ export class AccessRelationshipWidget extends ModelLinkWidget {
     }
     return TYPE;
   }
+  // drawTitle(link) {
+  //   const conceptInfo = this.getConceptInfo(link);
+  //   if (conceptInfo) {
+  //     const fullTitle = (a) => {
+  //       switch (a) {
+  //         case "r": return "reads";
+  //         case "w": return "writes";
+  //         case "rw": return "reads and writes";
+  //       }
+  //       return a;
+  //     };
+  //     return this.drawTitleText(link, fullTitle(conceptInfo['access']), "middle", 0, "50%");
+  //   }
+  //   return null;
+  // }
 }
 

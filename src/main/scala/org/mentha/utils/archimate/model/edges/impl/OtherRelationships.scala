@@ -13,9 +13,13 @@ import org.mentha.utils.archimate.model.edges._
  * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap05.html#_Toc489946003 AssociationRelationship ArchiMate® 3.0 Specification ]]
  */
 @javax.annotation.Generated(Array("org.mentha.utils.archimate.model.generator$"))
-final class AssociationRelationship(source: Concept, target: Concept)
+final class AssociationRelationship(source: Concept, target: Concept)(var predicate: String = null)
   extends OtherRelationship(source: Concept, target: Concept) {
   @inline override def meta: RelationshipMeta[AssociationRelationship] = OtherRelationships.associationRelationship
+  @inline def withPredicate(predicate: String): this.type = {
+    this.predicate = predicate
+    this
+  }
 }
 
 /**
@@ -39,7 +43,7 @@ object OtherRelationships {
   case object associationRelationship extends RelationshipMeta[AssociationRelationship] {
     override final def key: Char = 'o'
     override final def name: String = "associationRelationship"
-    override final def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)
+    override final def newInstance(source: Concept, target: Concept): AssociationRelationship = new AssociationRelationship(source, target)()
   }
   case object specializationRelationship extends RelationshipMeta[SpecializationRelationship] {
     override final def key: Char = 's'

@@ -53,11 +53,16 @@ export class ModelLinkWidget extends BaseLinkWidget {
     const obj = this.getConceptInfo(link);
     if (!obj) { return null; }
 
-    const meta = allMeta[obj['_tp']];
+    const tp = obj['_tp'];
+    const meta = allMeta[tp];
     if (!!meta) {
+      // let specs = "";
+      // if (tp === 'accessRelationship') { specs = `(${obj['access']})`; }
+      // else if (tp === 'influenceRelationship') { specs = `(${obj['influence']})`; }
+      // else if (tp === 'flowRelationship') { specs = `(${obj['flows']})`; }
       return `${meta['name']}\n * ${_.join(meta['help']['summ'])}`;
     }
-    return `${obj['_tp']}`;
+    return `${tp}`;
   }
 
 

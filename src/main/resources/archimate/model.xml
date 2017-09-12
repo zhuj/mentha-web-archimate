@@ -131,6 +131,7 @@
     <info>An association relationship models an unspecified relationship, or one that is not represented by another ArchiMate relationship.</info>
     <text>An association relationship is always allowed between two elements, or between a relationship and an element.</text>
     <text>The association relationship can be used when drawing a first high-level model where relationships are initially denoted in a generic way, and later refined to show more specific relationship types.</text>
+    <param name="predicate" type="String" default="null"/>
     <verb>associated-with</verb>
   </relationship>
 

@@ -180,6 +180,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint)
         new ViewNodeConcept[X](concept)
       }
     }
+    .markAsDeleted(false)
 
   private[model] def attach_edge[X <: Relationship](concept: X): ViewRelationship[X] = this
     .locate[X, ViewRelationship[X]](concept)
@@ -191,6 +192,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint)
         )(concept)
       }
     }
+    .markAsDeleted(false)
 
   // TODO: comment me
   def backwardDependencies(vo: ViewObject): Set[ViewObject] = Utils.backwardDependencies(vo, this.edges)

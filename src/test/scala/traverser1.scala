@@ -49,14 +49,16 @@ object traverser1 {
 
 
   import org.mentha.utils.archimate.model.traverse._
-  val traverser = new ModelTraverser(ModelTraverser.ChangesInfluence)(model)
+  val traverser = new ModelTraversing(ModelTraversing.ChangesInfluence)(model)
 
   traverser($(de))( new ModelVisitor {
-    override def visitConcept(c: Concept): Unit = {
-      println(s"visit-node: ${c.meta.name}@${c.id}")
+    override def visitVertex(vertex: Concept): Boolean = {
+      println(s"visit-node: ${vertex.meta.name}@${vertex.id}")
+      true
     }
-    override def visitEdge(from: Concept, edge: EdgeConcept, to: Concept): Unit = {
+    override def visitEdge(from: Concept, edge: EdgeConcept, to: Concept): Boolean = {
       println(s"visit-edge: ${from.meta.name}@${from.id} --~${edge.meta.name}~--> ${to.meta.name}@${to.id} ")
+      true
     }
   })
 

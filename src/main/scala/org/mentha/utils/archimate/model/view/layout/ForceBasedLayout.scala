@@ -7,18 +7,6 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] val rnd: java.util.Random = new java.util.Random(0)
 
-  @inline private[layout] final def sqr(d: Double): Double = d*d
-  @inline private[layout] final def l2(v: Vector): Double = sqr(v.x) + sqr(v.y)
-  @inline private[layout] final def reduce(vector: Vector, x: Double, y: Double): Vector = {
-    val sx = Math.signum(vector.x)
-    val sy = Math.signum(vector.y)
-    Vector(
-      x = sx * Math.max(0, Math.abs(vector.x) - Math.abs(x)),
-      y = sy * Math.max(0, Math.abs(vector.y) - Math.abs(y)),
-    )
-  }
-
-
   private[layout] val NORMAL_SIZE = View.defaultSize.mean
   private[layout] val SIZE_NORMALIZER = 1.0d / NORMAL_SIZE
 
@@ -27,6 +15,19 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] val MAX_DISTANCE = 1e+1d
   private[layout] val MAX_DISTANCE_2 = sqr(MAX_DISTANCE)
+
+  @inline private[layout] final def sqr(d: Double): Double = d*d
+  @inline private[layout] final def l2(v: Vector): Double = sqr(v.x) + sqr(v.y)
+  @inline private[layout] final def reduce(vector: Vector, x: Double, y: Double, threshold: Double=MIN_DISTANCE): Vector = {
+    val sx = Math.signum(vector.x)
+    val sy = Math.signum(vector.y)
+    val vx = Math.abs(vector.x)
+    val vy = Math.abs(vector.y)
+    Vector(
+      x = sx * Math.max(threshold * vx, vx - Math.abs(x)),
+      y = sy * Math.max(threshold * vy, vy - Math.abs(y)),
+    )
+  }
 
   private[layout] class NodeWrapper(val node: ViewNode) extends Vertex with Body {
 
@@ -120,7 +121,7 @@ abstract class ForceBasedLayout(view: View) {
   }
 
 
-  private[layout] val CENTER_GRAVITY = 1.0e-8d
+  private[layout] val CENTER_GRAVITY = 1.0e-5d
   private[layout] val DRAG = 0.1d
   private[layout] val TIMESTEP = 1.0d
 
@@ -138,10 +139,10 @@ abstract class ForceBasedLayout(view: View) {
     }
   }
 
-  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad) = {
+  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, temperature: Double) = {
     nodesSeqPar.foreach { node =>
       val d2 = l2(node.mass.center /* - quadTree.mass.center */ )
-      val normalized = node.mass.center * (Math.sqrt(d2) * CENTER_GRAVITY)
+      val normalized = node.mass.center * (d2 * CENTER_GRAVITY) * (1e-3d + temperature)
       node.force -= normalized
     }
   }
@@ -178,10 +179,9 @@ abstract class ForceBasedLayout(view: View) {
   def layout(maxIterations: Int = 1000): Unit = {
     var it = 0
     do {
-      val temperature = Math.exp(3.0 - 15.0 * it / maxIterations)
-      (0 until 10) foreach { _ => step(temperature) }
+      val temperature = Math.exp(3.0 - 10.0 * it / maxIterations)
+      (0 until 20) foreach { _ => step(temperature) }
       it += 1
-      // println(s"t=${temperature}, e=${totalEnergy}")
     } while (/*totalEnergy > ENERGY_CUTOFF &&*/ it < maxIterations)
     for { node <- nodesSeq } {
       node.node.withPosition(node.mass.center * NORMAL_SIZE)

@@ -6,7 +6,7 @@ import org.mentha.utils.archimate.model.view._
 
 import scala.annotation.tailrec
 
-class LayeredSpringLayoutF(view: View) extends SimpleSpringLayoutF(view) {
+class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
 
   private val layers = Seq(
     MotivationLayer,
@@ -31,18 +31,21 @@ class LayeredSpringLayoutF(view: View) extends SimpleSpringLayoutF(view) {
   private val LAYER_COEFFICIENT = 0.325d
   private val DIRECTION_COEFFICIENT = 0.900d
 
-  private val SIZE_BOUND = 0.2d
+  override private[layout] val SIZE_BOUND = 0.25d
 
   override val barnesHutCore = new BarnesHut(
-    d => -REPULSION_COEFFICIENT / sqr(0.5 * d),
-    reducerLength = 0.01,
+    d => {
+      val x = 0.50d * d
+      -REPULSION_COEFFICIENT / (sqr(x) * x)
+    },
+    reducerLength = 0.00,
     reducerBounds = SIZE_BOUND
   )
 
 
   private def withLayers(action: (NodeWrapper, Double) => Unit) = {
     def compute(list: List[(LayerObject, Seq[NodeWrapper])]): Unit = {
-      val border_Y = list.head._2.map { _.bounds.max_Y }.max + 2 * SPRING_LENGTH
+      val border_Y = list.head._2.map { _.bounds.max_Y }.max + 2.0 * SPRING_LENGTH
       for { t <- list.tail; n <- t._2 } {
         val displacement = n.bounds.min_Y - border_Y
         if (displacement < 0) { action(n, displacement) }
@@ -124,7 +127,8 @@ class LayeredSpringLayoutF(view: View) extends SimpleSpringLayoutF(view) {
   }
 
   override private[layout] def step(temperature: Double): Unit = {
-    withLayers { (n, displacement) => n.move(Vector(0, -temperature*displacement)) }
+    val coeff = Math.min(1.0d, 1e-4d + temperature)
+    withLayers { (n, displacement) => n.move(Vector(0, -coeff*displacement)) }
     super.step(temperature)
   }
 
@@ -133,7 +137,7 @@ class LayeredSpringLayoutF(view: View) extends SimpleSpringLayoutF(view) {
     computeSprings(quadTree, temperature)
     computeRepulsion(quadTree, temperature)
     computeDirections(quadTree, temperature)
-    computeGravityToCenter(quadTree)
+    computeGravityToCenter(quadTree, temperature)
   }
 
 

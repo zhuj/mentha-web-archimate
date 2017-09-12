@@ -2,40 +2,18 @@ package org.mentha.utils.archimate.model.view.layout
 
 import org.mentha.utils.archimate.model.view._
 
-class SimpleSpringLayoutF(view: View) extends ForceBasedLayout(view) {
+class SimpleSpringLayoutF(view: View) extends SpringLayoutF(view) {
 
-  private[layout] val SPRING_LENGTH = 0.75d
-  private[layout] val SPRING_COEFFICIENT = 2.75e-1d
-  private[layout] val REPULSION_COEFFICIENT = 1.0e-1d
+  override private[layout] val SIZE_BOUND = 0.25d
 
-  override val barnesHutCore = new BarnesHut( d => -REPULSION_COEFFICIENT / sqr(0.5d * d) )
-
-  private[layout] def springCoeff(displacement: Double) = {
-    if (displacement < 0.0) {
-      sqr(displacement) * displacement
-    } else {
-      displacement
-    }
-  }
-
-  def computeSprings(quadTree: QuadTree.Quad, temperature: Double) = for {edge <- edgesSeq } {
-    val d = edge.target.mass.center - edge.source.mass.center
-    val l = math.sqrt(l2(d))
-    val displacement = l - SPRING_LENGTH
-    if (Math.abs(displacement) > MIN_DISTANCE) {
-      val coeff = SPRING_COEFFICIENT * 0.5 * springCoeff(displacement)
-      val force = if (l > MIN_DISTANCE) { d * (coeff / l) } else { Vector.random(rnd) * coeff }
-      edge.source.force += force
-      edge.target.force -= force
-    }
-
-  }
-
-  override def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit = {
-    computeSprings(quadTree, temperature)
-    computeRepulsion(quadTree, temperature)
-    computeGravityToCenter(quadTree)
-  }
-
+  //override val barnesHutCore = new BarnesHut( d => -REPULSION_COEFFICIENT / sqr(0.5d * d) )
+  override val barnesHutCore = new BarnesHut(
+    d => {
+      val x = 0.5 * d
+      -REPULSION_COEFFICIENT / (sqr(x) * x)
+    },
+    reducerLength = 0.00,
+    reducerBounds = SIZE_BOUND
+  )
 
 }
