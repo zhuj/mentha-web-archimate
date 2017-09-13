@@ -129,10 +129,10 @@ package object dsl {
   /** Technology: A point of access where technology services offered by a node can be accessed. */
   def technologyInterface(implicit model: Model): TechnologyInterface = model.add(new TechnologyInterface)
 
-  /** Technology: A link between two or more nodes, through which these nodes can exchange data or material. */
+  /** Technology: A link between two or more nodes, through which these nodes can exchange data or material., A path is used to model the logical communication (or distribution) relations between nodes. */
   def path(implicit model: Model): Path = model.add(new Path)
 
-  /** Technology: A set of structures that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video. */
+  /** Technology: A set of structures that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video., A communication network represents the physical communication infrastructure. */
   def communicationNetwork(implicit model: Model): CommunicationNetwork = model.add(new CommunicationNetwork)
 
   /** Technology: A collection of technology behavior that can be performed by a node. */

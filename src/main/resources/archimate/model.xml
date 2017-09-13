@@ -515,6 +515,7 @@
   <element name="Path" layer="Technology" key="tph" parent="?Internal?ActiveStructureElement"> <!-- GenericElement ? !-->
     <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758052"/>
     <summ>A link between two or more nodes, through which these nodes can exchange data or material.</summ>
+    <summ>A path is used to model the logical communication (or distribution) relations between nodes.</summ>
     <info>A path represents a link between two or more nodes, through which these nodes can exchange data or material.</info>
     <text>A path is used to model the logical communication (or distribution) relations between nodes. It is realized by one or more networks, which represent the physical communication (or distribution) links. The properties (e.g., bandwidth, latency) of a path are usually aggregated from these underlying networks.</text>
     <text>A path connects two or more nodes. A path is realized by one or more networks. A path can aggregate nodes.</text>
@@ -523,6 +524,7 @@
   <element name="CommunicationNetwork" layer="Technology" key="tcn" parent="?Internal?ActiveStructureElement">
     <link src="http://pubs.opengroup.org/architecture/archimate3-doc/chap10.html#_Toc451758053"/>
     <summ>A set of structures that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.</summ>
+    <summ>A communication network represents the physical communication infrastructure.</summ>
     <info>A communication network represents a set of structures and behaviors that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.</info>
     <text>A communication network represents the physical communication infrastructure. It represents ”a set of products, concepts, and services that enable the connection of computer systems or devices for the purpose of transmitting data and other forms (e.g., voice and video) between the systems”, as defined by the TOGAF framework.</text>
     <text>A communication network connects two or more devices. The most basic communication network is a single link between two devices, but it may comprise multiple links and associated network equipment. A network has properties such as bandwidth and latency. A communication network realizes one or more paths. It embodies the physical realization of the logical path between nodes.</text>

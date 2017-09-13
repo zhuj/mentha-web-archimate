@@ -69,7 +69,7 @@ export class ModelNodeWidget extends BaseNodeWidget {
 
     const meta = allMeta[obj['_tp']];
     if (!!meta) {
-      return `${meta['name']}: «${this.getTitle(node)}»\n * ${_.join(meta['help']['summ'])}`;
+      return `${meta['name']}: «${this.getTitle(node)}»\n * ${_.join(meta['help']['summ'], "\n * ")}`;
     }
     return `${obj['_tp']}: «${this.getTitle(node)}»`;
   }

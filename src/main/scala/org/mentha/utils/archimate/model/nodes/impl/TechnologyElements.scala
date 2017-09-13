@@ -82,6 +82,7 @@ final class TechnologyInterface extends ExternalActiveStructureElement with Tech
 
 /**
  * A link between two or more nodes, through which these nodes can exchange data or material.
+ * A path is used to model the logical communication (or distribution) relations between nodes.
  * ==Overview==
  * A path represents a link between two or more nodes, through which these nodes can exchange data or material.
  * @note A path is used to model the logical communication (or distribution) relations between nodes. It is realized by one or more networks, which represent the physical communication (or distribution) links. The properties (e.g., bandwidth, latency) of a path are usually aggregated from these underlying networks.
@@ -95,6 +96,7 @@ final class Path extends InternalActiveStructureElement with TechnologyElement {
 
 /**
  * A set of structures that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.
+ * A communication network represents the physical communication infrastructure.
  * ==Overview==
  * A communication network represents a set of structures and behaviors that connects computer systems or other electronic devices for transmission, routing, and reception of data or data-based communications such as voice and video.
  * @note A communication network represents the physical communication infrastructure. It represents ”a set of products, concepts, and services that enable the connection of computer systems or devices for the purpose of transmitting data and other forms (e.g., voice and video) between the systems”, as defined by the TOGAF framework.
