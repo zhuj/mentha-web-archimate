@@ -513,7 +513,13 @@ package object json {
   def fromJsonString(jsonString: String): Model =
     fromJsonPair(Json.parse(jsonString))
 
-  def toJsonString(model: Model): String =
-    toJsonPair(model).toString()
+  def toJsonString(model: Model, pretty: Boolean = false): String = {
+    val jsonObject = toJsonPair(model)
+    if (pretty) {
+      Json.prettyPrint(jsonObject)
+    } else {
+      Json.stringify(jsonObject)
+    }
+  }
 
 }

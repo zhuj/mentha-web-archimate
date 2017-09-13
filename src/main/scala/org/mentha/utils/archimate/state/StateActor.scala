@@ -2,9 +2,11 @@ package org.mentha.utils.archimate.state
 
 import akka.actor._
 import akka.persistence._
+import com.typesafe.config.Config
 import org.mentha.utils.archimate.model._
 
 import scala.util._
+import scala.util.control.NonFatal
 
 object StateActor {
 
@@ -47,10 +49,15 @@ object StateActor {
   */
 class StateActor(val modelId: String) extends PersistentActor with ActorLogging {
 
+  private val config: Config = context.system.settings.config
   private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
   override def recovery: Recovery = Recovery.create(SnapshotSelectionCriteria.Latest)
+  override val journalPluginId: String = config.getString("akka.mentha.state.persistence.journal")
+  override val snapshotPluginId: String = config.getString("akka.mentha.state.persistence.snapshot")
   override val persistenceId: String = s"state-model-${modelId}"
+
+  private[state] val snapshotPrettyFormat: Boolean = config.getBoolean("akka.mentha.state.persistence.pretty")
 
   private[state] var state: ModelState = new ModelState( new Model().withId(modelId) )
   private[state] def setState(state: ModelState): Unit = { this.state = state }
@@ -63,7 +70,15 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   override def receiveRecover: Receive = {
     case SnapshotOffer(md, json: String) => {
-      setState(ModelState.fromJson(id = modelId, jsonString = json))
+      try {
+        setState(ModelState.fromJson(id = modelId, jsonString = json))
+      } catch {
+        case NonFatal(e) => {
+          log.error(e, e.getMessage)
+          self ! PoisonPill // An error has appeared during the initialization - just stop any activity
+        }
+      }
+      changes = 0
       // TODO: deleteMessages(md.sequenceNr)
     }
     case e: ModelState.ChangeSet => {
@@ -71,7 +86,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       changes += 1
     }
     case RecoveryCompleted => {
-      if (changes > 0) { saveSnapshot(ModelState.toJson(state)) }
+      if (changes > 0) { saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat)) }
       changes = 0
     }
   }
@@ -83,7 +98,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           case Success(response) => {
             dispatchAll(response, user)
             if (!changeSet.simple) {
-              saveSnapshot(ModelState.toJson(state))
+              saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
               changes = 0
             } else {
               changes += 1
@@ -91,7 +106,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           }
           case Failure(error) => {
             execute(user, Left(changeSet.command), error)
-            saveSnapshot(ModelState.toJson(state))
+            saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
             changes = 0
           }
         }
