@@ -75,3 +75,9 @@ tasks.withType(ScalaCompile) {
             "-Xplugin:" + configurations.scalaCompilerPlugin.asPath
     ]
 }
+
+task run(type: JavaExec, dependsOn: classes) {
+    main = 'Main'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
