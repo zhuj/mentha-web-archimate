@@ -17,7 +17,7 @@ object MkEdges extends MkModel {
 
   def main(args: Array[String]): Unit = {
 
-    implicit val space = Size(40, 10)
+    implicit val space = Size(120, 10)
     implicit val model = new Model withId "ex-edges"
     implicit val view = model.add("v-main") { new View() }
 
@@ -73,7 +73,7 @@ object MkEdges extends MkModel {
     // flowRelationship
     val o9l = in(view) node { businessEvent } place(directions.Down, o8l)
     val o9r = in(view) node { businessProcess } place(directions.Right, o9l)
-    in(view) edge { $(o9l) `flows` "smth" `to` $(o9r) }
+    in(view) edge { $(o9l) `flows` "something" `to` $(o9r) }
     in(view) connection ( o9r, in(view) notes "Flow Relationship" doubleWidth() place(directions.Right, o9r) )
 
     // specializationRelationship
@@ -85,7 +85,7 @@ object MkEdges extends MkModel {
     // associationRelationship
     val oBl = in(view) node { stakeholder } place(directions.Down, oAl)
     val oBr = in(view) node { businessEvent } place(directions.Right, oBl)
-    in(view) edge { $(oBl) `associated with` $(oBr) }
+    in(view) edge { $(oBl) `associated with` $(oBr) withPredicate "is associated with" }
     in(view) connection ( oBr, in(view) notes "Association Relationship" doubleWidth() place(directions.Right, oBr) )
 
     println(json.toJsonString(model))

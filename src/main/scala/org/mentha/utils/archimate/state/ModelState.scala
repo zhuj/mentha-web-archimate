@@ -694,8 +694,8 @@ object ModelState {
   )
 
   /** serialize to string */
-  private[state] def toJson(state: ModelState): String = {
-    json.toJsonString(state.model)
+  private[state] def toJson(state: ModelState, pretty: Boolean = false): String = {
+    json.toJsonString(state.model, pretty)
   }
 
 }
