@@ -43,9 +43,9 @@ object Strategy {
       def `to`(dst: Resource): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Capability): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Capability): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)

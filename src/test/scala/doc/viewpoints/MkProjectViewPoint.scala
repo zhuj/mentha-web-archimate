@@ -32,8 +32,8 @@ object MkProjectViewPoint extends MkModel {
 
     in(view) edge { $(wp) `flows` "smth" `to` $(wp) } routeLoop(directions.Down, 1)
     in(view) edge { $(wp) `triggers` $(wp) } routeLoop(directions.Down, 2)
-    in(view) edge { $(br) `assigned-to` $(wp) }
-    in(view) edge { $(ba) `assigned-to` $(br) }
+    in(view) edge { $(br) `assigned to` $(wp) }
+    in(view) edge { $(ba) `assigned to` $(br) }
     in(view) edge { $(wp) `realizes` $(g) }
     in(view) edge { $(wp) `realizes` $(d) }
 

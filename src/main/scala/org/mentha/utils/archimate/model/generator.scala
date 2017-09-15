@@ -189,7 +189,7 @@ object generator {
       writer.println()
 
       for { (name, (layer, _, el)) <- elements } {
-        writer.println(s"  /** ${layer}: ${ (el\"summ").map{ _.text }.mkString(", ") } */")
+        writer.println(s"  /** ${layer}: ${ (el\"summ").map{ s => StringUtils.stripEnd(s.text, ".,;") }.mkString(". ") } */")
         writer.println(s"  def ${StringUtils.uncapitalize(name)}(implicit model: Model): ${name} = model.add(new ${name})")
         writer.println()
       }
@@ -263,6 +263,7 @@ object generator {
             .groupBy { case (verb, _, _, _) => verb }
         } else {
           relationships
+            .filter { case (_, (_, rel)) => (rel \@ "key").charAt(0) != association  }
             .flatMap { case (rname, (_, rel)) => (rel \ "verb").map { verb => (verb.text, rname, "Concept", false) } }.toSeq
             .groupBy { case (verb, _, _, _) => verb }
         }
@@ -307,7 +308,7 @@ object generator {
             def writeMethod(dst: String, der: Boolean) = {
               writer.print(prefix)
               if (der) { writer.print("@derived ") }
-              writer.print(s"def `${lastPart}`")
+              writer.print(s"def `${lastPart.replace('-', ' ')}`")
               writer.print(s"(dst: ${dst}): ${rname} = _${constructor}(src, dst)")
               if (params.nonEmpty) {
                 writer.print("(")
@@ -328,7 +329,7 @@ object generator {
             writer.print(prefix)
             val param = "$" + params.size
             writer.print(s"def `${pts(0)}`")
-            writer.println(s"(${param}: ${pts(1)}) = new {")
+            writer.println(s"(${param}: ${pts(1).replace('-', ' ')}) = new {")
             _process_parts(tail, param :: params)
             writer.print(prefix)
             writer.println("}")

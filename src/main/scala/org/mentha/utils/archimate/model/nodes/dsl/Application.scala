@@ -147,13 +147,13 @@ object Application {
       def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationProcess): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationProcess): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -352,13 +352,13 @@ object Application {
       def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationProcess): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationEvent): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationFunction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationInteraction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationProcess): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)
@@ -552,9 +552,9 @@ object Application {
       def `to`(dst: TechnologyService): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: ApplicationService): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Grouping): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)

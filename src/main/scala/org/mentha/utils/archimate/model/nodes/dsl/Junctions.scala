@@ -30,9 +30,6 @@ object Junctions {
       def `of`(dst: Concept): AccessRelationship = _accesses_of(src, dst)($0)(model)
     }
 
-    def `associated-with`(dst: Junction): AssociationRelationship = _associated_with(src, dst)(model)
-    def `associated-with`(dst: Concept): AssociationRelationship = _associated_with(src, dst)(model)
-
     def `triggers`(dst: Junction): TriggeringRelationship = _triggers(src, dst)(model)
     def `triggers`(dst: Concept): TriggeringRelationship = _triggers(src, dst)(model)
 
@@ -41,8 +38,8 @@ object Junctions {
       def `to`(dst: Concept): FlowRelationship = _flows_to(src, dst)($0)(model)
     }
 
-    def `assigned-to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
-    def `assigned-to`(dst: Concept): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Junction): AssignmentRelationship = _assigned_to(src, dst)(model)
+    def `assigned to`(dst: Concept): AssignmentRelationship = _assigned_to(src, dst)(model)
 
     def `influences`($0: String) = new {
       def `in`(dst: Junction): InfluenceRelationship = _influences_in(src, dst)($0)(model)

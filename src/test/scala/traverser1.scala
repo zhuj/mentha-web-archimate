@@ -35,9 +35,9 @@ object traverser1 {
   in(view) edge { $(lo) `associated with` $(de) } flex (-1, -1, -1)
   in(view) edge { $(lo) `associated with` $(wp) } flex (-1, -1)
 
-  in(view) edge { $(lo) `assigned-to` $(br) }
-  in(view) edge { $(ba) `assigned-to` $(br) }
-  in(view) edge { $(br) `assigned-to` $(wp) }
+  in(view) edge { $(lo) `assigned to` $(br) }
+  in(view) edge { $(ba) `assigned to` $(br) }
+  in(view) edge { $(br) `assigned to` $(wp) }
 
   in(view) edge { $(wp) `realizes` $(de) }
   in(view) edge { $(de) `realizes` $(rq) }

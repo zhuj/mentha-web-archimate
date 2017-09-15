@@ -62,7 +62,7 @@ object MkSchool {
     }
 
     val $learning = businessProcess withName "Learning"
-    val $learnerAssignedToLearning = $learner `assigned-to` $learning
+    val $learnerAssignedToLearning = $learner `assigned to` $learning
     val $learningInfluencesLearnerSkillsReq = $learning `influences` "+" `in` $learnerSkillsReq
 
     {
@@ -80,7 +80,7 @@ object MkSchool {
 
     val $educationProcess = businessProcess withName "Education"
     val $educationProcessComposesLearning = $educationProcess `composes` $learning
-    val $learnerAssignedToEduProcess = $learner `assigned-to` $educationProcess
+    val $learnerAssignedToEduProcess = $learner `assigned to` $educationProcess
 
     {
       in { learningView("Learning: #. Education does the Learning") }
@@ -94,7 +94,7 @@ object MkSchool {
     }
 
     val $teacher = businessRole withName "Teacher"
-    val $teacherAssignedToEduProcess = $teacher `assigned-to` $educationProcess
+    val $teacherAssignedToEduProcess = $teacher `assigned to` $educationProcess
 
     {
       in { learningView("Learning: #. Education Overview (1)") }
@@ -108,7 +108,7 @@ object MkSchool {
     val $teaching = businessProcess withName "Teaching"
     val $educationProcessComposesTeaching = $educationProcess `composes` $teaching
     val $teachingFlowsKnowledgeToLearning = $teaching `flows` "Knowledge" `to` $learning
-    val $teacherAssignedToTeaching = $teacher `assigned-to` $teaching
+    val $teacherAssignedToTeaching = $teacher `assigned to` $teaching
 
     {
       in { learningView("Learning: #. Education Overview (2)") }

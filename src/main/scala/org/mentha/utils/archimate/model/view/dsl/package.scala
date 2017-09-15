@@ -271,6 +271,15 @@ package object dsl {
     @inline def connect(left: ViewObject, right: Concept): this.type = { connection(left, right); this }
     @inline def connect(left: Concept, right: ViewObject): this.type = { connection(left, right); this }
 
+    @inline def add(vo: ViewObject): this.type = {
+      vo match {
+        case v: ViewNodeConcept[_] => view.attach_node(v.concept) withSize { v.size } withPosition { v.position }
+        case v: ViewRelationship[_] => view.attach_edge(v.concept) withPoints { v.points }
+        case _ => throw new UnsupportedOperationException(vo.getClass.getName)
+      }
+      this
+    }
+
     /** Experimental API */
     def placeLikeBefore()(implicit model: Model): this.type = {
       val nodes = view.nodes.collect { case n: ViewNodeConcept[_] => n }.toVector

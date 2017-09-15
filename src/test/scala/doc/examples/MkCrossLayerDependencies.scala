@@ -29,7 +29,7 @@ object MkCrossLayerDependencies extends MkModel {
     val baCustomer = in(view) node { businessActor withName "Customer" }
     val brInsurant = in(view) node { businessRole withName "Insurant" } place(directions.Left, baCustomer)
 
-    in(view) edge { $(baCustomer) `assigned-to` $(brInsurant) }
+    in(view) edge { $(baCustomer) `assigned to` $(brInsurant) }
 
 
     // services
@@ -62,8 +62,8 @@ object MkCrossLayerDependencies extends MkModel {
     val bpProcessClaims = in(view) node { businessProcess withName "Process Claims" } wrap (wrapWithComposition, bpRegister, bpAccept, bpAdjudicate, bpPay)
     val brInsurer = in(view) node { businessRole withName "Insurer" } place(directions.Right, bpProcessClaims)
     val baSurance = in(view) node { businessActor withName "OurSuranceCo" } place(directions.Right, brInsurer)
-    in(view) edge { $(baSurance) `assigned-to` $(brInsurer) }
-    in(view) edge { $(brInsurer) `assigned-to` $(bpProcessClaims) }
+    in(view) edge { $(baSurance) `assigned to` $(brInsurer) }
+    in(view) edge { $(brInsurer) `assigned to` $(bpProcessClaims) }
 
     // customer management
 
@@ -102,23 +102,23 @@ object MkCrossLayerDependencies extends MkModel {
     // archives & providers
 
 //    val arDbaKar = in(view) node { artifact withName "Database access archive" } place(directions.Left, ssDBMS)
-//    in(view) edge { $(ssDBMS) `assigned-to` $(arDbaKar) }
+//    in(view) edge { $(ssDBMS) `assigned to` $(arDbaKar) }
 //    in(view) edge { $(arDbaKar) `serves` $(acCRMSystem) }
 //    in(view) edge { $(arDbaKar) `serves` $(acFinancialApplication) }
 
     val arCrmWar = in(view) node { artifact withName "CRM System\nWebArchive" } place(directions.Down, acCRMSystem)
-    in(view) edge { $(ssApplicationServer) `assigned-to` $(arCrmWar) }
+    in(view) edge { $(ssApplicationServer) `assigned to` $(arCrmWar) }
     in(view) edge { $(arCrmWar) `realizes` $(acCRMSystem) }
 
     val arPmWar = in(view) node { artifact withName "Financial Application\nWebArchive" } place(directions.Down, acFinancialApplication)
-    in(view) edge { $(ssApplicationServer) `assigned-to` $(arPmWar) }
+    in(view) edge { $(ssApplicationServer) `assigned to` $(arPmWar) }
     in(view) edge { $(arPmWar) `realizes` $(acFinancialApplication) }
 
     // blade
 
     val deBladeSystem = in(view) node { device withName "Blade system" } place(directions.Down, ssDBMS, ssApplicationServer) scaleWidth(3.0)
-    in(view) edge { $(deBladeSystem) `assigned-to` $(ssDBMS) }
-    in(view) edge { $(deBladeSystem) `assigned-to` $(ssApplicationServer) }
+    in(view) edge { $(deBladeSystem) `assigned to` $(ssDBMS) }
+    in(view) edge { $(deBladeSystem) `assigned to` $(ssApplicationServer) }
 
     // customer data (structure & usage)
 

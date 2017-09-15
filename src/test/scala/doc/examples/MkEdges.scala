@@ -37,7 +37,7 @@ object MkEdges extends MkModel {
     // assignmentRelationship
     val o3l = in(view) node { businessActor } place(directions.Down, o2l)
     val o3r = in(view) node { businessFunction } place(directions.Right, o3l)
-    in(view) edge { $(o3l) `assigned-to` $(o3r) }
+    in(view) edge { $(o3l) `assigned to` $(o3r) }
     in(view) connection ( o3r, in(view) notes "Assignment Relationship" doubleWidth() place(directions.Right, o3r) )
 
     // realizationRelationship
