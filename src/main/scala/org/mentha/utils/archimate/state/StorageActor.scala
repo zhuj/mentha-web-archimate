@@ -21,7 +21,7 @@ class StorageActor extends Actor with ActorLogging {
   import scala.concurrent._
   import scala.concurrent.duration._
 
-  private implicit val timeoutDuration = (1 seconds)
+  private implicit val timeoutDuration = (5 seconds)
   private implicit val timeout = Timeout(timeoutDuration)
 
   override def receive: Receive = akka.event.LoggingReceive {

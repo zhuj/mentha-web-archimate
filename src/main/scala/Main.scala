@@ -70,7 +70,10 @@ object Main {
   }
   //#websocket-request-handling
 
-  private val route = path("model" / Remaining) { modelWebSocket }
+  private val route =
+    path("model" / Remaining) {
+      modelId => modelWebSocket(modelId) ~ get { getFromResource(s"public/index.html") }
+    } ~ get { path(Remaining) { resource => getFromResource(s"public/${resource}") } }
 
   private val binding = Await.result(
     {

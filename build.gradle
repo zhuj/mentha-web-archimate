@@ -4,6 +4,7 @@ version "1.0.0-SNAPSHOT"
 apply plugin: "java"
 apply plugin: "scala"
 apply plugin: "maven"
+apply plugin: "idea"
 
 sourceCompatibility = 1.8
 
@@ -23,6 +24,17 @@ repositories {
 
 configurations {
     scalaCompilerPlugin
+}
+
+// it doesn't work with IDEA: https://youtrack.jetbrains.com/issue/IDEA-133047
+// processResources {
+//     from('client/public') { into 'public' }
+// }
+
+sourceSets {
+    main {
+        runtimeClasspath += files('client') filter { 'public/**' }
+    }
 }
 
 dependencies {
@@ -52,12 +64,8 @@ dependencies {
     compile 'io.jsonwebtoken:jjwt:0.7.0'
 
     compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
-    //compile "com.typesafe.play:play_${scalaLibVersion}:${playVersion}"
-    //compile "com.typesafe.play:play-ws_${scalaLibVersion}:${playVersion}"
 
     compile "org.eclipse.jgit:org.eclipse.jgit:4.8.0.201706111038-r"
-    //compile "org.iq80.leveldb:leveldb:0.9"
-    //compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
 
     compile "javax.validation:validation-api:1.1.0.Final"
     compile "org.apache.commons:commons-lang3:3.6"
@@ -74,6 +82,12 @@ tasks.withType(ScalaCompile) {
     scalaCompileOptions.additionalParameters = [
             "-Xplugin:" + configurations.scalaCompilerPlugin.asPath
     ]
+}
+
+jar {
+    manifest.mainAttributes(
+            'Main-Class': "Main"
+    )
 }
 
 task run(type: JavaExec, dependsOn: classes) {

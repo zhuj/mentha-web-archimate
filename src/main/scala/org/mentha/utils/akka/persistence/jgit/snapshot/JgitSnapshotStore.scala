@@ -20,6 +20,19 @@ import scala.util._
 
 class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
 
+  // debug
+  @inline private def time[R](name: String)(block: => R): R = {
+    if (!log.isInfoEnabled) {
+      block
+    } else {
+      val t0 = System.currentTimeMillis()
+      val result = block
+      val t1 = System.currentTimeMillis()
+      log.info(s"TIME: ${name}: " + (t1 - t0) + "ms")
+      result
+    }
+  }
+
   import akka.util.Helpers._
   private val maxLoadAttempts = config.getInt("max-load-attempts").requiring(_ > 1, "max-load-attempts must be >= 1")
 
@@ -42,24 +55,24 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
 
   override def loadAsync(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Option[SelectedSnapshot]] = {
     Future {
-      selectMetadata(persistenceId, criteria, maxLoadAttempts).flatMap { loadFirstSuccess }.get
+      time("loadAsync") { selectMetadata(persistenceId, criteria, maxLoadAttempts).flatMap { loadFirstSuccess }.get }
     }(executionContext)
   }
 
   override def saveAsync(metadata: SnapshotMetadata, snapshot: Any): Future[Unit] = {
     Future {
-      save(metadata, snapshot).map { _ => }.get
+      time("saveAsync") { save(metadata, snapshot).map { _ => }.get }
     }(executionContext)
   }
 
   override def deleteAsync(metadata: SnapshotMetadata): Future[Unit] = {
     // TODO: git rebase?
-    Future.successful() // DO NOTHING
+    Future.successful {} // DO NOTHING
   }
 
   override def deleteAsync(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Unit] = {
     // TODO: git rebase?
-    Future.successful() // DO NOTHING
+    Future.successful {}// DO NOTHING
   }
 
   @scala.annotation.tailrec
@@ -108,6 +121,7 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
   private def selectMetadata(persistenceId: String, criteria: SnapshotSelectionCriteria, maxLoad: Int): Try[Stream[(String, SnapshotMetadata)]] = withRepository { repo =>
     repo.withFileHistory(branchName = branch(persistenceId), entryName = ENTRY_NAME) { commits => Try {
       commits
+        // .take(maxLoad)
         .map { revCommit => revCommit.name() -> snapshotMetadata(persistenceId, revCommit) }
         .dropWhile { case (nm, md) => md.timestamp > criteria.maxTimestamp || md.sequenceNr > criteria.maxSequenceNr }
         .takeWhile { case (nm, md) => md.timestamp >= criteria.minTimestamp && md.sequenceNr >= criteria.minSequenceNr }

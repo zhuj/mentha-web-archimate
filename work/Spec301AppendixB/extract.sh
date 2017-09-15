@@ -10,4 +10,4 @@ for ((n=226;n<238;n++)); do
 done
 
 # parse them
-./extract.py > base.txt
+extract.py > base.txt
