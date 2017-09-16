@@ -1,6 +1,6 @@
 package doc.examples
 
-import org.mentha.utils.archimate.MkModel
+import org.mentha.utils.archimate.model.utils.MkModel
 
 /**
   * @see [[http://pubs.opengroup.org/architecture/archimate3-doc/chap12.html#_Toc489946115]]

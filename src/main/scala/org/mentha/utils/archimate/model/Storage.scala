@@ -1,12 +1,12 @@
 package org.mentha.utils.archimate.model
 
 import java.util.NoSuchElementException
-
-import org.mentha.utils.uuid.FastTimeBasedIdGenerator
+import java.util.function.LongSupplier
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.runtime.Nothing$
+import scala.util.DynamicVariable
 
 trait Identifiable {
 
@@ -35,6 +35,11 @@ trait Identifiable {
 }
 
 object Identifiable {
+  import org.mentha.utils.uuid.FastTimeBasedIdGenerator
+
+  private[model] val timeSource = new DynamicVariable[LongSupplier](
+    () => System.currentTimeMillis()
+  )
 
   type ID = String
 
@@ -50,12 +55,12 @@ object Identifiable {
   }
 
   @inline def generateId(klass: Class[_]): ID = FastTimeBasedIdGenerator
-    .generateId(typeIdentifier(klass))
+    .generateId(typeIdentifier(klass), timeSource.value.getAsLong)
 
   @inline def validateId(identifiable: Identifiable): Unit = {
     require(
       FastTimeBasedIdGenerator.validateId(typeIdentifier(identifiable.getClass), identifiable.id),
-      s"id=${identifiable.id} : ${FastTimeBasedIdGenerator.getCheckSum(identifiable.id)} != ${FastTimeBasedIdGenerator.getCheckSum(typeIdentifier(identifiable.getClass))}"
+      s"id=${identifiable.id} : ${FastTimeBasedIdGenerator.getCheckSum(identifiable.id)} should be ${FastTimeBasedIdGenerator.getCheckSum(typeIdentifier(identifiable.getClass))}"
     )
   }
 

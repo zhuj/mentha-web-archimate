@@ -1,6 +1,6 @@
 package doc.viewpoints
 
-import org.mentha.utils.archimate.MkModel
+import org.mentha.utils.archimate.model.utils.MkModel
 
 /**
   * The goal realization viewpoint allows a designer to model the refinement of (high-level) goals into more tangible goals, and the refinement of tangible goals into requirements or constraints that describe the properties that are needed to realize the goals. The refinement of goals into sub-goals is modeled using the aggregation relationship. The refinement of goals into requirements is modeled using the realization relationship.

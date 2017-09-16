@@ -1,7 +1,7 @@
 package doc.viewpoints
 
 import doc.viewpoints.MkProjectViewPoint.publishModel
-import org.mentha.utils.archimate.MkModel
+import org.mentha.utils.archimate.model.utils.MkModel
 
 /**
   * The information structure viewpoint is comparable to the traditional information models created in the development of almost any information system. It shows the structure of the information used in the enterprise or in a specific business process or application, in terms of data types or (object-oriented) class structures. Furthermore, it may show how the information at the business level is represented at the application level in the form of the data structures used there, and how these are then mapped onto the underlying technology infrastructure; e.g., by means of a database schema.

@@ -5,10 +5,10 @@ import java.util
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.MkModel
 import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.nodes.ElementMeta
 import org.mentha.utils.archimate.model.nodes.impl._
+import org.mentha.utils.archimate.model.utils.MkModel
 import org.mentha.utils.archimate.model.view._
 
 import scala.xml.XML

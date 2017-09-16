@@ -9,8 +9,8 @@ public class FastTimeBasedIdGenerator {
   private long lastTimestamp;
 
   private static final FastTimeBasedIdGenerator INSTANCE = new FastTimeBasedIdGenerator();
-  public static String generateId(short typeIdentifier) {
-    return INSTANCE.generateIdFromTimestamp(typeIdentifier, System.currentTimeMillis());
+  public static String generateId(short typeIdentifier, long currentTimeMillis) {
+    return INSTANCE.generateIdFromTimestamp(typeIdentifier, currentTimeMillis);
   }
 
   public static boolean validateId(short typeIdentifier, String id) {

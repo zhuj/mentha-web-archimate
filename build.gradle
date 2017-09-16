@@ -65,6 +65,8 @@ dependencies {
 
     compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
 
+    compile "org.iq80.leveldb:leveldb:0.9"
+    compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
     compile "org.eclipse.jgit:org.eclipse.jgit:4.8.0.201706111038-r"
 
     compile "javax.validation:validation-api:1.1.0.Final"

@@ -15,11 +15,11 @@ object StateActor {
   case class SubscriberSend(request: ModelState.Request) extends Event {}
   case class SubscriberFail(request: String, error: Throwable) extends Event {}
 
-
   /**
     * The actor which dispatches incoming messages to all subscribers
     */
   private[state] class StateDispatcherActor extends Actor with ActorLogging {
+
     private def _name(actorRef: ActorRef): String = actorRef.path.name
     private var subscribers: Map[String, ActorRef] = Map.empty
 
@@ -35,7 +35,10 @@ object StateActor {
       case Terminated(user) => {
         val name = _name(user)
         this.subscribers -= name
-        if (this.subscribers.isEmpty) { context.parent ! PoisonPill } // nobody is there - kill the state actor TODO: check if it works
+        if (this.subscribers.isEmpty) {
+          // nobody is there - kill the state actor
+          context.parent ! PoisonPill // TODO: it kills akka-persistent messages, fix this
+        }
       }
     }
   }
@@ -70,6 +73,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   override def receiveRecover: Receive = {
     case SnapshotOffer(md, json: String) => {
+      println("SnapshotOffer = " + md.sequenceNr)
       try {
         setState(ModelState.fromJson(id = modelId, jsonString = json))
       } catch {
@@ -92,7 +96,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: ActorRef, changeSet: ModelState.ChangeSet): Unit = {
-    persist(changeSet) {
+    persistAsync(changeSet) {
       changeSet => {
         commit(changeSet) match {
           case Success(response) => {

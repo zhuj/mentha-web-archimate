@@ -1,7 +1,7 @@
 package doc.examples
 
 import org.apache.commons.lang3.StringUtils
-import org.mentha.utils.archimate.MkModel
+import org.mentha.utils.archimate.model.utils.MkModel
 
 import scala.xml.XML
 

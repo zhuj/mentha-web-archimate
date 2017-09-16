@@ -1,6 +1,6 @@
 package doc.viewpoints
 
-import org.mentha.utils.archimate.MkModel
+import org.mentha.utils.archimate.model.utils.MkModel
 
 /**
   * (v2 only) The goal contribution viewpoint allows a designer or analyst to model the influence relationships between goals and requirements. The resulting views can be used to analyze the impact that goals have on each other or to detect conflicts between stakeholder goals.

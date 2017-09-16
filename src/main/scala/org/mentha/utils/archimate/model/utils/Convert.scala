@@ -1,19 +1,22 @@
-package org.mentha.utils.archimate
+package org.mentha.utils.archimate.model.utils
 
 import java.io.{File, StringReader}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.edges._
 import org.mentha.utils.archimate.model.edges.impl._
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.nodes.impl._
-import org.mentha.utils.archimate.model._
 import org.mentha.utils.archimate.model.view._
 
 import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
 
+/**
+  * It converts Archi format to Model Json
+  */
 object Convert extends MkModel {
 
   val allMeta: Seq[ConceptMeta[Concept]] = edges.allRelations ++ nodes.allNodes
@@ -231,7 +234,9 @@ object Convert extends MkModel {
     val jsonFile = new File(s"${name}.json")
     FileUtils.write(jsonFile, str, "UTF-8")
 
-    publishModel(model)
+    if (args.length > 1 && args(1) == "publish") {
+      publishModel(model)
+    }
   }
 
   private def getTp(el: Node) = {

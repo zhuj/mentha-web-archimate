@@ -4,17 +4,11 @@ import java.util.concurrent.atomic.AtomicLong
 
 import org.apache.commons.lang3.StringUtils
 import org.mentha.utils.archimate.model._
-import org.mentha.utils.archimate.model.nodes._
-import org.mentha.utils.archimate.model.nodes.dsl.Motivation._
 import org.mentha.utils.archimate.model.nodes.dsl.Business._
-import org.mentha.utils.archimate.model.nodes.dsl.Application._
-import org.mentha.utils.archimate.model.nodes.dsl.Junctions._
+import org.mentha.utils.archimate.model.nodes.dsl.Motivation._
 import org.mentha.utils.archimate.model.nodes.dsl._
-import org.mentha.utils.archimate.model.edges._
-import org.mentha.utils.archimate.model.edges.impl._
 import org.mentha.utils.archimate.model.view._
 import org.mentha.utils.archimate.model.view.dsl._
-import org.mentha.utils.archimate.MkModel
 
 object MkSchool {
 
