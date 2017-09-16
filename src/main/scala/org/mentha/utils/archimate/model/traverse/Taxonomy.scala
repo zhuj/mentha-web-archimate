@@ -15,11 +15,13 @@ object Taxonomy {
   object TaxonomyDirection extends ModelTraversing.Direction {
 
     override def nextLevelResolver(c: Concept): PartialFunction[EdgeConcept, (EdgeConcept, Concept)] = {
-      case r: CompositionRelationship if r.source == c => (r, r.target)
-      case r: AggregationRelationship if r.source == c => (r, r.target)
+      case r: StructuralRelationship if r.source == c => (r, r.target)
+//      case r: CompositionRelationship if r.source == c => (r, r.target)
+//      case r: AggregationRelationship if r.source == c => (r, r.target)
+//      case r: AssignmentRelationship if r.source == c => (r, r.target)
+//      case r: RealizationRelationship if r.source == c => (r, r.target)
 
 //      case r: SpecializationRelationship if r.target == c => (r, r.source)
-//      case r: AssignmentRelationship if r.target == c => (r, r.source)
 //      case r: RealizationRelationship if r.target == c => (r, r.source)
 //      case r: ServingRelationship if r.target == c => (r, r.source)
 //      case r: InfluenceRelationship if r.target == c => (r, r.source)
@@ -39,7 +41,7 @@ object Taxonomy {
     val visitedVertexes = mutable.Set[Concept]()
     val modelVisitor = new ModelVisitor {
       override def visitEdge(from: Concept, edge: EdgeConcept, to: Concept) = {
-        if (visitedVertexes.add(to) && visitor.visitEdge(from, edge, to)) {
+        if (/*visitedVertexes.add(to) &&*/ visitor.visitEdge(from, edge, to)) {
           view.attach(edge)
           true
         } else {

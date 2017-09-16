@@ -81,13 +81,15 @@ const updateDiagramModel = (view, diagramModel) => {
 
       const l = edge.points.length;
       if (l > 0) {
-        if (prev.points.length === l + 2) {
+        if (prev.points.length === (l + 2)) {
           for (let i=0; i<l; i++) {
             prev.points[1+i].updateLocation(edge.points[i]);
           }
         } else {
           prev.setMiddlePoints(edge.points);
         }
+      } else {
+        prev.setMiddlePoints([]);
       }
       return prev;
     }

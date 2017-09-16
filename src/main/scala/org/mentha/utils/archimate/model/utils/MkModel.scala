@@ -1,12 +1,11 @@
 package org.mentha.utils.archimate.model.utils
 
+import java.util.Random
 import java.util.concurrent.atomic.AtomicLong
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import org.mentha.utils.archimate.model._
-
-import scala.concurrent.duration._
 
 /**
   *
@@ -14,10 +13,14 @@ import scala.concurrent.duration._
 abstract class MkModel {
 
   // set sequential time source
-  {
-    val source = new AtomicLong(0l)
-    Identifiable.timeSource.value = () => source.incrementAndGet()
+  def initTimeSource(base: Long): Unit = {
+    val source = new AtomicLong(base & 0xff)
+    val random = new Random(base)
+    Identifiable.timeSource.value = () => source.incrementAndGet() | ((random.nextInt() & 0xffff) << 24)
   }
+
+  // set sequential time source (default - 0)
+  initTimeSource(0l)
 
   private def sendWebSocketMessage(id: String, message: String): Unit = {
 
@@ -35,18 +38,19 @@ abstract class MkModel {
     }
 
     // see: http://doc.akka.io/docs/akka-http/10.0.0/scala/http/client-side/websocket-support.html#half-closed-websockets
-    val outgoing = Source(TextMessage(message) :: Nil).concatMat(Source.maybe[Message])(Keep.right)
-    val webSocketFlow = Http().webSocketClientFlow(WebSocketRequest(s"ws://127.0.0.1:8088/model/${id}"))
-    val (upgradeResponse, closed) = outgoing
-      .viaMat(webSocketFlow)(Keep.right)
-      .toMat(incoming)(Keep.both)
-      .run()
+    val maybe = Source.maybe[Message]
+    val outgoing = Source(TextMessage(message) :: Nil).concatMat(maybe)(Keep.right)
+    val flow = Flow.fromSinkAndSourceMat(incoming, outgoing)(Keep.both)
+    val (upgradeResponse, (closed, promise)) = Http().singleWebSocketRequest(WebSocketRequest(s"ws://127.0.0.1:8088/model/${id}"), flow)
 
     closed.foreach(_ => println("closed"))
-    upgradeResponse.onComplete(_ => {
-      Thread.sleep(1000)
-      system.terminate()
-    })
+    upgradeResponse.onComplete(_ => {})
+
+    Thread.sleep(1500)
+    promise.success(None)
+
+    Thread.sleep(500)
+    system.terminate()
   }
 
   def publishModel(model: Model): Unit = {

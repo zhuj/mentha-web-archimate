@@ -1,4 +1,4 @@
-package org.mentha.utils.archimate.model.utils
+package org.mentha.utils.archimate.model.utils.convert.archi
 
 import java.io.{File, StringReader}
 
@@ -9,15 +9,16 @@ import org.mentha.utils.archimate.model.edges._
 import org.mentha.utils.archimate.model.edges.impl._
 import org.mentha.utils.archimate.model.nodes._
 import org.mentha.utils.archimate.model.nodes.impl._
+import org.mentha.utils.archimate.model.utils.MkModel
 import org.mentha.utils.archimate.model.view._
 
 import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
 
 /**
-  * It converts Archi format to Model Json
+  * It imports Archi file to Model Json
   */
-object Convert extends MkModel {
+object ImportArchi extends MkModel {
 
   val allMeta: Seq[ConceptMeta[Concept]] = edges.allRelations ++ nodes.allNodes
   val mapMeta: Map[String, ConceptMeta[Concept]] = allMeta.map { m => (m.name, m) }.toMap
@@ -234,8 +235,8 @@ object Convert extends MkModel {
     val jsonFile = new File(s"${name}.json")
     FileUtils.write(jsonFile, str, "UTF-8")
 
-    if (args.length > 1 && args(1) == "publish") {
-      publishModel(model)
+    if (args.length > 1 && args(1).length > 0) {
+      publishModel { model withId args(1) }
     }
   }
 
