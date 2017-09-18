@@ -346,13 +346,13 @@ package object dsl {
 
     def layout(): this.type = this.layoutLayered()
 
-    def layoutLayered(): this.type = {
-      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayoutF(view).layout()
+    def layoutLayered(maxIterations: Int = 1000): this.type = {
+      new org.mentha.utils.archimate.model.view.layout.LayeredSpringLayoutF(view).layout(maxIterations)
       this
     }
 
-    def layoutSimple(): this.type = {
-      new org.mentha.utils.archimate.model.view.layout.SimpleSpringLayoutF(view).layout()
+    def layoutSimple(maxIterations: Int = 1000): this.type = {
+      new org.mentha.utils.archimate.model.view.layout.SimpleSpringLayoutF(view).layout(maxIterations)
       this
     }
 

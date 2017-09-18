@@ -1,5 +1,4 @@
 
-import akka.http.scaladsl.server.Route
 import com.typesafe.config.Config
 import org.mentha.utils.archimate.state._
 
@@ -8,6 +7,7 @@ object Main {
   import akka.actor._
   import akka.http.scaladsl._
   import akka.http.scaladsl.server.Directives._
+  import akka.http.scaladsl.server._
   import akka.pattern.ask
   import akka.stream._
   import akka.util.Timeout
@@ -50,30 +50,53 @@ object Main {
 
   private val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
 
+  private def obtainStateActor(modelId: String) = {
+    Await.result(
+      storageActor
+        .ask(StorageActor.Request(modelId))
+        .map { case StorageActor.Response(ref) => ref },
+      timeout.duration
+    )
+  }
+
   // TODO: https://www.playframework.com/documentation/2.6.x/ScalaWebSockets
   // TODO: https://github.com/playframework/play-scala-websocket-example
-
-
   //#websocket-request-handling
   private def modelWebSocket(modelId: String): Route = {
-    handleWebSocketMessages {
-      UserActor.newUser(
-        modelId = modelId,
-        stateActor = Await.result(
-          storageActor
-            .ask(StorageActor.Request(modelId))
-            .map { case StorageActor.Response(ref) => ref },
-          timeout.duration
-        )
-      )
+    extractUpgradeToWebSocket {
+      upgrade => {
+        val flow = UserActor.newWebSocketUser(modelId, obtainStateActor(modelId))
+        complete { upgrade.handleMessages(flow, None) }
+      }
     }
   }
   //#websocket-request-handling
 
+//  private def modelREST(modelId: String): Route = {
+//    post {
+//      entity(as[String]) {
+//        command => {
+//          val flow = UserActor.newCommandFlow(modelId, obtainStateActor(modelId))
+//
+//          val source = Source.single[String](command).concatMat(Source.maybe[String])(Keep.right)
+//          val sink = Sink.head[String]
+//          val (p, f) = source.via(flow).toMat(sink)(Keep.both).run()
+//
+//          p.success(None)
+//          complete { f }
+//        }
+//      }
+//    }
+//  }
+
   private val route =
     path("model" / Remaining) {
-      modelId => modelWebSocket(modelId) ~ get { getFromResource(s"public/index.html") }
-    } ~ get { path(Remaining) { resource => getFromResource(s"public/${resource}") } }
+      modelId => modelWebSocket(modelId) ~
+//        modelREST(modelId) ~
+        get { getFromResource(s"public/index.html") }
+    } ~ get {
+      path(Remaining) { resource => getFromResource(s"public/${resource}") }
+    }
 
   private val binding = Await.result(
     {

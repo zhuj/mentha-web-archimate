@@ -5,6 +5,7 @@ import akka.persistence._
 import com.typesafe.config.Config
 import org.mentha.utils.archimate.model._
 
+import scala.concurrent.ExecutionContext
 import scala.util._
 import scala.util.control.NonFatal
 
@@ -13,7 +14,8 @@ object StateActor {
   sealed trait Event {}
   case object SubscriberJoin extends Event {}
   case class SubscriberSend(request: ModelState.Request) extends Event {}
-  case class SubscriberFail(request: String, error: Throwable) extends Event {}
+
+  private case object NoMoreSubscribers {}
 
   /**
     * The actor which dispatches incoming messages to all subscribers
@@ -36,8 +38,7 @@ object StateActor {
         val name = _name(user)
         this.subscribers -= name
         if (this.subscribers.isEmpty) {
-          // nobody is there - kill the state actor
-          context.parent ! PoisonPill // TODO: it kills akka-persistent messages, fix this
+          context.parent ! NoMoreSubscribers // nobody is there - kill the state actor
         }
       }
     }
@@ -73,7 +74,6 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   override def receiveRecover: Receive = {
     case SnapshotOffer(md, json: String) => {
-      println("SnapshotOffer = " + md.sequenceNr)
       try {
         setState(ModelState.fromJson(id = modelId, jsonString = json))
       } catch {
@@ -83,7 +83,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
         }
       }
       changes = 0
-      // TODO: deleteMessages(md.sequenceNr)
+      deleteMessages(md.sequenceNr)
     }
     case e: ModelState.ChangeSet => {
       commit(e)
@@ -96,7 +96,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: ActorRef, changeSet: ModelState.ChangeSet): Unit = {
-    persistAsync(changeSet) {
+    persist(changeSet) {
       changeSet => {
         commit(changeSet) match {
           case Success(response) => {
@@ -144,7 +144,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: ActorRef, noop: ModelState.Noop): Unit = {
-    val response = ModelState.Responses.ModelStateNoop(modelId)
+    val response = ModelState.Responses.ModelStateNoop(noop, modelId)
     dispatchUser(response, user)
   }
 
@@ -156,28 +156,39 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     user ! response
   }
 
-  override def receiveCommand: Receive = akka.event.LoggingReceive {
+  private var delayedPoisonPill: Cancellable = _
+
+  @inline private def cancelPoisonPill(): Unit = {
+    if (null != delayedPoisonPill) {
+      delayedPoisonPill.cancel()
+      delayedPoisonPill = null
+    }
+  }
+
+  @inline private def delayPoisonPill(): Unit = {
+    cancelPoisonPill()
+    import scala.concurrent.duration._
+    implicit val executionContext: ExecutionContext = context.dispatcher
+    delayedPoisonPill = context.system.scheduler.scheduleOnce(30 second, self, PoisonPill) // self ! PoisonPill
+  }
+
+  override def receiveCommand: Receive = receiveCommandNormal
+
+  private val receiveCommandNormal: Receive = akka.event.LoggingReceive {
     case StateActor.SubscriberSend(cmd) => cmd match {
       case command: ModelState.Command => execute(sender(), command)
       case query: ModelState.Query => execute(sender(), query)
       case noop @ ModelState.Noop() => execute(sender(), noop)
     }
     case StateActor.SubscriberJoin => {
+      cancelPoisonPill() // cancel poison pull if a new subscriber has arrived
       val user = sender()
       dispatcher.forward(user)
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
-    case StateActor.SubscriberFail(request, error) => {
-      execute(sender(), Right(request), error) // should never happen (it's handled by the UserActor)
+    case StateActor.NoMoreSubscribers => {
+      delayPoisonPill() // there is no more subscribers, take a while and kill itself
     }
-
-    case SaveSnapshotSuccess(_) =>
-    case DeleteSnapshotSuccess(_) =>
-    case DeleteSnapshotsSuccess(_) =>
-    case SaveSnapshotFailure(_, _) =>
-    case DeleteSnapshotFailure(_, _) =>
-    case DeleteSnapshotsFailure(_, _) =>
-
   }
 
 }

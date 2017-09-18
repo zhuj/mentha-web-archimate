@@ -61,9 +61,11 @@ abstract class ForceBasedLayout(view: View) {
 
   }
 
+
   private[layout] val nodesMap = view.nodes.map { n => n.id -> new NodeWrapper(n) }.toMap
   private[layout] val nodesSeq = nodesMap.values.toVector
-  private[layout] val nodesSeqPar = nodesSeq//.par
+  private[layout] val nodesSize = 1.0d * nodesSeq.size
+  private[layout] val nodesSeqPar = if (nodesSize > 100.0d) { nodesSeq.par } else { nodesSeq }
 
   private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
     // TODO: do smth with associations to relationships
@@ -73,7 +75,7 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] val edgesMap = view.edges.map { e => e.id -> new EdgeWrapper(e)}.toMap
   private[layout] val edgesSeq = edgesMap.values.toVector
-  private[layout] val edgesSeqPar = edgesSeq//.par
+  private[layout] val edgesSeqPar = if (nodesSize > 100.0d) { edgesSeq.par } else { edgesSeq }
 
   class BarnesHut(
     val force: Double => Double,
@@ -141,7 +143,7 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, temperature: Double) = {
     nodesSeqPar.foreach { node =>
-      val d2 = l2(node.mass.center /* - quadTree.mass.center */ )
+      val d2 = l2(node.mass.center /* - quadTree.mass.center */ ) / nodesSize
       val normalized = node.mass.center * (d2 * CENTER_GRAVITY) * (1e-3d + temperature)
       node.force -= normalized
     }
@@ -179,6 +181,7 @@ abstract class ForceBasedLayout(view: View) {
   def layout(maxIterations: Int = 1000): Unit = {
     var it = 0
     do {
+      // DEBUG: println(it)
       val temperature = Math.exp(3.0 - 10.0 * it / maxIterations)
       (0 until 20) foreach { _ => step(temperature) }
       it += 1
