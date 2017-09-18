@@ -187,18 +187,20 @@ object ModelState {
   }
 
   /**
+    * INCOMING MESSAGE
+    * An incoming request - parsed incoming message text
+    */
+  sealed trait Request {}
+
+  /**
     * OUTGOING MESSAGE
     * Result of the request.
     */
   sealed trait Response {
     def toJson: JsonObject
+    def source: Request
   }
 
-  /**
-    * INCOMING MESSAGE
-    * An incoming request - parsed incoming message text
-    */
-  sealed trait Request {}
 
   /**
     * Request to do something (it always changes the state)
@@ -545,6 +547,7 @@ object ModelState {
       * @param diffJson the model diff JSON
       */
     case class ModelChangeSet(modelId: String, changeSet: ModelState.ChangeSet, diffJson: JsonObject) extends ModelState.Response {
+      override def source: ModelState.Command = changeSet.command
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "commit",
         "commit" -> diffJson
@@ -558,6 +561,7 @@ object ModelState {
       * @param objectJson requested object json
       */
     case class ModelObjectJson(modelId: String, request: ModelState.Query, objectJson: JsonObject) extends ModelState.Response {
+      override def source: ModelState.Query = request
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "object",
         "object" -> objectJson
@@ -571,6 +575,7 @@ object ModelState {
       * @param error the error has been thrown
       */
     case class ModelStateError(modelId: String, request: Either[ModelState.Request, String], error: Throwable) extends ModelState.Response {
+      override def source: ModelState.Request = request.left.getOrElse(null)
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "error",
         "error" -> error.getMessage
@@ -581,7 +586,8 @@ object ModelState {
       * RESPONSE: The client does nothing for a long time, we are still here...
       * @param modelId the model
       */
-    case class ModelStateNoop(modelId: String) extends ModelState.Response {
+    case class ModelStateNoop(noop: ModelState.Noop, modelId: String) extends ModelState.Response {
+      override def source: ModelState.Noop = noop
       override def toJson: JsonObject = Json.obj(
         "_tp" -> "noop",
         "noop" -> JsonObject.empty

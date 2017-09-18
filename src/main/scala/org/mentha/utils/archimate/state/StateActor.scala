@@ -14,7 +14,6 @@ object StateActor {
   sealed trait Event {}
   case object SubscriberJoin extends Event {}
   case class SubscriberSend(request: ModelState.Request) extends Event {}
-  case class SubscriberFail(request: String, error: Throwable) extends Event {}
 
   private case object NoMoreSubscribers {}
 
@@ -145,7 +144,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: ActorRef, noop: ModelState.Noop): Unit = {
-    val response = ModelState.Responses.ModelStateNoop(modelId)
+    val response = ModelState.Responses.ModelStateNoop(noop, modelId)
     dispatchUser(response, user)
   }
 
@@ -186,9 +185,6 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       val user = sender()
       dispatcher.forward(user)
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
-    }
-    case StateActor.SubscriberFail(request, error) => {
-      execute(sender(), Right(request), error) // should never happen (it's handled by the UserActor)
     }
     case StateActor.NoMoreSubscribers => {
       delayPoisonPill() // there is no more subscribers, take a while and kill itself
