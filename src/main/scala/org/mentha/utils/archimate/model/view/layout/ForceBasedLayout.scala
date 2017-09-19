@@ -1,7 +1,7 @@
 package org.mentha.utils.archimate.model.view.layout
 
-import org.mentha.utils.archimate.model.view._
 import org.mentha.utils.archimate.model._
+import org.mentha.utils.archimate.model.view._
 
 abstract class ForceBasedLayout(view: View) {
 
@@ -69,6 +69,7 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
     // TODO: do smth with associations to relationships
+    edge withPoints(Nil) // clear all intermediate points
     override val source: NodeWrapper = nodesMap(edge.source.id)
     override val target: NodeWrapper = nodesMap(edge.target.id)
   }

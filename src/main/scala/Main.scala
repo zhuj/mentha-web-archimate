@@ -42,11 +42,10 @@ object Main {
     ConnectionContext.https(sslContext)
   }
 
-  implicit val system = ActorSystem("webArchimate")
-  implicit val materializer = ActorMaterializer()
-
-  implicit val executionContext: ExecutionContext = system.dispatcher
-  implicit val timeout = Timeout(5 seconds)
+  private implicit val system: ActorSystem = ActorSystem("webArchimate")
+  private implicit val mat: Materializer = ActorMaterializer()
+  private implicit val executionContext: ExecutionContext = system.dispatcher
+  private implicit val timeout: Timeout = Timeout(5 seconds)
 
   private val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
 

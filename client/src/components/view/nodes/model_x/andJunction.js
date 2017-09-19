@@ -9,9 +9,9 @@ export class AndJunctionWidget extends ModelNodeWidget {
   getClassName(node) { return 'a-node model_x andJunction'; }
   renderTitle(node) { return null; }
   borderShape(node) {
-    const width = node.width || 0;
-    const height = node.height || 0;
-    return shape("ellipse", {cx:width/2, cy:height/2, rx:width/2, ry:height/2});
+    const width = 0.5*(node.width || 0);
+    const height = 0.5*(node.height || 0);
+    return shape("ellipse", {cx:width, cy:height, rx:width, ry:height});
   }
 }
 
