@@ -21,8 +21,8 @@ export class DefaultNodeWidget extends React.Component {
         const { x: px, y: py } = p;
         let { x: nx, y: ny } = node;
 
-        const w2 = (node.width || 0) / 2;
-        const h2 = (node.height || 0) / 2;
+        const w2 = 0.5*(node.width || 0);
+        const h2 = 0.5*(node.height || 0);
         const x0 = nx - w2;
         const y0 = ny - h2;
 
@@ -200,8 +200,8 @@ export class DefaultLinkWidget extends React.Component {
 
     let last = points.length - 1;
     for (let i = 0; i < last; i++) {
-      const x = (points[i].x + points[i + 1].x) / 2;
-      const y = (points[i].y + points[i + 1].y) / 2;
+      const x = 0.5*(points[i].x + points[i + 1].x);
+      const y = 0.5*(points[i].y + points[i + 1].y);
 
       if (i > 0) {
         path = path + ` Q ${points[i].x.toFixed(0)} ${points[i].y.toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)}`;

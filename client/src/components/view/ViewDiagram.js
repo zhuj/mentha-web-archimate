@@ -184,7 +184,7 @@ const nodesTarget = {
 
     // concept elements
     if (kind === 'element') {
-      const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
+      const width = 120, height = 40, x = internal.x+0.5*width, y = internal.y+0.5*height;
       return component.props.sendModelCommands([
         api.addViewNodeConcept(
           component.props.id,
@@ -197,7 +197,7 @@ const nodesTarget = {
 
     // notes
     if (kind === 'notes') {
-      const width = 120, height = 40, x = internal.x+width/2, y = internal.y+height/2;
+      const width = 120, height = 40, x = internal.x+0.5*width, y = internal.y+0.5*height;
       return component.props.sendModelCommands([
         api.addViewNotes(
           component.props.id,
@@ -209,7 +209,7 @@ const nodesTarget = {
 
     if (kind === 'connector') {
       // lazy: TODO
-      const width = 10, height = 10, x = internal.x+width/2, y = internal.y+height/2;
+      const width = 10, height = 10, x = internal.x+0.5*width, y = internal.y+0.5*height;
       const diagramModel = component.getDiagramModel();
       const conceptInfo = { _tp: tp };
       const viewObject = { _tp: 'viewNodeConcept', name: '', conceptInfo };
@@ -454,8 +454,8 @@ class ViewDiagram extends DiagramWidget {
       <div key='link-menu'
            className='link-menu'
            style={{
-             marginLeft:relX - width/2,
-             marginTop:relY - height/2
+             marginLeft:relX - 0.5*width,
+             marginTop:relY - 0.5*height
            }}>
         <NewLinkMenu
           linkModel={link}

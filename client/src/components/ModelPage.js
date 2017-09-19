@@ -125,7 +125,7 @@ class ModelPage extends React.Component {
                 className={classes.button}
                 disableRipple
               >
-                [{id}] {view.name}
+                {view.name}
               </Button>
             </ListItem>
           ) )
@@ -182,6 +182,7 @@ class ModelPage extends React.Component {
         >
           <div className={classes.nav}>
             <Toolbar className={classes.toolbar}>
+              {/* TODO: search */}
             </Toolbar>
             <Divider/>
             { this.renderViewList() }

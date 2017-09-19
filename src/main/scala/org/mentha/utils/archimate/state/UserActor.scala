@@ -5,11 +5,9 @@ import akka.actor._
 import akka.http.scaladsl.model.ws
 import akka.stream._
 import akka.stream.scaladsl._
-import akka.util.Timeout
 
 import scala.concurrent._
 import scala.util._
-
 
 /**
   *
@@ -19,12 +17,32 @@ object UserActor {
   case class IncomingMessage(text: String)
   case class OutgoingMessage(text: String)
 
+  import scala.concurrent.duration._
+  private val dataTransferTimeout = 10 seconds
+  private val keepAliveInterval = 45 seconds
+
+  private def collect(stream: Source[String, _])(implicit system: ActorSystem, materializer: Materializer) = {
+    implicit val executionContext = system.dispatcher
+    stream
+      .limit(1000)
+      .completionTimeout(dataTransferTimeout)
+      .runFold("") { _ + _ }
+      .map { text => UserActor.IncomingMessage(text) }
+  }
+
   //#websocket-flow
-  def newWebSocketUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem): Flow[ws.Message, ws.Message, NotUsed] = newFlow[ws.Message, ws.Message](
+  def newWebSocketUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = newFlow[ws.Message, ws.Message](
     modelId = modelId,
     stateActor = stateActor,
-    inCollector = { case ws.TextMessage.Strict(text) => UserActor.IncomingMessage(text) },
-    outCollector = { case UserActor.OutgoingMessage(response) => ws.TextMessage(response) }
+    inCollector = {
+      case ws.TextMessage.Strict(text) => Future.successful(UserActor.IncomingMessage(text))
+      case ws.TextMessage.Streamed(stream) => collect { stream }
+      case ws.BinaryMessage.Strict(data) => Future.successful(UserActor.IncomingMessage(data.utf8String))
+      case ws.BinaryMessage.Streamed(stream) => collect { stream.map(_.utf8String) }
+    },
+    outCollector = {
+      case UserActor.OutgoingMessage(response) => ws.TextMessage(response)
+    }
   )(system)
   //#websocket-flow
 
@@ -38,22 +56,21 @@ object UserActor {
   private def newFlow[I, O](
     modelId: String,
     stateActor: ActorRef,
-    inCollector: PartialFunction[I, UserActor.IncomingMessage],
+    inCollector: PartialFunction[I, Future[UserActor.IncomingMessage]],
     outCollector: PartialFunction[UserActor.OutgoingMessage, O]
   )(implicit system: ActorSystem): Flow[I, O, NotUsed] = {
 
     // new connection - new user actor
     val userActor = system.actorOf(Props(new UserActor(modelId, stateActor)))
 
-    // new actor (it will send incoming messages to the userActor)
-    // also it will kill the userActor on complete of the input stream
+    // new actor (it will send incoming messages to the userActor), also it will kill the userActor on complete of the input stream
     val actorRefSink = Sink.actorRef[UserActor.IncomingMessage](userActor, PoisonPill)
 
     // incoming stream (will convert messages and send it to actorRefSink)
-    import scala.concurrent.duration._
     val in = Flow[I]
       .collect { inCollector }
-      .keepAlive( 45 seconds, () => UserActor.IncomingMessage("{}") ) // TODO: make it configured
+      .mapAsync(parallelism = 2)(identity)
+      .keepAlive( keepAliveInterval, () => UserActor.IncomingMessage("{}") )
       .to { actorRefSink }
 
     // jet another actor (it will subscribe to the userActor answers)

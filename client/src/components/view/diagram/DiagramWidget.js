@@ -38,8 +38,8 @@ class NodeWrapper extends React.Component {
     const props = {
       className: `x-node${(selected ? ' selected' : '')}`,
       style:{
-        left: node.x - width/2,
-        top: node.y - height/2,
+        left: node.x - 0.5*width,
+        top: node.y - 0.5*height,
         width: width,
         height: height,
         zIndex: node.zIndex || 0
@@ -82,8 +82,8 @@ class PortWrapper extends React.Component {
     const { node } = this.props;
     const width = node.width || 0;
     const height = node.height || 0;
-    const x = node.x - width / 2;
-    const y = node.y - height / 2;
+    const x = node.x - 0.5*width;
+    const y = node.y - 0.5*height;
     return (
       <rect x={x} y={y} width={width} height={height}
         className="x-port"
@@ -158,8 +158,8 @@ export class DiagramWidget extends React.Component {
     const { left, top, width, height } = this.canvas.getBoundingClientRect();
     const { zoom, offset: { x: offsetX, y: offsetY } } = this.state;
     return {
-      x: ((clientX - left - width/2) / zoom) - offsetX,
-      y: ((clientY - top - height/2) / zoom) - offsetY
+      x: ((clientX - left - 0.5*width) / zoom) - offsetX,
+      y: ((clientY - top - 0.5*height) / zoom) - offsetY
     };
   }
 
@@ -417,8 +417,8 @@ export class DiagramWidget extends React.Component {
       const shY = ((relativeMouse.y - action.relativeMouse.y) / zoom);
       action.selectionData.forEach(model => {
         const { ref } = model;
-        ref.x = model.initialX + Math.abs(kX)*shX/2;
-        ref.y = model.initialY + Math.abs(kY)*shY/2;
+        ref.x = model.initialX + Math.abs(kX)*0.5*shX;
+        ref.y = model.initialY + Math.abs(kY)*0.5*shY;
         ref.width = Math.max(model.initialW + kX*shX, 5);
         ref.height = Math.max(model.initialH + kY*shY, 5);
       });
