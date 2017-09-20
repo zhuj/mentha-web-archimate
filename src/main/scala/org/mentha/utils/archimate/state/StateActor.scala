@@ -71,6 +71,12 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private[state] def commit(changeSet: ModelState.ChangeSet): Try[ModelState.Response] = changeSet.commit(state)
 
   private var changes: Int = 0
+  private def snapshotState(force: Boolean = false) = {
+    if (force || (changes > 0)) {
+      saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
+      changes = 0
+    }
+  }
 
   override def receiveRecover: Receive = {
     case SnapshotOffer(md, json: String) => {
@@ -90,8 +96,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       changes += 1
     }
     case RecoveryCompleted => {
-      if (changes > 0) { saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat)) }
-      changes = 0
+      snapshotState()
     }
   }
 
@@ -102,16 +107,14 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
           case Success(response) => {
             dispatchAll(response, user)
             if (!changeSet.simple) {
-              saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
-              changes = 0
+              snapshotState(force = true)
             } else {
               changes += 1
             }
           }
           case Failure(error) => {
             execute(user, Left(changeSet.command), error)
-            saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
-            changes = 0
+            snapshotState(force = true)
           }
         }
       }
@@ -187,6 +190,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
     case StateActor.NoMoreSubscribers => {
+      snapshotState() // store all changes (if exist)
       delayPoisonPill() // there is no more subscribers, take a while and kill itself
     }
   }
