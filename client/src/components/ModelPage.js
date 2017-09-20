@@ -16,11 +16,13 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 import DownloadIcon from 'material-ui-icons/ScreenShare';
+import AddViewIcon from 'material-ui-icons/PlaylistAdd';
 import List, { ListItem } from 'material-ui/List';
 
 import View from './view/View'
 
 import * as actions from '../actions'
+import * as api from '../actions/model.api'
 
 import dom2image from 'dom-to-image'
 import filesaver from 'file-saver'
@@ -183,6 +185,17 @@ class ModelPage extends React.Component {
           <div className={classes.nav}>
             <Toolbar className={classes.toolbar}>
               {/* TODO: search */}
+              {
+                <ListItem key="add-view" className={classes.navItem}>
+                  <IconButton
+                    color="contrast"
+                    onClick={() => { this.addView() }}
+                    className={classes.icon}
+                  >
+                    <AddViewIcon/>
+                  </IconButton>
+                </ListItem>
+              }
             </Toolbar>
             <Divider/>
             { this.renderViewList() }
@@ -193,6 +206,12 @@ class ModelPage extends React.Component {
         </div>
       </div>
     )
+  }
+
+  addView() {
+    this.props.sendModelCommands(
+      api.addView('layered', 'View#' + new Date().toISOString())
+    );
   }
 
   downloadCurrentView() {
@@ -217,7 +236,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  connectModel: (id) => dispatch(actions.connectModel(id))
+  connectModel: (id) => dispatch(actions.connectModel(id)),
+  sendModelCommands: (commands) => dispatch(actions.sendModelMessage(api.composite(commands))),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)( withStyles(styleSheet)(ModelPage) )

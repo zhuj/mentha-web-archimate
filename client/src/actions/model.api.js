@@ -82,3 +82,18 @@ export const addViewConnection = (viewId, src, dst) => ({
     src, dst
   }
 });
+
+export const addView = (viewpoint, name, payload={}) => ({
+  'add-view': {
+    viewpoint: viewpoint,
+    name: name,
+    ...payload
+  }
+});
+
+export const modView = (id, payload={}) => ({
+  'mod-view': {
+    id: id,
+    ...payload
+  }
+});

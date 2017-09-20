@@ -14,16 +14,16 @@ object ModelState {
   type Type = String
   type ID = Identifiable.ID
 
-  private[state] implicit class ImplicitModel(model: Model) {
-
-    private def withPathAndName(params: JsonObject)(callback: (List[String], String) => Unit) = {
-      val pathOpt = (params \ json.names.`path`).asOpt[List[String]]
-      val nameOpt = (params \ json.names.`name`).asOpt[String]
-      (pathOpt, nameOpt) match {
-        case (Some(path), Some(name)) => callback(path, name)
-        case _ =>
-      }
+  private def withPathAndName(params: JsonObject)(callback: (List[String], String) => Unit) = {
+    val pathOpt = (params \ json.names.`path`).asOpt[List[String]]
+    val nameOpt = (params \ json.names.`name`).asOpt[String]
+    (pathOpt, nameOpt) match {
+      case (Some(path), Some(name)) => callback(path, name)
+      case _ =>
     }
+  }
+
+  private[state] implicit class ImplicitModel(model: Model) {
 
     val prepare: PartialFunction[Command, ChangeSet] = {
       case c @ Commands.AddElement(tp, _) => {
@@ -50,19 +50,6 @@ object ModelState {
         }
         ChangeSets.AddView(Identifiable.generateId(classOf[View]), c)
       }
-      case c @ Commands.ModView(id, params) => {
-        // TODO: move this to ModelValidator
-        withPathAndName(params) {
-          case (path, name) => model.findView(path, name) match {
-            case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
-            case None =>
-          }
-         }
-        ChangeSets.ModView(c)
-      }
-      case c @ Commands.DelView(_) => {
-        ChangeSets.DelView(c)
-      }
     }
   }
 
@@ -76,6 +63,19 @@ object ModelState {
   private[state] implicit class ImplicitView(data: (Model, View)) {
     val (model, view) = data
     val prepare: PartialFunction[Command, ChangeSet] = {
+      case c @ Commands.ModView(id, params) => {
+        // TODO: move this to ModelValidator
+        withPathAndName(params) {
+          case (path, name) => model.findView(path, name) match {
+            case Some(v) => require(v.id == id, s"Duplicate view name: ${name}.")
+            case None =>
+          }
+        }
+        ChangeSets.ModView(c)
+      }
+      case c @ Commands.DelView(_) => {
+        ChangeSets.DelView(c)
+      }
       case c @ Commands.AddViewNotes(_, _) => {
         ChangeSets.AddViewObject(Identifiable.generateId(classOf[ViewNotes]), c)
       }
