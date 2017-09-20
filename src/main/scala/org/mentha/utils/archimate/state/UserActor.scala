@@ -21,29 +21,31 @@ object UserActor {
   private val dataTransferTimeout = 10 seconds
   private val keepAliveInterval = 45 seconds
 
-  private def collect(stream: Source[String, _])(implicit system: ActorSystem, materializer: Materializer) = {
-    implicit val executionContext = system.dispatcher
-    stream
-      .limit(1000)
-      .completionTimeout(dataTransferTimeout)
-      .runFold("") { _ + _ }
-      .map { text => UserActor.IncomingMessage(text) }
-  }
+
 
   //#websocket-flow
-  def newWebSocketUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = newFlow[ws.Message, ws.Message](
-    modelId = modelId,
-    stateActor = stateActor,
-    inCollector = {
-      case ws.TextMessage.Strict(text) => Future.successful(UserActor.IncomingMessage(text))
-      case ws.TextMessage.Streamed(stream) => collect { stream }
-      case ws.BinaryMessage.Strict(data) => Future.successful(UserActor.IncomingMessage(data.utf8String))
-      case ws.BinaryMessage.Streamed(stream) => collect { stream.map(_.utf8String) }
-    },
-    outCollector = {
-      case UserActor.OutgoingMessage(response) => ws.TextMessage(response)
-    }
-  )(system)
+  def newWebSocketUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = {
+    implicit val executionContext = system.dispatcher
+    def collect(stream: Source[String, _]) = stream
+        .limit(1000)
+        .completionTimeout(dataTransferTimeout)
+        .runFold("") { _ + _ }
+        .map { text => UserActor.IncomingMessage(text) }
+
+    newFlow[ws.Message, ws.Message](
+      modelId = modelId,
+      stateActor = stateActor,
+      inCollector = {
+        case ws.TextMessage.Strict(text) => Future.successful(UserActor.IncomingMessage(text))
+        case ws.TextMessage.Streamed(stream) => collect { stream }
+        case ws.BinaryMessage.Strict(data) => akka.http.scaladsl.coding.Gzip.decode(data).map { msg => UserActor.IncomingMessage(msg.utf8String) }
+        case ws.BinaryMessage.Streamed(stream) => collect { stream.via(akka.http.scaladsl.coding.Gzip.decoderFlow).map(_.utf8String) }
+      },
+      outCollector = {
+        case UserActor.OutgoingMessage(response) => ws.TextMessage(response)
+      }
+    )
+  }
   //#websocket-flow
 
 //  def newCommandFlow(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem): Flow[String, String, NotUsed] = newFlow[String, String](

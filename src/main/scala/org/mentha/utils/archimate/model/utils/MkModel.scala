@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicLong
 
 import akka.actor.ActorSystem
 import akka.stream._
+import akka.util.ByteString
+import org.apache.commons.io.IOUtils
 import org.mentha.utils.archimate.model._
 
 import scala.concurrent._
@@ -46,12 +48,16 @@ abstract class MkModel {
         case message: TextMessage.Streamed => message.textStream.limit(1000).completionTimeout(10 seconds).runFold(s"${counter.incrementAndGet()}: ")(_ + _)
         case _ => Future.successful(s"${counter.incrementAndGet()}: ${message}")
       }
-      .mapAsync(parallelism = 1)(identity)
+      .mapAsync(parallelism = 2)(identity)
       .toMat(Sink.foreach[String]( x => log.debug(s"RESP: ${x}") ))(Keep.right)
+
+    val payload = {
+      akka.http.scaladsl.coding.Gzip.encode(ByteString(message))
+    }
 
     // see: http://doc.akka.io/docs/akka-http/10.0.0/scala/http/client-side/websocket-support.html#half-closed-websockets
     val maybe = Source.maybe[Message]
-    val outgoing = Source(TextMessage(message) :: Nil).concatMat(maybe)(Keep.right)
+    val outgoing = Source(BinaryMessage(payload) :: Nil).concatMat(maybe)(Keep.right)
     val flow = Flow.fromSinkAndSourceMat(incoming, outgoing)(Keep.both)
     val (upgradeResponse, (closed, promise)) = Http().singleWebSocketRequest(WebSocketRequest(s"ws://127.0.0.1:8088/model/${id}"), flow)
 
