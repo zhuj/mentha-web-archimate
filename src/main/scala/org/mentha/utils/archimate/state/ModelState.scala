@@ -694,14 +694,14 @@ object ModelState {
     }
   }
 
-  /** deserialize from string */
-  private[state] def fromJson(id: ID, jsonString: String): ModelState = new ModelState(
-    json.fromJsonString(jsonString) withId(id)
+  /** deserialize from json.JsonObject */
+  private[state] def fromJsonPair(id: ID, jsonPair: json.JsonObject): ModelState = new ModelState(
+    json.fromJsonPair(jsonPair) withId(id)
   )
 
-  /** serialize to string */
-  private[state] def toJson(state: ModelState, pretty: Boolean = false): String = {
-    json.toJsonString(state.model, pretty)
+  /** serialize to json.JsonObject */
+  private[state] def toJsonPair(state: ModelState): json.JsonObject = {
+    json.toJsonPair(state.model)
   }
 
 }

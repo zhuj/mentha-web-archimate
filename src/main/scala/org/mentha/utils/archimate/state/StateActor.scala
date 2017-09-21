@@ -61,8 +61,6 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   override val snapshotPluginId: String = config.getString("akka.mentha.state.persistence.snapshot")
   override val persistenceId: String = s"state-model-${modelId}"
 
-  private[state] val snapshotPrettyFormat: Boolean = config.getBoolean("akka.mentha.state.persistence.pretty")
-
   private[state] var state: ModelState = new ModelState( new Model().withId(modelId) )
   private[state] def setState(state: ModelState): Unit = { this.state = state }
 
@@ -73,15 +71,15 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private var changes: Int = 0
   private def snapshotState(force: Boolean = false) = {
     if (force || (changes > 0)) {
-      saveSnapshot(ModelState.toJson(state, snapshotPrettyFormat))
+      saveSnapshot(ModelState.toJsonPair(state))
       changes = 0
     }
   }
 
   override def receiveRecover: Receive = {
-    case SnapshotOffer(md, json: String) => {
+    case SnapshotOffer(md, json: json.JsonObject) => {
       try {
-        setState(ModelState.fromJson(id = modelId, jsonString = json))
+        setState(ModelState.fromJsonPair(id = modelId, jsonPair = json))
       } catch {
         case NonFatal(e) => {
           log.error(e, e.getMessage)
@@ -193,6 +191,13 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       snapshotState() // store all changes (if exist)
       delayPoisonPill() // there is no more subscribers, take a while and kill itself
     }
+
+    case SaveSnapshotSuccess(_) =>
+    case DeleteSnapshotSuccess(_) =>
+    case DeleteSnapshotsSuccess(_) =>
+    case SaveSnapshotFailure(_, _) =>
+    case DeleteSnapshotFailure(_, _) =>
+    case DeleteSnapshotsFailure(_, _) =>
   }
 
 }

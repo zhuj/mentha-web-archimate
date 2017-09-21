@@ -93,10 +93,12 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
   protected def save(metadata: SnapshotMetadata, snapshot: Any): Try[RefUpdate.Result] = withRepository { repo =>
     repo.commitBranchEntry(
       branchName = branch(metadata.persistenceId),
-      entryName = ENTRY_NAME,
       commiter = new PersonIdent(commiterName, commiterMail, metadata.timestamp, SystemReader.getInstance.getTimezone(metadata.timestamp)),
-      message = s"[${metadata.sequenceNr}]: Snapshot stored ${new Date(metadata.timestamp).toString}",
-    )(bytes = serialize(Snapshot(snapshot)))
+      message = s"[${metadata.sequenceNr}]: Snapshot stored ${new Date(metadata.timestamp).toString}"
+    )(
+      entryName = ENTRY_NAME,
+      bytes = serialize(Snapshot(snapshot))
+    )
   }
 
   protected def deserialize(inputStream: InputStream): Snapshot =
