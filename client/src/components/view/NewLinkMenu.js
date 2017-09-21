@@ -33,7 +33,9 @@ const styleSheet =theme => ({
     height: 20
   },
   svg: {
-    transform:'scale(0.8)'
+    transform:'scale(0.8)',
+    position:'absolute',
+    transformOrigin: '0 0'
   }
 });
 

@@ -647,31 +647,22 @@ export class DiagramWidget extends React.Component {
   }
 
   renderNodeLayerWidget() {
-    const { zoom, offset } = this.state;
-    const style = {
-      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`, // eslint-disable-line
-      width: '100%',
-      height: '100%'
-    };
-
     // TODO: https://developer.mozilla.org/ru/docs/Web/SVG/Element/foreignObject
     return (
-      <div className="node-view" style={style}>
+      <div className="node-view">
         { this.generateNodes('html') }
       </div>
     );
   }
 
-  renderLinkLayerWidget() {
-    const { zoom, offset } = this.state;
-    const style = {
-      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`,
-      width: '100%',
-      height: '100%'
-    };
+  renderLinkLayerDefs() {
+    return null;
+  }
 
+  renderLinkLayerWidget() {
     return (
-      <svg className="link-view" style={style}>
+      <svg className="link-view">
+        { this.renderLinkLayerDefs() }
         { this.generateLinks('svg') }
         { this.generatePorts('svg') }
       </svg>
@@ -687,12 +678,6 @@ export class DiagramWidget extends React.Component {
     const {x:x1, y:y1} = action.internalMouse1;
     const {x:x2, y:y2} = action.internalMouse2;
 
-    const { zoom, offset } = this.state;
-    const wrapperStyle = {
-      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`, // eslint-disable-line
-      width: '100%',
-      height: '100%'
-    };
 
     const style = {
       border: '1px solid black',
@@ -703,7 +688,7 @@ export class DiagramWidget extends React.Component {
     };
 
     return (
-      <div className="node-view" style={wrapperStyle}>
+      <div className="node-view">
         <div
           className='selector'
           style={style}
@@ -717,6 +702,12 @@ export class DiagramWidget extends React.Component {
   }
 
   render() {
+    const { zoom, offset } = this.state;
+    const transformStyle = {
+      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`, // eslint-disable-line
+      position: 'absolute'
+    };
+
     return (
       <div
         ref='canvas'
@@ -731,9 +722,11 @@ export class DiagramWidget extends React.Component {
       >
         <div className="diagram-center">
           {this.renderPrefixLayer()}
-          {this.renderNodeLayerWidget()}
-          {this.renderLinkLayerWidget()}
-          {this.renderSelector()}
+          <div className="diagram-position" style={transformStyle}>
+            {this.renderNodeLayerWidget()}
+            {this.renderLinkLayerWidget()}
+            {this.renderSelector()}
+          </div>
         </div>
       </div>
     );

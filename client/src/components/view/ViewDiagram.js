@@ -15,8 +15,10 @@ import * as models from './diagram/models'
 
 import { viewNodeWidget } from './nodes/ViewNodeWidget'
 import { viewEdgeWidget } from './edges/ViewEdgeWidget'
+import { markersDefs } from './edges/markers'
 
 import NewLinkMenu from './NewLinkMenu'
+import DiagramLegend from './DiagramLegend'
 
 import './ViewDiagram.sass.scss'
 
@@ -24,7 +26,7 @@ const updateDiagramModel = (view, diagramModel) => {
 
   const zIndexMap = ((view) => {
     return _.chain(view.nodes)
-      .entries(view.nodes)
+      .entries()
       .sortBy((e) => {
         const { width: w, height: h } = e[1].size;
         return -(w*h);
@@ -240,7 +242,8 @@ class ViewDiagram extends DiagramWidget {
     };
 
     /*if (true)*/ {
-      const rect = this.getDiagramModel().rect;
+      const diagramModel = this.getDiagramModel();
+      const rect = diagramModel.rect;
       if (isFinite(rect.xc) && isFinite(rect.yc)) {
         this.state['offset'] = {
           x: -rect.xc,
@@ -474,16 +477,21 @@ class ViewDiagram extends DiagramWidget {
     );
   }
 
+  renderLinkLayerDefs() {
+    return markersDefs();
+  }
+
   render() {
     // const timerName = `view-diagram-render-${this.props.id}`;
     // console.time(timerName);
     try {
-      const {id,connectDropTarget} = this.props;
+      const {id, connectDropTarget} = this.props;
       return connectDropTarget(
-        <div className='diagram-root' id={`diagrams-canvas-${id}`}>
+        <div className='diagram-root' id={`diagrams-root-${id}`}>
           {this.renderNewLinkMenu()}
           {this.renderHoverRegion()}
           {super.render()}
+          {/*<DiagramLegend id={id}/>*/}
         </div>
       );
     } finally {
