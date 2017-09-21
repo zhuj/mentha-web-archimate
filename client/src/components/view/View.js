@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Markers from './edges/markers'
 import ViewDiagram from './ViewDiagram'
 import Palette from './Palette'
 import Properties from './Properties'
@@ -23,7 +22,6 @@ class View extends React.Component {
     };
     return (
       <div className="view" style={style}>
-        <Markers/>
         <LeftPanel visible={true}>
           <Palette id={id}/>
         </LeftPanel>

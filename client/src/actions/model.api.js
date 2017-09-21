@@ -91,9 +91,10 @@ export const addView = (viewpoint, name, payload={}) => ({
   }
 });
 
-export const modView = (id, payload={}) => ({
+export const modView = (id, name, payload={}) => ({
   'mod-view': {
     id: id,
+    name: name,
     ...payload
   }
 });

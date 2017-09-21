@@ -35,8 +35,8 @@
     position: relative;
     left: 50%;
     top: 50%;
-    width: 100%;
-    height: 100%;
+    //width: 100%;
+    //height: 100%;
   }
 
   .selector {
@@ -47,23 +47,16 @@
 
   svg.link-view {
     position: absolute;
-    height: 100%;
-    width: 100%;
-    transform-origin: 0 0;
     overflow: visible;
     z-index: 999; // over 9000
     pointer-events: none;
   }
 
   div.node-view {
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
     position: absolute;
-    pointer-events: none;
-    transform-origin: 0 0;
+    overflow: visible;
     z-index: 1;
+    pointer-events: none;
   }
 
   .x-node {
@@ -109,7 +102,7 @@
       pointer-events: all;
       fill: rgba(white,0.1);
       &:hover {
-        fill: rgb(192,255,0);
+        fill: rgba(192,255,0,0.25);
       }
     }
 

@@ -216,7 +216,7 @@ class ModelPage extends React.Component {
 
   downloadCurrentView() {
     const { 'current-view': id } = this.state;
-    const diagram = document.getElementById(`diagrams-canvas-${id}`);
+    const diagram = document.getElementById(`diagrams-root-${id}`);
     if (!!diagram) {
       dom2image
         .toBlob(diagram, {})
