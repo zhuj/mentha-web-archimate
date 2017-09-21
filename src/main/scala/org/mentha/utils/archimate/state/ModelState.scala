@@ -704,6 +704,16 @@ object ModelState {
     json.toJsonPair(state.model)
   }
 
+  /** deserialize from string */
+  private[state] def fromJsonString(id: ID, jsonString: String): ModelState = new ModelState(
+    json.fromJsonString(jsonString) withId(id)
+  )
+
+  /** serialize to string */
+  private[state] def toJsonString(state: ModelState, pretty: Boolean = false): String = {
+    json.toJsonString(state.model, pretty)
+  }
+
 }
 
 class ModelState(private[state] var model: Model = new Model) {

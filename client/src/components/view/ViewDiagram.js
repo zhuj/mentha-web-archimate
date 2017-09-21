@@ -241,10 +241,12 @@ class ViewDiagram extends DiagramWidget {
 
     /*if (true)*/ {
       const rect = this.getDiagramModel().rect;
-      this.state['offset'] = {
-        x: -rect.xc,
-        y: -rect.yc
-      };
+      if (isFinite(rect.xc) && isFinite(rect.yc)) {
+        this.state['offset'] = {
+          x: -rect.xc,
+          y: -rect.yc
+        };
+      }
     }
   }
 

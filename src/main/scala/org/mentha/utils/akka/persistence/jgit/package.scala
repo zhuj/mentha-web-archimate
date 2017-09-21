@@ -212,7 +212,7 @@ package object jgit {
 
         // add the entry with content, then commit the tree
         builder.add(entry)
-        builder.commit()
+        builder.finish()
         dc.writeTree(obi)
       }
     }
