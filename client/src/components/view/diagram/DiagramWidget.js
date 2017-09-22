@@ -14,10 +14,10 @@ class LinkWrapper extends React.Component {
   }
 
   render() {
-    const { link, children } = this.props;
+    const { diagram, link } = this.props;
     return (
-      <g data-linkid={link.id}>
-        {children}
+      <g key={link.id} data-linkid={link.id}>
+        {diagram.generateWidgetForLink.call(diagram, {link})}
       </g>
     );
   }
@@ -30,7 +30,7 @@ class NodeWrapper extends React.Component {
   }
 
   render() {
-    const { diagram, node, children } = this.props;
+    const { diagram, node } = this.props;
     const width = node.width || 0;
     const height = node.height || 0;
     const selected = node.isSelected();
@@ -50,8 +50,8 @@ class NodeWrapper extends React.Component {
 
     if (selected) {
       return (
-        <div data-nodeid={node.id} {...props}>
-          {children}
+        <div key={node.id} data-nodeid={node.id} {...props}>
+          {diagram.generateWidgetForNode.call(diagram, {node})}
           <div className="resize lt"/>
           <div className="resize ct"/>
           <div className="resize rt"/>
@@ -65,8 +65,8 @@ class NodeWrapper extends React.Component {
     }
 
     return (
-      <div data-nodeid={node.id} {...props}>
-        {children}
+      <div key={node.id} data-nodeid={node.id} {...props}>
+        {diagram.generateWidgetForNode.call(diagram, {node})}
       </div>
     );
   }
@@ -91,6 +91,23 @@ class PortWrapper extends React.Component {
         data-nodeid={node.id}
       />
     );
+  }
+}
+
+class DiagramAreaWrapper extends React.Component {
+  shouldComponentUpdate() {
+    const { diagram } = this.props;
+    return diagram.canAreaRepaint.call(diagram);
+  }
+  render() {
+    const { diagram } = this.props;
+    return (
+      <div>
+        {diagram.renderNodeLayerWidget.call(diagram)}
+        {diagram.renderLinkLayerWidget.call(diagram)}
+        {diagram.renderSelector.call(diagram)}
+      </div>
+    )
   }
 }
 
@@ -188,6 +205,9 @@ export class DiagramWidget extends React.Component {
     return this.paintableWidgets[model.id] !== undefined;
   }
 
+  canAreaRepaint() {
+    return ((this.paintableWidgets === null) || (Object.keys(this.paintableWidgets).length > 0));
+  }
 
   /**
    * Gets an element meta under the mouse cursor
@@ -613,9 +633,7 @@ export class DiagramWidget extends React.Component {
         key={node.id}
         node={node}
         diagram={this}
-      >
-        { this.generateWidgetForNode({node}) }
-      </NodeWrapper>
+      />
     ));
   }
 
@@ -625,9 +643,7 @@ export class DiagramWidget extends React.Component {
         key={link.id}
         link={link}
         diagram={this}
-      >
-        { this.generateWidgetForLink({link}) }
-      </LinkWrapper>
+      />
     ));
   }
 
@@ -704,7 +720,8 @@ export class DiagramWidget extends React.Component {
   render() {
     const { zoom, offset } = this.state;
     const transformStyle = {
-      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`, // eslint-disable-line
+      transform: `scale(${zoom}) translate(${offset.x}px, ${offset.y}px)`,
+      // transition: 'transform 0ms linear 0s',
       position: 'absolute'
     };
 
@@ -723,9 +740,7 @@ export class DiagramWidget extends React.Component {
         <div className="diagram-center">
           {this.renderPrefixLayer()}
           <div className="diagram-position" style={transformStyle}>
-            {this.renderNodeLayerWidget()}
-            {this.renderLinkLayerWidget()}
-            {this.renderSelector()}
+            <DiagramAreaWrapper diagram={this}/>
           </div>
         </div>
       </div>
