@@ -7,24 +7,25 @@ import akka.stream._
 import akka.stream.scaladsl._
 
 import scala.concurrent._
+import scala.concurrent.duration._
 import scala.util._
 
 /**
   *
   */
 object UserActor {
+
   private case class Connected(outgoing: ActorRef)
   case class IncomingMessage(text: String)
   case class OutgoingMessage(text: String)
 
-  import scala.concurrent.duration._
-  private val dataTransferTimeout = 10 seconds
-  private val keepAliveInterval = 45 seconds
-
-
-
   //#websocket-flow
-  def newWebSocketUser(modelId: String, stateActor: ActorRef)(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = {
+  def newWebSocketUser(
+    modelId: String,
+    stateActor: ActorRef,
+    dataTransferTimeout: FiniteDuration,
+    keepAliveInterval: FiniteDuration
+  )(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = {
     implicit val executionContext = system.dispatcher
     def collect(stream: Source[String, _]) = stream
         .limit(1000)
@@ -43,7 +44,8 @@ object UserActor {
       },
       outCollector = {
         case UserActor.OutgoingMessage(response) => ws.TextMessage(response)
-      }
+      },
+      keepAliveInterval = keepAliveInterval
     )
   }
   //#websocket-flow
@@ -59,7 +61,8 @@ object UserActor {
     modelId: String,
     stateActor: ActorRef,
     inCollector: PartialFunction[I, Future[UserActor.IncomingMessage]],
-    outCollector: PartialFunction[UserActor.OutgoingMessage, O]
+    outCollector: PartialFunction[UserActor.OutgoingMessage, O],
+    keepAliveInterval: FiniteDuration
   )(implicit system: ActorSystem): Flow[I, O, NotUsed] = {
 
     // new connection - new user actor

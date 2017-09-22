@@ -43,12 +43,19 @@ object Main {
   }
 
   private implicit val system: ActorSystem = ActorSystem("webArchimate")
+  private val config: Config = system.settings.config
+
   private implicit val mat: Materializer = ActorMaterializer()
   private implicit val executionContext: ExecutionContext = system.dispatcher
   private implicit val timeout: Timeout = Timeout(5 seconds)
 
-  private val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
+  // load current config
+  private val idleTimeout = Duration(config.getString("akka.http.server.idle-timeout"))
+  private val keepAliveInterval: FiniteDuration = (idleTimeout * 0.90d).asInstanceOf[FiniteDuration]
+  private val dataTransferTimeout: FiniteDuration = (idleTimeout * 1.00d).asInstanceOf[FiniteDuration] // TODO: make a separate config
 
+  // state the actor storage
+  private val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
   private def obtainStateActor(modelId: String) = {
     Await.result(
       storageActor
@@ -63,8 +70,13 @@ object Main {
   //#websocket-request-handling
   private def modelWebSocket(modelId: String): Route = {
     extractUpgradeToWebSocket {
-      upgrade => {
-        val flow = UserActor.newWebSocketUser(modelId, obtainStateActor(modelId))
+      upgrade => /* withRequestTimeout(keepAliveInterval * 1.5) */ {
+        val flow = UserActor.newWebSocketUser(
+          modelId = modelId,
+          stateActor = obtainStateActor(modelId),
+          dataTransferTimeout = dataTransferTimeout,
+          keepAliveInterval = keepAliveInterval
+        )
         complete { upgrade.handleMessages(flow, None) }
       }
     }

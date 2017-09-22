@@ -5,9 +5,11 @@ import akka.persistence._
 import com.typesafe.config.Config
 import org.mentha.utils.archimate.model._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent._
+import scala.concurrent.duration._
 import scala.util._
-import scala.util.control.NonFatal
+import scala.util.control._
+
 
 object StateActor {
 
@@ -16,6 +18,7 @@ object StateActor {
   case class SubscriberSend(request: ModelState.Request) extends Event {}
 
   private case object NoMoreSubscribers {}
+  private case object AutoSaveEvent {}
 
   /**
     * The actor which dispatches incoming messages to all subscribers
@@ -54,6 +57,9 @@ object StateActor {
 class StateActor(val modelId: String) extends PersistentActor with ActorLogging {
 
   private val config: Config = context.system.settings.config
+  private val poisonPillDelay = Duration(config.getString("akka.mentha.state.poisonPillDelay")).asInstanceOf[FiniteDuration]
+  private val autoSaveInterval = Duration(config.getString("akka.mentha.state.autoSaveInterval")).asInstanceOf[FiniteDuration]
+
   private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
   override def recovery: Recovery = Recovery.create(SnapshotSelectionCriteria.Latest)
@@ -96,7 +102,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       changes += 1
     }
     case RecoveryCompleted => {
-      snapshotState()
+      snapshotState(force = false)
     }
   }
 
@@ -161,18 +167,19 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
 
   private var delayedPoisonPill: Cancellable = _
 
-  @inline private def cancelPoisonPill(): Unit = {
-    if (null != delayedPoisonPill) {
-      delayedPoisonPill.cancel()
-      delayedPoisonPill = null
-    }
+  private def cancelPoisonPill(): Unit = {
+    if (null != delayedPoisonPill) { delayedPoisonPill.cancel() }
+    delayedPoisonPill = null
   }
 
-  @inline private def delayPoisonPill(): Unit = {
+  private def delayPoisonPill(): Unit = {
     cancelPoisonPill()
-    import scala.concurrent.duration._
     implicit val executionContext: ExecutionContext = context.dispatcher
-    delayedPoisonPill = context.system.scheduler.scheduleOnce(30 second, self, PoisonPill) // self ! PoisonPill
+    delayedPoisonPill = context.system.scheduler.scheduleOnce(
+      delay = poisonPillDelay,
+      receiver = self,
+      message = PoisonPill
+    )
   }
 
   override def receiveCommand: Receive = receiveCommandNormal
@@ -189,8 +196,11 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
       dispatcher.forward(user)
       execute(user, ModelState.Queries.GetModel(id = state.model.id))
     }
+    case StateActor.AutoSaveEvent => {
+      snapshotState(force = false) // store all changes (if exist)
+    }
     case StateActor.NoMoreSubscribers => {
-      snapshotState() // store all changes (if exist)
+      snapshotState(force = false) // store all changes (if exist)
       delayPoisonPill() // there is no more subscribers, take a while and kill itself
     }
 
@@ -202,4 +212,32 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     case DeleteSnapshotsFailure(_, _) =>
   }
 
+  private var autoSaveTimer: Cancellable = _
+
+  private def cancelAutoSaveTimer(): Unit = {
+    if (null != autoSaveTimer) { autoSaveTimer.cancel() }
+    autoSaveTimer = null
+  }
+
+  private def startAutoSaveTimer(): Unit = {
+    cancelAutoSaveTimer()
+    implicit val executionContext: ExecutionContext = context.dispatcher
+    autoSaveTimer = context.system.scheduler.schedule(
+      initialDelay = autoSaveInterval,
+      interval = autoSaveInterval,
+      receiver = self,
+      message = StateActor.AutoSaveEvent
+    )
+  }
+
+  override def postStop(): Unit = {
+    cancelAutoSaveTimer()
+    cancelPoisonPill()
+    super.postStop()
+  }
+
+  override def preStart(): Unit = {
+    super.preStart()
+    startAutoSaveTimer()
+  }
 }
