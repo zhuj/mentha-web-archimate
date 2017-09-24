@@ -4,8 +4,9 @@ import scala.util._
 
 package object dsl {
 
-  import org.mentha.utils.archimate.model.edges.impl._
   import org.mentha.utils.archimate.model._
+  import org.mentha.utils.archimate.model.edges._
+  import org.mentha.utils.archimate.model.edges.impl._
 
   implicit class NodeConceptToView[T <: NodeConcept](val concept: T) {
     @inline def attach(implicit view: View): ViewNodeConcept[T] = view.attach_node(concept)
@@ -131,21 +132,36 @@ package object dsl {
 
   def wrapWithComposition(implicit model: Model, view: View): (ViewNode, ViewNode) => Unit = {
     case (src: ViewGroup, dst) => view.add { new ViewConnection(src, dst) }
-    case (src: ViewNodeConcept[_], dst: ViewNodeConcept[_]) => view.add {
-      new ViewRelationship[Relationship](src, dst)(
-        model.add {
-          Seq(
-            StructuralRelationships.compositionRelationship,
-            StructuralRelationships.assignmentRelationship,
-            StructuralRelationships.realizationRelationship,
-            StructuralRelationships.aggregationRelationship
-          )
-            .iterator // make it lazy
-            .map { meta => Try[Relationship] { meta.newInstance(src.concept, dst.concept).validate } }
-            .collectFirst { case Success(r) => r }
-            .getOrElse { throw new IllegalArgumentException(s"There is no possible relationship between ${src} and ${dst}") }
-        }
-      )
+    case (src: ViewNodeConcept[_], dst: ViewNodeConcept[_]) => {
+      view.add {
+        new ViewRelationship[Relationship](src, dst)(
+          model
+            .edges
+            .collect { case e: StructuralRelationship if e.source == src.concept && e.target == dst.concept => e }
+            .toSeq
+            .sortBy {
+              case _: CompositionRelationship => 1
+              case _: AssignmentRelationship => 2
+              case _: RealizationRelationship => 3
+              case _: AggregationRelationship => 4
+            }
+            .headOption
+            .getOrElse {
+              model.add {
+                Seq(
+                  StructuralRelationships.compositionRelationship,
+                  StructuralRelationships.assignmentRelationship,
+                  StructuralRelationships.realizationRelationship,
+                  StructuralRelationships.aggregationRelationship
+                )
+                  .iterator // make it lazy (we want to try each type of relation one by one)
+                  .map { meta => Try[Relationship] { meta.newInstance(src.concept, dst.concept).validate } }
+                  .collectFirst { case Success(r) => r }
+                  .getOrElse { throw new IllegalArgumentException(s"There is no possible relationship between ${src} and ${dst}") }
+              }
+            }
+        )
+      }
     }
     case (src, dst) => throw new IllegalArgumentException(s"There is no possible relationship between ${src} and ${dst}")
   }
@@ -245,6 +261,19 @@ package object dsl {
     @inline def connection(left: ViewObject, right: Concept): ViewConnection = connection(left, view.attach(right))
     @inline def connection(left: Concept, right: ViewObject): ViewConnection = connection(view.attach(left), right)
 
+
+    //
+
+    def notes(vo: ViewObject)(text: String): ViewNotes = {
+      val n = view.add { new ViewNotes withText { text } }
+      connection(vo, n)
+      n
+    }
+
+    @inline def notes(concept: Concept)(text: String): ViewNotes = {
+      notes( view.attach(concept) )(text)
+    }
+
     // Verbs for flows
 
     def add(v: View): this.type = {
@@ -326,17 +355,18 @@ package object dsl {
             Size( width = 10, height = 10 )
           } else {
             val strings = text.split('\n')
-            val height: Int = 20 + strings.length * 20
-            val width: Int = 20 + strings.map {
+            val height: Int = 20 + strings.length * 12
+            val width: Int = 40 + strings.map {
               _.trim.collect {
-                case c if c.isDigit | c.isUpper => 8
+                case c if c.isDigit | c.isUpper => 6
                 case _ => 5
               }.sum
             }.max
 
+            val BOX: Int = 20
             Size(
-              width = width + { if (width % 40 <= 0) 0 else 40 },
-              height = height + { if (height % 40 <= 0) 0 else 40 }
+              width = BOX*Math.floor(width/BOX) + { if (width % BOX <= 0) 0 else BOX },
+              height = BOX*Math.floor(height/BOX) + { if (height % BOX <= 0) 0 else BOX }
             )
           }
         }
