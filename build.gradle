@@ -5,8 +5,11 @@ apply plugin: "java"
 apply plugin: "scala"
 apply plugin: "maven"
 apply plugin: "idea"
+apply plugin: 'distribution'
+apply plugin: "application"
 
 sourceCompatibility = 1.8
+mainClassName = "Main"
 
 ext {
     scalaLibVersion = "2.12"
@@ -15,22 +18,19 @@ ext {
     slf4j = "1.7.25"
     akkaVersion = "2.5.4"
     akkaHttpVersion = "10.0.10"
-    playVersion = "2.6.3"
+    playVersion = "2.6.5"
 }
 
 repositories {
     mavenCentral()
 }
 
-configurations {
-    scalaCompilerPlugin
+// it doesn't work with IDEA: https://youtrack.jetbrains.com/issue/IDEA-133047
+processResources {
+    from('client/public') { into 'public' }
 }
 
-// it doesn't work with IDEA: https://youtrack.jetbrains.com/issue/IDEA-133047
-// processResources {
-//     from('client/public') { into 'public' }
-// }
-
+// so it's required to add resources to runtimeClasspath too
 sourceSets {
     main {
         runtimeClasspath += files('client') filter { 'public/**' }
@@ -49,19 +49,16 @@ dependencies {
     compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
     compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.6"
 
-    scalaCompilerPlugin "org.scalamacros:paradise_${scalaVersion}:2.1.1"
-    compile "org.scalameta:scalameta_${scalaLibVersion}:1.8.0"
-
     compile "org.scalaz:scalaz-core_${scalaLibVersion}:7.2.14"
 
     compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-stream_${scalaLibVersion}:${akkaVersion}"
-    compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
+//    compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
     compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
 
-    compile 'io.jsonwebtoken:jjwt:0.7.0'
+//    compile 'io.jsonwebtoken:jjwt:0.7.0'
 
     compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
 
@@ -80,20 +77,22 @@ dependencies {
     testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.1"
 }
 
-tasks.withType(ScalaCompile) {
-    scalaCompileOptions.additionalParameters = [
-            "-Xplugin:" + configurations.scalaCompilerPlugin.asPath
-    ]
-}
-
 jar {
     manifest.mainAttributes(
-            'Main-Class': "Main"
+            'Main-Class': mainClassName
     )
 }
 
-task run(type: JavaExec, dependsOn: classes) {
-    main = 'Main'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
+distributions {
+    main {
+        contents {
+            into ('storage') {
+                def p = File.createTempFile("tmp-","-tmp")
+                p.deleteOnExit()
+                from(p) {
+                    rename { '.placeholder' }
+                }
+            }
+        }
+    }
 }

@@ -165,7 +165,7 @@ const reducer = (state = getInitialState(), action) => {
     case actions.MODEL_COMMIT_RECEIVED: return debug(type, ()=>applyCommit(state, action.payload));
     case actions.MODEL_ERROR_RECEIVED: return debug(type, ()=>applyError(state, action.payload));
 
-    // internal
+    // internal TODO: don't store it in the model
     case actions.VIEW_SELECT_OBJECTS: return debug(type, ()=>selectViewObjects(state, action.viewId, action.selection));
   }
   return state;

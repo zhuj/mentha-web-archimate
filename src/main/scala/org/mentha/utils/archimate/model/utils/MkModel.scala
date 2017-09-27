@@ -79,7 +79,11 @@ abstract class MkModel {
 
   def publishModel(model: Model): Unit = {
     import play.api.libs.json.Json
-    val js = Json.obj( "set-model" -> json.toJsonPair(model) )
+
+    val p = json.toJsonPair(model)
+    json.fromJsonPair(p) // check if it works
+
+    val js = Json.obj( "set-model" -> p )
     sendWebSocketMessage(model.id, js.toString)
   }
 
