@@ -16,7 +16,7 @@ ext {
     scalaVersion = "${scalaLibVersion}.3"
     zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
     slf4j = "1.7.25"
-    akkaVersion = "2.5.4"
+    akkaVersion = "2.5.6"
     akkaHttpVersion = "10.0.10"
     playVersion = "2.6.5"
 }
@@ -30,12 +30,7 @@ processResources {
     from('client/public') { into 'public' }
 }
 
-// so it's required to add resources to runtimeClasspath too
-sourceSets {
-    main {
-        runtimeClasspath += files('client') filter { 'public/**' }
-    }
-}
+assemble.dependsOn processResources
 
 dependencies {
     zinc "com.typesafe.zinc:zinc:0.3.15"

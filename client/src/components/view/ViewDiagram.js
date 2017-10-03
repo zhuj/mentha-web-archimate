@@ -295,13 +295,25 @@ class ViewDiagram extends DiagramWidget {
 
   /* @overide: DiagramWidget */
   buildWindowListener() {
+    let last = 0;
+    const tooFast = () => {
+      const now = Date.now();
+      if ((now - last) < 100) { return true; }
+      last = now;
+      return false;
+    };
+
     return event => {
+      if (tooFast()) { return; }
+
+      // modifiers
       const viewId = this.props.id;
-      const diagramModel = this.getDiagramModel();
-      // const ctrl = (event.metaKey || event.ctrlKey);
+      const keyCode = event.keyCode;
+      const ctrl = (event.metaKey || event.ctrlKey);
 
       // Delete all selected
-      if (event.keyCode === 46) {
+      if (keyCode === 46) {
+        const diagramModel = this.getDiagramModel();
         const selectedItems = diagramModel.getSelectedItems();
         if (selectedItems.length > 0) {
           this.props.sendModelCommands(
@@ -311,7 +323,47 @@ class ViewDiagram extends DiagramWidget {
               .value()
           );
         }
+        return event.stopPropagation();
       }
+
+      // movement
+      if (keyCode >= 37 && keyCode <= 40) {
+        const diagramModel = this.getDiagramModel();
+        const selectedItems = diagramModel.getSelectedItems();
+        if (selectedItems.length > 0) {
+          let dx = 0, dy = 0;
+          switch (keyCode) {
+            case 37: dx = -10; break; // left
+            case 38: dy = -10; break; // up
+            case 39: dx =  10; break; // right
+            case 40: dy =  10; break; // down
+          }
+
+          let pos = (vo) => vo;
+          let size = (vo) => vo;
+
+          if (ctrl) {
+            size = (vo) => ({
+              width: 10 * Math.max(8, Math.floor((vo.width + dx) / 10)),
+              height: 10 * Math.max(4, Math.floor((vo.height + dy) / 10))
+            });
+          } else {
+            pos = (vo) => ({
+              x: 10 * Math.floor((vo.x + dx) / 10),
+              y: 10 * Math.floor((vo.y + dy) / 10)
+            });
+          }
+
+          this.props.sendModelCommands(
+            _.chain(selectedItems)
+              .filter((vo) => (vo instanceof models.NodeModel))
+              .map((vo) => api.moveViewNode(viewId, vo.id, pos(vo), size(vo)))
+              .value()
+          );
+        }
+        return event.stopPropagation();
+      }
+
     };
   }
 
