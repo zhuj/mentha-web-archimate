@@ -1,2 +1,10 @@
 rootProject.name = 'mentha-web-archimate'
-
+include 'akka'
+include 'archimate-model'
+include 'archimate-estimate'
+include 'archimate-wiki'
+include 'archimate-state'
+include 'archimate-utils'
+include 'archimate-frontend'
+include 'main'
+include 'junk'

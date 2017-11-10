@@ -1,0 +1,12 @@
+dependencies {
+    compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
+
+    compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-stream_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
+    compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
+
+    compile "org.eclipse.jgit:org.eclipse.jgit:4.10.0.201712302008-r"
+}

@@ -1,0 +1,17 @@
+// Install packages from package.json
+task npmInstall(type: Exec) {
+    description = "Grab NodeJS dependencies (from package.json)"
+    inputs.file("package.json").withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.dir("node_modules")
+    commandLine = ["npm", "install"]
+}
+
+// Run build from package.json
+task npmBuild(dependsOn: 'npmInstall', type: Exec) {
+    description = "Run build-prod script (from package.json)"
+    inputs.file("package-lock.json").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("src/main/javascript").withPathSensitivity(PathSensitivity.RELATIVE)
+    commandLine = ["npm", "run-script", "build"]
+}
+
+processResources.dependsOn 'npmBuild'

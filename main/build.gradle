@@ -1,0 +1,32 @@
+dependencies {
+    compile project(":akka")
+    compile project(":archimate-model")
+    compile project(":archimate-state")
+    compile project(":archimate-wiki")
+    compile project(":archimate-frontend")
+}
+
+apply plugin: 'distribution'
+apply plugin: "application"
+
+mainClassName = "Main"
+
+jar {
+    manifest.mainAttributes(
+            'Main-Class': mainClassName
+    )
+}
+
+distributions {
+    main {
+        contents {
+            into ('storage') {
+                def p = File.createTempFile("tmp-","-tmp")
+                p.deleteOnExit()
+                from(p) {
+                    rename { '.placeholder' }
+                }
+            }
+        }
+    }
+}

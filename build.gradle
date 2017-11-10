@@ -1,93 +1,50 @@
 group "org.mentha.tools"
 version "1.0.0-SNAPSHOT"
 
-apply plugin: "java"
-apply plugin: "scala"
-apply plugin: "maven"
 apply plugin: "idea"
-apply plugin: 'distribution'
-apply plugin: "application"
 
-sourceCompatibility = 1.8
-mainClassName = "Main"
+subprojects {
 
-ext {
-    scalaLibVersion = "2.12"
-    scalaVersion = "${scalaLibVersion}.3"
-    zincScalaVersion = "2.10.6" // zinc is build with scala 2.10
-    slf4j = "1.7.25"
-    akkaVersion = "2.5.6"
-    akkaHttpVersion = "10.0.10"
-    playVersion = "2.6.5"
-}
+    apply plugin: "java"
+    apply plugin: "scala"
+    apply plugin: "maven"
 
-repositories {
-    mavenCentral()
-}
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-// it doesn't work with IDEA: https://youtrack.jetbrains.com/issue/IDEA-133047
-processResources {
-    from('client/public') { into 'public' }
-}
-
-assemble.dependsOn processResources
-
-dependencies {
-    zinc "com.typesafe.zinc:zinc:0.3.15"
-    zinc "org.scala-lang:scala-library:${zincScalaVersion}"
-    zinc "org.scala-lang:scala-reflect:${zincScalaVersion}"
-    zinc "org.scala-lang:scala-compiler:${zincScalaVersion}"
-
-    compile "org.scala-lang:scala-library:${scalaVersion}"
-    compile "org.scala-lang:scala-reflect:${scalaVersion}"
-
-    compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
-    compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.6"
-
-    compile "org.scalaz:scalaz-core_${scalaLibVersion}:7.2.14"
-
-    compile "com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}"
-    compile "com.typesafe.akka:akka-slf4j_${scalaLibVersion}:${akkaVersion}"
-    compile "com.typesafe.akka:akka-stream_${scalaLibVersion}:${akkaVersion}"
-//    compile "com.typesafe.akka:akka-cluster_${scalaLibVersion}:${akkaVersion}"
-    compile "com.typesafe.akka:akka-persistence_${scalaLibVersion}:${akkaVersion}"
-    compile "com.typesafe.akka:akka-http_${scalaLibVersion}:${akkaHttpVersion}"
-
-//    compile 'io.jsonwebtoken:jjwt:0.7.0'
-
-    compile "com.typesafe.play:play-json_${scalaLibVersion}:${playVersion}"
-
-//    compile "org.iq80.leveldb:leveldb:0.9"
-//    compile "org.fusesource.leveldbjni:leveldbjni-all:1.8"
-    compile "org.eclipse.jgit:org.eclipse.jgit:4.8.0.201706111038-r"
-
-    compile "javax.validation:validation-api:1.1.0.Final"
-    compile "org.apache.commons:commons-lang3:3.6"
-    compile "commons-io:commons-io:2.5"
-
-    compile "org.slf4j:slf4j-api:${slf4j}"
-    compile "org.slf4j:slf4j-log4j12:${slf4j}"
-
-    testCompile "junit:junit:4.12"
-    testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.1"
-}
-
-jar {
-    manifest.mainAttributes(
-            'Main-Class': mainClassName
-    )
-}
-
-distributions {
-    main {
-        contents {
-            into ('storage') {
-                def p = File.createTempFile("tmp-","-tmp")
-                p.deleteOnExit()
-                from(p) {
-                    rename { '.placeholder' }
-                }
-            }
-        }
+    ext {
+        scalaLibVersion = "2.12"
+        scalaVersion = "${scalaLibVersion}.4"
+        zincScalaVersion = "2.10.7" // zinc is build with scala 2.10
+        slf4j = "1.7.25"
+        akkaVersion = "2.5.9"
+        akkaHttpVersion = "10.0.11"
+        playVersion = "2.6.8"
     }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        zinc "com.typesafe.zinc:zinc:0.3.15"
+        zinc "org.scala-lang:scala-library:${zincScalaVersion}"
+        zinc "org.scala-lang:scala-reflect:${zincScalaVersion}"
+        zinc "org.scala-lang:scala-compiler:${zincScalaVersion}"
+
+        compile "org.scala-lang:scala-library:${scalaVersion}"
+        compile "org.scala-lang:scala-reflect:${scalaVersion}"
+
+        compile "javax.validation:validation-api:2.0.1.Final"
+        compile "org.apache.commons:commons-lang3:3.7"
+        compile "commons-io:commons-io:2.6"
+
+        compile "org.slf4j:slf4j-api:${slf4j}"
+        compile "org.slf4j:slf4j-log4j12:${slf4j}"
+
+        testCompile "junit:junit:4.12"
+        testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.4"
+    }
+
 }

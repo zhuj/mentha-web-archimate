@@ -1,0 +1,7 @@
+dependencies {
+    compile project(":akka")
+    compile project(":archimate-model")
+    compile project(":archimate-state")
+    compile project(":archimate-wiki")
+    compile project(":archimate-utils")
+}
