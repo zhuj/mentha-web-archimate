@@ -11,7 +11,7 @@ class View extends React.Component {
   componentWillMount() {
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
   }
 
   render() {

@@ -5,7 +5,7 @@ import { ModelNodeWidget } from '../BaseNodeWidget'
 export const TYPE='orJunction';
 
 export class OrJunctionWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+  
   getClassName(node) { return 'a-node model_x orJunction'; }
   renderTitle(node) { return null; }
   borderShape(node) {

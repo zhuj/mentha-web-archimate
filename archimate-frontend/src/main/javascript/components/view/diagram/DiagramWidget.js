@@ -121,8 +121,8 @@ const ELTP = {
 
 export class DiagramWidget extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.canvas = null;
     this.paintableWidgets = null;
     this.state = {
@@ -159,7 +159,7 @@ export class DiagramWidget extends React.Component {
     this.canvas = this.refs['canvas'];
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     this.clearRepaintEntities();
   }
 

@@ -6,7 +6,7 @@ import { ModelNodeWidget } from '../BaseNodeWidget'
 export const TYPE='systemSoftware';
 
 export class SystemSoftwareWidget extends BaseNodeLikeWidget {
-  constructor(props) { super(props); }
+
   getClassName(node) { return 'a-node model_t systemSoftware'; }
 }
 

@@ -7,7 +7,7 @@ export const TYPE='viewNotes';
 
 import * as api from '../../../../actions/model.api'
 export class ViewNotesWidget extends ViewNodeWidget {
-  constructor(props) { super(props); }
+  
   getClassName(node) { return 'a-node viewNotes'; }
   getTitle(node) { return node.viewObject.text; }
   mkSetTitleCommand(node, title) {

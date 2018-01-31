@@ -4,8 +4,8 @@ import './Panels.sass.scss'
 
 export class LeftPanel extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = { visible: !!props.visible };
   }
 
@@ -32,8 +32,8 @@ export class LeftPanel extends React.Component {
 
 export class RightPanel extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = { visible: !!props.visible };
   }
 

@@ -4,8 +4,8 @@ import _ from 'lodash'
 import { intersect, shape } from 'svg-intersections'
 
 export class DefaultNodeWidget extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.updateLinkPoints(props.node);
   }
 
@@ -85,7 +85,7 @@ export class DefaultNodeWidget extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     const { node } = nextProps;
     this.updateLinkPoints(node);
   }
@@ -132,8 +132,8 @@ export class DefaultNodeWidget extends React.Component {
 // const useSmooth = true;
 export class DefaultLinkWidget extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
   }
 
   generatePoint(link, index) {

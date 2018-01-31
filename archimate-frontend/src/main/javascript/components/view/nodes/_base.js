@@ -4,7 +4,7 @@ import { ModelNodeWidget } from './BaseNodeWidget'
 
 
 export class BaseNodeLikeWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+
 
   borderPath(node) {
     const w = (node.width || 0);
@@ -41,7 +41,7 @@ export class BaseNodeLikeWidget extends ModelNodeWidget {
 
 
 export class BaseRepresentationWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+
 
   borderPath(node) {
     const w = (node.width || 0);

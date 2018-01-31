@@ -7,11 +7,20 @@ task npmInstall(type: Exec) {
 }
 
 // Run build from package.json
-task npmBuild(dependsOn: 'npmInstall', type: Exec) {
+task npmBuildProd(dependsOn: 'npmInstall', type: Exec) {
     description = "Run build-prod script (from package.json)"
     inputs.file("package-lock.json").withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir("src/main/javascript").withPathSensitivity(PathSensitivity.RELATIVE)
     commandLine = ["npm", "run-script", "build"]
 }
 
-processResources.dependsOn 'npmBuild'
+// Run dev server from package.json
+task npmDevServer(dependsOn: 'npmInstall', type: Exec) {
+    description = "Run build-prod script (from package.json)"
+    inputs.file("package-lock.json").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("src/main/javascript").withPathSensitivity(PathSensitivity.RELATIVE)
+    commandLine = ["npm", "run-script", "dev"]
+}
+
+
+processResources.dependsOn 'npmBuildProd'

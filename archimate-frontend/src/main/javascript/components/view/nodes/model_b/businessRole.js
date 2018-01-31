@@ -6,7 +6,7 @@ import { ModelNodeWidget } from '../BaseNodeWidget'
 export const TYPE='businessRole';
 
 export class BusinessRoleWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+  
   getClassName(node) { return 'a-node model_b businessRole'; }
 }
 

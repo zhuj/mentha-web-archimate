@@ -5,7 +5,7 @@ import { allMeta } from '../../../meta/index'
 import { DefaultLinkWidget } from '../diagram/DefaultWidgets'
 
 export class BaseLinkWidget extends DefaultLinkWidget {
-  constructor(props) { super(props); }
+  
   render() {
     try {
       const {link: {sourceNode: source, targetNode: target}} = this.props;
@@ -30,7 +30,7 @@ export class BaseLinkWidget extends DefaultLinkWidget {
 export const ViewLinkWidget = BaseLinkWidget;
 
 export class ModelLinkWidget extends BaseLinkWidget {
-  constructor(props) { super(props); }
+  
   getBaseClassName(link) { return super.getClassName(); }
   getClassName(link) {
     let classes = this.getBaseClassName(link);

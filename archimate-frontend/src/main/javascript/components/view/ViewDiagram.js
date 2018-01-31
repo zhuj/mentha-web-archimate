@@ -234,8 +234,8 @@ const nodesTarget = {
 }))
 class ViewDiagram extends DiagramWidget {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = {
       ...this.state,
       ...diagramModelInState(props, new models.DiagramModel(props.id))
@@ -264,8 +264,8 @@ class ViewDiagram extends DiagramWidget {
     return ["zoom", "offset"];
   }
 
-  componentWillReceiveProps(nextProps) {
-    super.componentWillReceiveProps(nextProps);
+  componentWillReceiveProps(nextProps, nextContext) {
+    super.componentWillReceiveProps(nextProps, nextContext);
     this.setState(diagramModelInState(nextProps, this.getDiagramModel()));
     this.clearHoverRegion();
   }
@@ -275,9 +275,9 @@ class ViewDiagram extends DiagramWidget {
   // TODO:  return true;
   // TODO: }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState, nextContext) {
     reactLS.componentWillUpdate.call(this, nextProps, nextState);
-    if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
+    if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState, nextContext); }
   }
 
   componentDidMount() {
@@ -293,7 +293,7 @@ class ViewDiagram extends DiagramWidget {
     return viewEdgeWidget({ diagram: this, ...props});
   }
 
-  /* @overide: DiagramWidget */
+  /* @override: DiagramWidget */
   buildWindowListener() {
     let last = 0;
     const tooFast = () => {
@@ -318,15 +318,37 @@ class ViewDiagram extends DiagramWidget {
         if (typeof(editItem) === 'undefined') {
           const selectedItems = diagramModel.getSelectedItems();
           if (selectedItems.length > 0) {
-            this.props.sendModelCommands(
-              _.chain(selectedItems)
-                .filter((vo) => (vo instanceof models.NodeModel) || (vo instanceof models.LinkModel))
-                .map((vo) => api.deleteViewObject(viewId, vo.id))
-                .value()
-            );
+            const selectedPoints = _.filter(selectedItems, (vo) => (vo instanceof models.PointModel));
+            if (selectedPoints.length > 0) {
+
+              // first, delete points from links
+              _.forEach(selectedPoints, (po) => {
+                po.link.removePoint(po);
+              });
+
+              // then, update objects in model
+              this.props.sendModelCommands(
+                _.chain(selectedPoints)
+                  .map((po) => po.link)
+                  .uniq()
+                  .map((vo) => api.moveViewEdge(viewId, vo.id, vo.getMiddlePoints()))
+                  .value()
+              );
+
+            } else {
+
+              // delete objects from model
+              this.props.sendModelCommands(
+                _.chain(selectedItems)
+                  .filter((vo) => (vo instanceof models.NodeModel) || (vo instanceof models.LinkModel))
+                  .map((vo) => api.deleteViewObject(viewId, vo.id))
+                  .value()
+              );
+
+            }
           }
           return event.stopPropagation();
-          }
+        }
       }
 
       // movement
@@ -380,7 +402,7 @@ class ViewDiagram extends DiagramWidget {
     this.props.selectViewObjects(this.props.id, []); // just refresh the model from the redux state
   }
 
-  /* @overide: DiagramWidget */
+  /* @override: DiagramWidget */
   onChange(action) {
     const viewId = this.props.id;
 
@@ -402,8 +424,9 @@ class ViewDiagram extends DiagramWidget {
                 return api.moveViewNode(viewId, vo.id, vo, vo);
               }
               if (vo instanceof models.LinkModel) {
-                return api.moveViewEdge(viewId, vo.id, _.slice(vo.points, 1, vo.points.length-1));
+                return api.moveViewEdge(viewId, vo.id, vo.getMiddlePoints());
               }
+              return null;
             })
             .filter((command) => command !== null)
             .value()
