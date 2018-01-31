@@ -8,6 +8,7 @@ import akka.actor.ActorLogging
 import akka.persistence._
 import akka.persistence.snapshot.SnapshotStore
 import com.typesafe.config.Config
+import org.apache.commons.codec.net.URLCodec
 import org.eclipse.jgit.dircache.{DirCache, DirCacheEntry}
 import org.eclipse.jgit.lib._
 import org.eclipse.jgit.revwalk._
@@ -21,7 +22,7 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util._
 
-class JgitJsonSnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
+class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
 
   protected sealed trait NodeType {}
   protected case object NodeTypeFolder extends NodeType {}
@@ -110,7 +111,7 @@ class JgitJsonSnapshotStore(config: Config) extends SnapshotStore with ActorLogg
     }
   }
 
-  protected def getNodeType(path: String, name: String, value: JsValue): NodeType = {
+  protected def getNodeType(path: List[String], name: String, value: JsValue): NodeType = {
     if (OBJECT_JSON == name) { throw new IllegalStateException() }
     else { NodeTypeFile }
   }
@@ -125,14 +126,16 @@ class JgitJsonSnapshotStore(config: Config) extends SnapshotStore with ActorLogg
     ) {
       (obi) => Try {
 
+        val encoder = new URLCodec()
         val dc = DirCache.newInCore()
         val builder = dc.builder()
 
-        def insert(obj: JsValue, path: String) = {
+        def insert(obj: JsValue, path: List[String]) = {
           val text = if (snapshotPrettyFormat) { Json.prettyPrint(obj) } else { Json.stringify(obj) }
           val fileContentBlobId = obi.insert(Constants.OBJ_BLOB, text.getBytes(UTF8))
 
-          val entry = new DirCacheEntry(path)
+          val pathString = path.reverse.map { encoder.encode }.mkString("/")
+          val entry = new DirCacheEntry(pathString)
           entry.setLength(text.length)
           entry.setFileMode(FileMode.REGULAR_FILE)
           entry.setObjectId(fileContentBlobId)
@@ -141,23 +144,21 @@ class JgitJsonSnapshotStore(config: Config) extends SnapshotStore with ActorLogg
           builder.add(entry)
         }
 
-        @inline def concat(path: String, name: String) = if (path.isEmpty) { name } else { path + '/' + name }
-
-        def withObject(obj: JsObject, path: String): Unit = {
+        def withObject(obj: JsObject, path: List[String]): Unit = {
           val c = mutable.LinkedHashMap.empty[String, JsValue]
           for { (name, value) <- obj.fields } {
             getNodeType(path, name, value) match {
-              case NodeTypeFolder => withObject(value.asInstanceOf[JsObject], concat(path, name))
-              case NodeTypeFile => insert(value, concat(path, name))
+              case NodeTypeFolder => withObject(value.asInstanceOf[JsObject], name :: path)
+              case NodeTypeFile => insert(value, name :: path)
               case _ => c += (name -> value)
             }
           }
           if (c.nonEmpty) {
-            insert(JsObject(c), concat(path, OBJECT_JSON))
+            insert(JsObject(c), OBJECT_JSON :: path)
           }
         }
 
-        withObject(snapshot, "")
+        withObject(snapshot, Nil)
 
         builder.finish()
         dc.writeTree(obi)
@@ -203,13 +204,15 @@ class JgitJsonSnapshotStore(config: Config) extends SnapshotStore with ActorLogg
         val commit = revWalk.parseCommit(commitId)
         withResource(repo.newObjectReader()) { reader =>
 
+          val encoder = new URLCodec()
+
           def withTree(tree: ObjectId): JsObject = {
             val c = mutable.LinkedHashMap.empty[String, JsValue]
 
             val p = new CanonicalTreeParser()
             p.reset(reader, tree)
             while (!p.eof()) {
-              val name = p.getEntryPathString
+              val name = encoder.decode(p.getEntryPathString)
               val value = if (p.getEntryFileMode == FileMode.TREE) {
                 withTree(p.getEntryObjectId)
               } else {

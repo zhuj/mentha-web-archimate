@@ -59,6 +59,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private val config: Config = context.system.settings.config
   private val poisonPillDelay = Duration(config.getString("akka.mentha.state.poisonPillDelay")).asInstanceOf[FiniteDuration]
   private val autoSaveInterval = Duration(config.getString("akka.mentha.state.autoSaveInterval")).asInstanceOf[FiniteDuration]
+  private val autoSaveThreshold = Math.min(config.getInt("akka.mentha.state.autoSaveThreshold"), 1000)
 
   private val dispatcher = context.actorOf(Props(new StateActor.StateDispatcherActor()), name = "dispatcher")
 
@@ -66,8 +67,6 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   override val journalPluginId: String = config.getString("akka.mentha.state.persistence.journal")
   override val snapshotPluginId: String = config.getString("akka.mentha.state.persistence.snapshot")
   override val persistenceId: String = s"state-model-${modelId}"
-
-  private[state] val snapshotPrettyFormat: Boolean = config.getBoolean("akka.mentha.state.persistence.pretty")
 
   private[state] var state: ModelState = new ModelState( new Model().withId(modelId) )
   private[state] def setState(state: ModelState): Unit = { this.state = state }
@@ -77,21 +76,22 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   private[state] def commit(changeSet: ModelState.ChangeSet): Try[ModelState.Response] = changeSet.commit(state)
 
   private var changes: Int = 0
-  private def snapshotState(force: Boolean = false) = {
+  private def snapshotState(force: Boolean): Unit = {
     if (force || (changes > 0)) {
-      saveSnapshot(ModelState.toJsonString(state, snapshotPrettyFormat))
+      saveSnapshot(ModelState.toJsonPair(state))
       changes = 0
     }
   }
 
   override def receiveRecover: Receive = {
-    case SnapshotOffer(md, json: String) => {
+    case SnapshotOffer(md, json: play.api.libs.json.JsObject) => {
       try {
-        setState(ModelState.fromJsonString(id = modelId, jsonString = json))
+        setState(ModelState.fromJsonPair(id = modelId, jsonPair = json))
       } catch {
         case NonFatal(e) => {
           log.error(e, e.getMessage)
           self ! PoisonPill // An error has appeared during the initialization - just stop any activity
+          throw e
         }
       }
       changes = 0
@@ -116,6 +116,9 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
               snapshotState(force = true)
             } else {
               changes += 1
+              if (changes > autoSaveThreshold) {
+                snapshotState(force = false)
+              }
             }
           }
           case Failure(error) => {
@@ -207,9 +210,10 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
     case SaveSnapshotSuccess(_) =>
     case DeleteSnapshotSuccess(_) =>
     case DeleteSnapshotsSuccess(_) =>
-    case SaveSnapshotFailure(_, _) =>
-    case DeleteSnapshotFailure(_, _) =>
-    case DeleteSnapshotsFailure(_, _) =>
+
+    case SaveSnapshotFailure(_, cause) => log.error(cause, s"SaveSnapshotFailure: ${cause.getMessage}")
+    case DeleteSnapshotFailure(_, cause) => log.error(cause, s"DeleteSnapshotFailure: ${cause.getMessage}")
+    case DeleteSnapshotsFailure(_, cause) => log.error(cause, s"DeleteSnapshotsFailure: ${cause.getMessage}")
   }
 
   private var autoSaveTimer: Cancellable = _
