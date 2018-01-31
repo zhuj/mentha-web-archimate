@@ -19,7 +19,7 @@ class BaseModel extends BaseEntity {
   }
 
   isSelected() {
-    return !!this.selected;
+    return this.selected;
   }
 
   getSelected() {
@@ -27,7 +27,7 @@ class BaseModel extends BaseEntity {
   }
 
   setSelected(selected) {
-    this.selected = selected;
+    this.selected = !!selected;
   }
 
 }
@@ -90,6 +90,10 @@ export class LinkModel extends BaseModel {
     ];
   }
 
+  getMiddlePoints() {
+    return _.slice(this.points, 1, this.points.length-1);
+  }
+
   getFirstPoint() {
     return _.first(this.points);
   }
@@ -112,6 +116,10 @@ export class LinkModel extends BaseModel {
     const pointModel = new PointModel(this, point.x, point.y);
     this.points.splice(index, 0, pointModel);
     return pointModel;
+  }
+
+  removePoint(point) {
+    this.points = _.filter(this.points, (p) => point !== p);
   }
 
   getType() {

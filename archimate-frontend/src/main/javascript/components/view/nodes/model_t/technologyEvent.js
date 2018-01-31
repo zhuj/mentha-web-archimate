@@ -6,7 +6,7 @@ import { ModelNodeWidget } from '../BaseNodeWidget'
 export const TYPE='technologyEvent';
 
 export class TechnologyEventWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+  
   getClassName(node) { return 'a-node model_t technologyEvent'; }
 }
 

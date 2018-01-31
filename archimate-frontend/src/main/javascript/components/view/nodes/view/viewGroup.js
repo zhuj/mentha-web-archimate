@@ -7,7 +7,7 @@ export const TYPE='viewGroup';
 
 import * as api from '../../../../actions/model.api'
 export class ViewGroupWidget extends ViewNodeWidget {
-  constructor(props) { super(props); }
+
   getClassName(node) { return 'a-node viewGroup'; }
   getTitle(node) { return node.viewObject.name; }
   mkSetTitleCommand(node, title) {

@@ -80,8 +80,8 @@ const loadData = ({ id, connectModel }) => {
 @DragDropContext(HTML5Backend)
 class ModelPage extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = {};
   }
 
@@ -95,9 +95,9 @@ class ModelPage extends React.Component {
     return ["current-view"];
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState, nextContext) {
     reactLS.componentWillUpdate.call(this, nextProps, nextState);
-    if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState); }
+    if (!!super.componentWillUpdate) { super.componentWillUpdate(nextProps, nextState, nextContext); }
   }
 
   componentDidMount() {
@@ -109,7 +109,7 @@ class ModelPage extends React.Component {
     loadData(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.id !== this.props.id) {
       loadData(nextProps);
     }

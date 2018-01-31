@@ -22,8 +22,8 @@ const hint = (tp) => {
 
 class Palette extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = {
       hover: null
     };
@@ -32,7 +32,7 @@ class Palette extends React.Component {
   componentWillMount() {
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
   }
 
 

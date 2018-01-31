@@ -5,7 +5,7 @@ import { ModelNodeWidget } from '../BaseNodeWidget'
 export const TYPE='value';
 
 export class ValueWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+  
   getClassName(node) { return 'a-node model_m value'; }
 
   borderShape(node) {

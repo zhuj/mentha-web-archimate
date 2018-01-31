@@ -5,14 +5,10 @@ import _ from 'lodash'
 
 class DiagramLegend extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
   }
 
   render() {

@@ -3,7 +3,7 @@ import { shape } from 'svg-intersections'
 import { ModelNodeWidget } from '../BaseNodeWidget'
 
 export class BaseMotivationWidget extends ModelNodeWidget {
-  constructor(props) { super(props); }
+  
 
   borderPath(node) {
     const w = (node.width || 0);

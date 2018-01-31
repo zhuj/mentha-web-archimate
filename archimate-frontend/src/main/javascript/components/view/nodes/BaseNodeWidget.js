@@ -5,7 +5,7 @@ import { allMeta } from '../../../meta/index'
 import { DefaultNodeWidget } from '../diagram/DefaultWidgets'
 
 class BaseNodeWidget extends DefaultNodeWidget {
-  constructor(props) { super(props); }
+  
   mkSetTitleCommand(node, title) {}
   renderTitle(node) {
     if (node.selected === 2) {
@@ -50,7 +50,7 @@ class BaseNodeWidget extends DefaultNodeWidget {
 
 import * as api from '../../../actions/model.api'
 export class ModelNodeWidget extends BaseNodeWidget {
-  constructor(props) { super(props); }
+  
   getTitle(node) { return this.props.conceptInfo.name; }
   mkSetTitleCommand(node, title) {
     return (viewId) => api.modConcept(node.viewObject.concept, {
@@ -77,5 +77,5 @@ export class ModelNodeWidget extends BaseNodeWidget {
 }
 
 export class ViewNodeWidget extends BaseNodeWidget {
-  constructor(props) { super(props); }
+  
 }
