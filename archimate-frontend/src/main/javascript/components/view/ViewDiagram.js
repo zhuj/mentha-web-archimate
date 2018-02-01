@@ -314,7 +314,7 @@ class ViewDiagram extends DiagramWidget {
       // Delete all selected
       if (keyCode === 46) {
         const diagramModel = this.getDiagramModel();
-        const editItem = _.find(diagramModel.getNodes(), (node) => node.getSelected() > 1);
+        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelected());
         if (typeof(editItem) === 'undefined') {
           const selectedItems = diagramModel.getSelectedItems();
           if (selectedItems.length > 0) {
@@ -354,7 +354,7 @@ class ViewDiagram extends DiagramWidget {
       // movement
       if (keyCode >= 37 && keyCode <= 40) {
         const diagramModel = this.getDiagramModel();
-        const editItem = _.find(diagramModel.getNodes(), (node) => node.getSelected() > 1);
+        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelected());
         if (typeof(editItem) === 'undefined') {
           const selectedItems = diagramModel.getSelectedItems();
           if (selectedItems.length > 0) {
@@ -434,7 +434,7 @@ class ViewDiagram extends DiagramWidget {
         return;
       }
       case 'items-selected-2': {
-        _.forEach(action.items, (item) => { item.setSelected(2); });
+        _.forEach(action.items, (item) => { item.selectForEdit(); });
         this.forceUpdate();
         return;
       }

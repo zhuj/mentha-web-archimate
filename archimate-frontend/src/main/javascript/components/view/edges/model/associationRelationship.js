@@ -7,7 +7,10 @@ export class AssociationRelationshipWidget extends ModelLinkWidget {
   getBaseClassName(link) { return TYPE; }
   drawTitle(link) {
     const conceptInfo = this.getConceptInfo(link);
-    if (conceptInfo) { return this.drawTitleText(link, conceptInfo['predicate'], "middle", 0, "50%"); }
+    if (conceptInfo) {
+      // TODO: if (link.isSelectedForEdit()) { return this.renderEditTitle(link, 'predicate'); }
+      return this.drawTitleText(link, conceptInfo['predicate'], "middle", 0, "50%");
+    }
     return null;
   }
 }

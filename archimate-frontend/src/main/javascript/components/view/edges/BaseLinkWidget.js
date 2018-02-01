@@ -3,6 +3,8 @@ import _ from 'lodash'
 
 import { allMeta } from '../../../meta/index'
 import { DefaultLinkWidget } from '../diagram/DefaultWidgets'
+import {buildKeyPress, inputFocus} from "../../../utils/textarea";
+import * as api from "../../../actions/model.api";
 
 export class BaseLinkWidget extends DefaultLinkWidget {
   
@@ -34,8 +36,9 @@ export class ModelLinkWidget extends BaseLinkWidget {
   getBaseClassName(link) { return super.getClassName(); }
   getClassName(link) {
     let classes = this.getBaseClassName(link);
-    if (!!this.props.conceptInfo['invalid']) { classes += " invalid"; }
-    if (!!this.props.conceptInfo['derived']) { classes += " derived"; }
+    const { invalid, derived } = this.props.conceptInfo;
+    if (!!invalid) { classes += " invalid"; }
+    if (!!derived) { classes += " derived"; }
     return classes;
   }
 
@@ -65,6 +68,38 @@ export class ModelLinkWidget extends BaseLinkWidget {
     return `${tp}`;
   }
 
+  renderEditTitle(link, property) {
+    const keyPress = buildKeyPress(
+      (title) => {
+        this.props.diagram.onChange({
+          type: 'title-changed',
+          title: title,
+          items: [link],
+          command: (viewId) => api.modConcept(link.viewObject.concept, { [property]: title })
+        });
+        link.setSelected(true);
+        this.forceUpdate();
+      },
+      () => {
+        link.setSelected(true);
+        this.forceUpdate();
+      }
+    );
+
+    // TODO: const { x, y } = this.props.diagram.toInternalCoordinates(mouseX, mouseY);
+    const { x, y } = link.getFirstPoint();
+    const conceptInfo = this.getConceptInfo(link);
+    return (
+      <foreignObject x={x} y={y}>
+        <div key="title-edit" className="title-edit">
+            <textarea
+              defaultValue={conceptInfo[property]}
+              ref={inputFocus} onKeyDown={keyPress}
+            />
+        </div>
+      </foreignObject>
+    );
+  }
 
 }
 

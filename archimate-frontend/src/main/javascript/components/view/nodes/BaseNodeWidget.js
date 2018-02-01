@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
+import { inputFocus, buildKeyPress } from '../../../utils/textarea'
 import { allMeta } from '../../../meta/index'
 import { DefaultNodeWidget } from '../diagram/DefaultWidgets'
 
@@ -8,43 +9,35 @@ class BaseNodeWidget extends DefaultNodeWidget {
   
   mkSetTitleCommand(node, title) {}
   renderTitle(node) {
-    if (node.selected === 2) {
-      const select = (input) => {
-        if (input) {
-          input.select();
-          input.focus();
-        }
-      };
-      const keyPress = (event) => {
-        const keyCode = event.keyCode;
-        if (keyCode === 27) {
-          event.stopPropagation();
-          node.setSelected(true);
-          this.forceUpdate();
-        } else if (keyCode === 13) {
-          const title = event.target.value;
-          this.props.diagram.onChange({
-            type: 'title-changed',
-            title: title,
-            items: [ node ],
-            command: this.mkSetTitleCommand(node, title)
-          });
-          event.stopPropagation();
-          node.setSelected(true);
-          this.forceUpdate();
-        }
-      };
+    if (node.isSelectedForEdit()) { return this.renderEditTitle(node); }
+    return super.renderTitle(node);
+  }
+  renderEditTitle(node) {
+    const keyPress = buildKeyPress(
+      (title) => {
+        this.props.diagram.onChange({
+          type: 'title-changed',
+          title: title,
+          items: [node],
+          command: this.mkSetTitleCommand(node, title)
+        });
+        node.setSelected(true);
+        this.forceUpdate();
+      },
+      () => {
+        node.setSelected(true);
+        this.forceUpdate();
+      }
+    );
 
-      return (
-        <div key="title-edit" className="title-edit">
+    return (
+      <div key="title-edit" className="title-edit">
           <textarea
             defaultValue={this.getTitle(node)}
-            ref={select} onKeyDown={keyPress}
+            ref={inputFocus} onKeyDown={keyPress}
           />
-        </div>
-      );
-    }
-    return super.renderTitle(node);
+      </div>
+    );
   }
 }
 

@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.view._
 
-
 object WikiActor {
   case class Sync(modelJson: String)
 

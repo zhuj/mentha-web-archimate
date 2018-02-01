@@ -2,6 +2,7 @@ package doc.examples.softdev
 
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.nodes._
+import org.mentha.tools.archimate.model.nodes.impl._
 import org.mentha.tools.archimate.model.nodes.dsl.Motivation._
 import org.mentha.tools.archimate.model.nodes.dsl.Business._
 import org.mentha.tools.archimate.model.nodes.dsl.Application._
@@ -16,7 +17,6 @@ import org.mentha.tools.archimate.model.edges._
 import org.mentha.tools.archimate.model.edges.impl._
 import org.mentha.tools.archimate.model.view._
 import org.mentha.tools.archimate.model.view.dsl._
-
 import org.mentha.tools.archimate.model.utils.MkModel
 
 trait Base {
@@ -25,12 +25,35 @@ trait Base {
 }
 
 
-trait MkSoftwareDevelopmentTrait {
+trait Common {
   this: Base =>
+
+  val seniorManagement: Stakeholder = stakeholder withName "Senior Management"
+  val ceo: Stakeholder = stakeholder withName "CEO"
+  val cto: Stakeholder = stakeholder withName "CTO"
+  val cxo: Stakeholder = stakeholder withName "C?O"
+
+  seniorManagement `aggregates` ceo
+  seniorManagement `aggregates` cto
+  seniorManagement `aggregates` cxo
+
+  val `customer`: Stakeholder = stakeholder withName "Customer"
+
+  val customerSatisfaction: Driver = driver withName "Customer Satisfaction"
+
+  customerSatisfaction `associated with` ceo
+  customerSatisfaction `associated with` customer
+
+}
+
+trait MkSoftwareDevelopmentTrait {
+  this: Common =>
+
 }
 
 object MkSoftwareDevelopment extends MkModel
   with MkSoftwareDevelopmentTrait
+  with Common
   with Base {
 
   def main(args: Array[String]): Unit = {
