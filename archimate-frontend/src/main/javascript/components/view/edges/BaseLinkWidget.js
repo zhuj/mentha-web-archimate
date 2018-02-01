@@ -86,8 +86,7 @@ export class ModelLinkWidget extends BaseLinkWidget {
       }
     );
 
-    // TODO: const { x, y } = this.props.diagram.toInternalCoordinates(mouseX, mouseY);
-    const { x, y } = link.getFirstPoint();
+    const { x, y } = link._last_acton_point || link.getFirstPoint();
     const conceptInfo = this.getConceptInfo(link);
     return (
       <foreignObject x={x} y={y}>

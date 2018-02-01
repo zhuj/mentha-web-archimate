@@ -588,6 +588,11 @@ export class DiagramWidget extends React.Component {
     }
 
     actionOutput.items = _.filter(diagramModel.getSelectedItems(), item => (item instanceof models.NodeModel) || (item instanceof models.LinkModel));
+    if (actionOutput.items.length > 0) {
+      const lastActionPoint = action.clientXY ? this.getInternalMousePoint(action.clientXY) : undefined;
+      _.forEach(actionOutput.items, (i) => { i._last_acton_point = lastActionPoint; })
+    }
+
     this.clearRepaintEntities();
 
     if (actionOutput.type !== 'unknown') {

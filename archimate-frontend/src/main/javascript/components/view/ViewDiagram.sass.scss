@@ -20,6 +20,14 @@
 
   svg.link-view {
     @import 'edges/svg.edges';
+
+    textarea {
+      text-align: center;
+      font-size: 10px;
+      outline: none !important;
+      border: 0;
+    }
+
   }
 
   div.x-node {
