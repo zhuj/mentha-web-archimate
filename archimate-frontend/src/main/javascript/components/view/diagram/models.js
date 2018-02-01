@@ -13,21 +13,30 @@ class BaseEntity {
 }
 
 class BaseModel extends BaseEntity {
+
+  static SELECTED_MODE_OFF = false;
+  static SELECTED_MODE_SELECTED = true;
+  static SELECTED_MODE_SELECTED_FOR_EDIT = 2;
+
   constructor() {
     super();
-    this.selected = false;
+    this.selected = BaseModel.SELECTED_MODE_OFF;
   }
 
   isSelected() {
-    return this.selected;
-  }
-
-  getSelected() {
-    return this.selected
+    return !!this.selected;
   }
 
   setSelected(selected) {
     this.selected = !!selected;
+  }
+
+  selectForEdit() {
+    this.selected = BaseModel.SELECTED_MODE_SELECTED_FOR_EDIT;
+  }
+
+  isSelectedForEdit() {
+    return (BaseModel.SELECTED_MODE_SELECTED_FOR_EDIT === this.selected);
   }
 
 }

@@ -328,7 +328,7 @@ export class DefaultLinkWidget extends React.Component {
   }
 
   drawTitle(link) {
-    return null; // placeholder: use drawTitleText
+    return null; // placeholder: if you want to draw certain title - call drawTitleText here
   }
 
   render() {

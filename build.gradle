@@ -36,7 +36,8 @@ subprojects {
         compile "org.scala-lang:scala-library:${scalaVersion}"
         compile "org.scala-lang:scala-reflect:${scalaVersion}"
 
-        compile "javax.validation:validation-api:2.0.1.Final"
+        compile "com.google.code.findbugs:jsr305:3.0.2"
+
         compile "org.apache.commons:commons-lang3:3.7"
         compile "commons-io:commons-io:2.6"
 

@@ -6,6 +6,6 @@ package org.mentha.tools.archimate.wiki.impl.wikiJs
   * @see [[https://wiki.js.org/]]
   * @see [[https://github.com/Requarks/wiki]]
   */
-class WikiJS {
+object WikiJS {
 
 }
