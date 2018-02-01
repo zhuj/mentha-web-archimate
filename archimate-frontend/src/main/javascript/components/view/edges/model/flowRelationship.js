@@ -8,7 +8,7 @@ export class FlowRelationshipWidget extends ModelLinkWidget {
   drawTitle(link) {
     const conceptInfo = this.getConceptInfo(link);
     if (conceptInfo) {
-      // TODO: if (link.isSelectedForEdit()) { return this.renderEditTitle(link, 'flows'); }
+      if (link.isSelectedForEdit()) { return this.renderEditTitle(link, 'flows'); }
       return this.drawTitleText(link, conceptInfo['flows'], "middle", 0, "50%");
     }
     return null;

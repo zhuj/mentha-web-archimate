@@ -8,7 +8,7 @@ export class InfluenceRelationshipWidget extends ModelLinkWidget {
   drawTitle(link) {
     const conceptInfo = this.getConceptInfo(link);
     if (conceptInfo) {
-      // TODO: if (link.isSelectedForEdit()) { return this.renderEditTitle(link, 'influence'); }
+      if (link.isSelectedForEdit()) { return this.renderEditTitle(link, 'influence'); }
       const text = conceptInfo['influence'];
       if (text) {
         let className = null;
