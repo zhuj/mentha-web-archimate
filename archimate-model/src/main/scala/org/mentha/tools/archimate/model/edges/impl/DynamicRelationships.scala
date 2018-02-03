@@ -1,5 +1,6 @@
 package org.mentha.tools.archimate.model.edges.impl
 
+import org.apache.commons.lang3.builder.EqualsBuilder
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.edges._
 
@@ -20,6 +21,9 @@ final class FlowRelationship(source: Concept, target: Concept)(var flow: String 
     this.flow = flow
     this
   }
+  override def similarEqualsBuilder(that: this.type): EqualsBuilder = super
+    .similarEqualsBuilder(that)
+    .append(this.flow, that.flow)
 }
 
 /**

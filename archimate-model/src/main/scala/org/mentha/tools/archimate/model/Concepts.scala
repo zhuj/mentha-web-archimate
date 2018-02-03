@@ -1,5 +1,6 @@
 package org.mentha.tools.archimate.model
 
+import org.apache.commons.lang3.builder.EqualsBuilder
 import org.mentha.tools.archimate.model.edges.RelationshipMeta
 import org.mentha.tools.archimate.model.nodes.{ElementMeta, RelationshipConnectorMeta}
 
@@ -103,5 +104,12 @@ abstract class Relationship(val source: Concept, val target: Concept)
   @inline def derivation: Derivation = _derivation
 
   override def meta: RelationshipMeta[Relationship]
+
+  def similarEqualsBuilder(that: this.type): EqualsBuilder = {
+    new EqualsBuilder()
+      .append(this.getClass, that.getClass)
+      .append(this.source, that.source)
+      .append(this.target, that.target)
+  }
 
 }

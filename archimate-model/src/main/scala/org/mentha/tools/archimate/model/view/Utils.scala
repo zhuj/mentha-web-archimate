@@ -41,7 +41,7 @@ object Vector {
       v1 = v2
       v2 = 2.0d * rnd.nextDouble - 1.0d
       s = v1*v1 + v2*v2
-    } while ( s >= 1 || s == 0 )
+    } while ( s >= 1.0d || s == 0.0d )
     val multiplier = length / Math.sqrt(s)
     Vector(x = v1 * multiplier, y = v2 * multiplier)
   }

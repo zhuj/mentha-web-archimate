@@ -4,6 +4,10 @@ import scala.collection.mutable.ArrayBuffer
 
 object QuadTree {
 
+  @inline private def requireNonQuad(body: Body): Unit = {
+    require(!body.isInstanceOf[Quad], "Body argument shouldn't be a Quad")
+  }
+
   private val MIN_SIZE: Double = 1e-2d
 
   sealed abstract class Quad(override val bounds: Bounds) extends Body {
@@ -15,14 +19,17 @@ object QuadTree {
     override def mass: Mass = Mass.NO_MASS
     private[QuadTree] override def recalculateMass(): Mass = mass
     private[QuadTree] override def +(body: Body): Quad = {
+      // TEST: requireNonQuad(body)
       new Single(bounds)(body)
     }
   }
 
   class Single(bounds: Bounds)(val body: Body) extends Quad(bounds) {
+    // TEST: requireNonQuad(body)
     override def mass: Mass = body.mass
     private[QuadTree] override def recalculateMass(): Mass = mass
     private[QuadTree] override def +(body: Body): Quad = {
+      // TEST: requireNonQuad(body)
       if (bounds.mean < MIN_SIZE) {
         new Bunch(bounds)(this.body, body)
       } else {
@@ -32,14 +39,17 @@ object QuadTree {
   }
 
   class Bunch(bounds: Bounds)(b1: Body, b2: Body) extends Quad(bounds) {
+    // TEST: requireNonQuad(b1)
+    // TEST: requireNonQuad(b2)
     private val bodies: ArrayBuffer[Body] = ArrayBuffer[Body](b1, b2)
     private var _mass: Mass = Mass.NO_MASS
     @inline override def mass: Mass = _mass
     private[QuadTree] override def recalculateMass(): Mass = {
-      this._mass = Mass.calculateMass[Body]( bodies, _.mass )
+      this._mass = Mass.calculateMass[Body]( bodies, _.mass ) // there is no quad inside, don't have to recalculate mass
       this._mass
     }
     private[QuadTree] override def +(body: Body): Quad = {
+      // TEST: requireNonQuad(body)
       bodies += body
       this
     }
@@ -56,6 +66,7 @@ object QuadTree {
       this._mass
     }
     private[QuadTree] override def +(body: Body): Quad = {
+      // TEST: requireNonQuad(body)
       val w = body.mass.center.x <= bounds.mid.x
       val n = body.mass.center.y <= bounds.mid.y
       if (w) {

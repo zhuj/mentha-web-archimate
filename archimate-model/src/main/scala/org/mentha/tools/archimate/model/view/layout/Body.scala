@@ -11,7 +11,11 @@ case class Mass(
   center: Vector,
   value: Double
 ) {
-
+  // TODO: enable for testing only:
+  if (false) {
+    require(java.lang.Double.isFinite(value), "value has to be finite")
+    require(value >= 0d, "value has to be either zero or a positive number")
+  }
 }
 
 /**
@@ -61,7 +65,17 @@ case class Bounds(
   max_Y: Double
 ) {
 
-  /** middle point of the bounds */
+  // TODO: enable for testing only:
+  if (false) {
+    require(java.lang.Double.isFinite(min_X), "min_X has to be finite")
+    require(java.lang.Double.isFinite(max_X), "max_X has to be finite")
+    require(java.lang.Double.isFinite(min_Y), "min_Y has to be finite")
+    require(java.lang.Double.isFinite(max_Y), "max_Y has to be finite")
+    require(min_X <= max_X, "min_X has to be less or equal to max_X")
+    require(min_Y <= max_Y, "min_Y has to be less or equal to max_Y")
+  }
+
+    /** middle point of the bounds */
   val mid: Vector = Vector(x = 0.5d * (min_X + max_X), y = 0.5 * (min_Y + max_Y))
 
   @inline def width: Double = max_X - min_X
@@ -108,10 +122,17 @@ object Bounds {
         max_X = Math.max(max_X, b.max_X)
         max_Y = Math.max(max_Y, b.max_Y)
       }
-      require(java.lang.Double.isFinite(min_X))
-      require(java.lang.Double.isFinite(max_X))
-      require(java.lang.Double.isFinite(min_Y))
-      require(java.lang.Double.isFinite(max_Y))
+
+      // TODO: enable for testing only:
+      if (true) {
+        require(java.lang.Double.isFinite(min_X), "min_X has to be finite")
+        require(java.lang.Double.isFinite(max_X), "max_X has to be finite")
+        require(java.lang.Double.isFinite(min_Y), "min_Y has to be finite")
+        require(java.lang.Double.isFinite(max_Y), "max_Y has to be finite")
+        require(min_X <= max_X, "min_X has to be less or equal to max_X")
+        require(min_Y <= max_Y, "min_Y has to be less or equal to max_Y")
+      }
+
       Bounds(min_X, min_Y, max_X, max_Y)
     }
   }
