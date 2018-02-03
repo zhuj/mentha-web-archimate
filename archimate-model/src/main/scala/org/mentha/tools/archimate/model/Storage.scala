@@ -50,7 +50,7 @@ object Identifiable {
     else entity
   }
 
-  @inline private def typeIdentifier(klass: Class[_]): Short = {
+  @inline def typeIdentifier(klass: Class[_]): Short = {
     (klass.getName.hashCode & 0x7ff).toShort
   }
 

@@ -9,6 +9,15 @@
 //
 //  private[layout] val rnd: java.util.Random = new java.util.Random(0)
 //
+//  private[layout] val NORMAL_SIZE = View.defaultSize.mean
+//  private[layout] val SIZE_NORMALIZER = 1.0d / NORMAL_SIZE
+//
+//  private[layout] val MIN_DISTANCE = 1e-1d
+//  private[layout] val MIN_DISTANCE_2 = sqr(MIN_DISTANCE)
+//
+//  private[layout] val MAX_DISTANCE = 1e+1d
+//  private[layout] val MAX_DISTANCE_2 = sqr(MAX_DISTANCE)
+//
 //  @inline private[layout] final def sqr(d: Double): Double = d*d
 //  @inline private[layout] final def l2(v: Vector): Double = sqr(v.x) + sqr(v.y)
 //  @inline private[layout] final def reduce(vector: Vector, x: Double, y: Double): Vector = {
@@ -20,14 +29,6 @@
 //    )
 //  }
 //
-//  private[layout] val NORMAL_SIZE = View.defaultSize.mean
-//  private[layout] val SIZE_NORMALIZER = 1.0d / NORMAL_SIZE
-//
-//  private[layout] val MIN_DISTANCE = 1e-1d
-//  private[layout] val MIN_DISTANCE_2 = sqr(MIN_DISTANCE)
-//
-//  private[layout] val MAX_DISTANCE = 1e+1d
-//  private[layout] val MAX_DISTANCE_2 = sqr(MAX_DISTANCE)
 //
 //  private[layout] class NodeWrapper(val node: ViewNode) extends Vertex with Body {
 //
@@ -35,43 +36,46 @@
 //    private val height = node.size.height * SIZE_NORMALIZER
 //    private val massValue = Math.pow(width * height, 0.4)
 //
-//    private[layout] var position: Vector = set(node.position * SIZE_NORMALIZER)
-//
-//    def commit(): Unit = {
-//      position = _mass.center
-//    }
-//
-//    def randomize(length: Double): Unit = {
-//      set(p = position + Vector.random(rnd, length * rnd.nextGaussian()))
-//    }
-//
-//    @inline def set(p: Vector): Vector = {
-//      _mass = Mass(
-//        center = p,
-//        value = massValue
-//      )
-//      _bounds = Bounds(
-//        position = p,
-//        width = width,
-//        height = height
-//      )
-//      p
-//    }
-//
 //    var _mass: Mass = _
 //    @inline override def mass: Mass = _mass
 //
 //    var _bounds: Bounds = _
 //    @inline override def bounds: Bounds = _bounds
 //
+//    def commit(): Unit = {
+//      position = _mass.center
+//    }
+//
+//    def displace(length: Double): Unit = {
+//      place(position = position + Vector.random(rnd, length * rnd.nextGaussian()))
+//    }
+//
+//    @inline def place(position: Vector): Vector = {
+//      _mass = Mass(
+//        center = position,
+//        value = massValue
+//      )
+//      _bounds = Bounds(
+//        position = position,
+//        width = width,
+//        height = height
+//      )
+//      position
+//    }
+//
+//    // last actual position
+//    private[layout] var position: Vector = place(node.position * SIZE_NORMALIZER)
+//
 //  }
 //
 //  private[layout] val nodesMap = view.nodes.map { n => n.id -> new NodeWrapper(n) }.toMap
 //  private[layout] val nodesSeq = nodesMap.values.toVector
+//  private[layout] val nodesSize = 1.0d * nodesSeq.size
 //  private[layout] val nodesSeqPar = nodesSeq//.par
 //
 //  private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
 //    // TODO: do smth with associations to relationships
+//    edge withPoints { Nil } // clear all intermediate points
 //    override val source: NodeWrapper = nodesMap(edge.source.id)
 //    override val target: NodeWrapper = nodesMap(edge.target.id)
 //  }
@@ -79,6 +83,12 @@
 //  private[layout] val edgesMap = view.edges.map { e => e.id -> new EdgeWrapper(e)}.toMap
 //  private[layout] val edgesSeq = edgesMap.values.toVector
 //  private[layout] val edgesSeqPar = edgesSeq//.par
+//
+//  private[layout] val nodesEdges = nodesSeq.map {
+//    node => node -> edgesSeq.filter {
+//      edge => edge.source == node || edge.target == node
+//    }
+//  }.toMap
 //
 //  class BarnesHut(
 //    val energy: Double => Double,
@@ -110,7 +120,8 @@
 //            if (distance2 < MIN_DISTANCE_2) {
 //              quad.mass.value * energy(MIN_DISTANCE) // just repulse it with random force
 //            } else if (distance2 < MAX_DISTANCE_2) {
-//              quad.mass.value * energy(Math.sqrt(distance2)) // calculate the real force
+//              val distance = Math.sqrt(distance2)
+//              quad.mass.value * energy(distance) // calculate the real force
 //            } else {
 //              0.0d
 //            }
@@ -133,8 +144,9 @@
 //    barnesHutCore.calculateEnergy(node, quadTree)
 //  }
 //
-//  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, node: NodeWrapper): Double = {
-//    l2(node.mass.center) * CENTER_GRAVITY
+//  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, node: NodeWrapper, temperature: Double): Double = {
+//    val d2 = l2(node.mass.center /* - quadTree.mass.center*/) / nodesSize
+//    (d2 * CENTER_GRAVITY) * (1e-3d + temperature)
 //  }
 //
 //  var lastQuad: QuadTree.Quad = QuadTree(nodesSeq)
@@ -143,7 +155,7 @@
 //      val node = nodesSeq.apply(rnd.nextInt(nodesSeq.size))
 //      val lastEnergy = computeEnergy(lastQuad, node, temperature)
 //
-//      node.randomize(0.001 + temperature)
+//      node.displace(0.001 + temperature)
 //      val nextEnergy = computeEnergy(lastQuad, node, temperature)
 //
 //      val delta = nextEnergy - lastEnergy
@@ -153,16 +165,17 @@
 //      } else {
 //        node.commit()
 //        lastQuad = QuadTree(nodesSeq)
+//        println(s"t=${temperature}, center=${lastQuad.mass.center}")
 //      }
 //    }
 //    core()
 //  }
 //
-//  def layout(maxIterations: Int = 5000): Unit = {
+//  def layout(maxIterations: Int = 1000): Unit = {
 //    var it = 0
 //    do {
 //      val temperature = Math.exp(3.0 - 12.0 * it / maxIterations)
-//      step(temperature)
+//      (0 until 20) foreach { _ => step(temperature) }
 //      it += 1
 //    } while (it < maxIterations)
 //    for { node <- nodesSeq } {

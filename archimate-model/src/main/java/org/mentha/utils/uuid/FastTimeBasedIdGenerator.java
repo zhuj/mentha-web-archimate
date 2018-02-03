@@ -64,17 +64,21 @@ public class FastTimeBasedIdGenerator {
     return charPos;
   }
 
-  private String generateIdFromTimestamp(short typeIdentifier, long currentTimeMillis) {
-
-    long seq = nextSeq(currentTimeMillis);
-
+  /**
+   * Combine bits to make 72bit identifier string representation
+   * @param typeIdentifier (last 11 bits are only used)
+   * @param timestamp (last 44 bits are only used)
+   * @param seq (last 16 bits are only used)
+   * @return 72bit (12 characters) identifier string representation
+   */
+  public static String generateId(short typeIdentifier, long timestamp, long seq) {
     // we have to preserve the last 44 bits of timestamp (it will work up to Mon Jun 23 2527 06:20:44)
-    currentTimeMillis &= 0xfffffffffffL; // now there is 44 buts of data
+    timestamp &= 0xfffffffffffL; // now there is 44 buts of data
 
     int id11 = (typeIdentifier & 0x7ff); // 11 bits of data
 
-    long tl08 = (currentTimeMillis & 0xff); // 8 bits of data
-    long th36 = (currentTimeMillis >>> 8); // 36 bits of data
+    long tl08 = (timestamp & 0xff); // 8 bits of data
+    long th36 = (timestamp >>> 8); // 36 bits of data
 
     seq &= 0xffff; // 16 bits of data
     long sl04 = (seq & 0xf); // 4 bits of data
@@ -88,6 +92,11 @@ public class FastTimeBasedIdGenerator {
     formatUnsignedLong(b48, 6, buff, 4, 8); // (48/6) = 8 digits
 
     return new String(buff);
+  }
+
+  private String generateIdFromTimestamp(short typeIdentifier, long currentTimeMillis) {
+    long seq = nextSeq(currentTimeMillis);
+    return generateId(typeIdentifier, currentTimeMillis, seq);
   }
 
   private long nextSeq(long currentTimeMillis) {

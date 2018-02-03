@@ -1,5 +1,6 @@
 package org.mentha.tools.archimate.model.edges.impl
 
+import org.apache.commons.lang3.builder.EqualsBuilder
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.edges._
 
@@ -23,6 +24,9 @@ final class InfluenceRelationship(source: Concept, target: Concept)(var influenc
     this.influence = influence
     this
   }
+  override def similarEqualsBuilder(that: this.type): EqualsBuilder = super
+    .similarEqualsBuilder(that)
+    .append(this.influence, that.influence)
 }
 
 /**
@@ -43,6 +47,9 @@ final class AccessRelationship(source: Concept, target: Concept)(var access: Acc
     this.access = access
     this
   }
+  override def similarEqualsBuilder(that: this.type): EqualsBuilder = super
+    .similarEqualsBuilder(that)
+    .append(this.access, that.access)
 }
 
 /**

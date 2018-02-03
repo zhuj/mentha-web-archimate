@@ -27,8 +27,9 @@ abstract class RelationshipMeta[+T <: Relationship: ClassTag] extends ConceptMet
     require(pls.nonEmpty, s"${name} should have non-default constructor.")
 
     // check if the first group contains only two aspects (from and to)
-    require(pls.head.size == 2, s"${name} should have constructor with 2 arguments.")
-    require(pls.head.forall(param => {
+    val primaryParams = pls.head
+    require(primaryParams.lengthCompare(2) == 0, s"${name} should have constructor with 2 arguments.")
+    require(primaryParams.forall(param => {
       ConceptClass.isAssignableFrom(runtimeMirror.runtimeClass(param.typeSignature))
     }), s"${name} should have constructor (Concept -> Concept).")
 

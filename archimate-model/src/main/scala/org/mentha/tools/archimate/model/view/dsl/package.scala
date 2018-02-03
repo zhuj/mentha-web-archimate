@@ -251,6 +251,13 @@ package object dsl {
     // TODO: def apply(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
     // TODO: def apply(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
 
+    //
+
+    @inline def apply[T <: Concept](r: => T): T = r match {
+      case n: NodeConcept => node(n).concept.asInstanceOf[T]
+      case e: Relationship => edge(e).concept.asInstanceOf[T]
+    }
+
     // Nouns for objects
 
     def node[T <: NodeConcept](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
@@ -260,7 +267,6 @@ package object dsl {
 
     @inline def connection(left: ViewObject, right: Concept): ViewConnection = connection(left, view.attach(right))
     @inline def connection(left: Concept, right: ViewObject): ViewConnection = connection(view.attach(left), right)
-
 
     //
 
@@ -315,6 +321,14 @@ package object dsl {
         case v: ViewNodeConcept[_] => view.attach_node(v.concept).markAsDeleted(marker = true)
         case v: ViewRelationship[_] => view.attach_edge(v.concept).markAsDeleted(marker = true)
         case _ => throw new UnsupportedOperationException(vo.getClass.getName)
+      }
+      this
+    }
+
+    def borrowEdges(v: View): this.type = {
+      v.edges.foreach {
+        case e: ViewRelationship[_] if view.locate(e.concept.source).isDefined && view.locate(e.concept.target).isDefined => add(e.concept)
+        case _ =>
       }
       this
     }
@@ -399,5 +413,6 @@ package object dsl {
   }
 
   @inline def $[T <: Concept](t: ViewObject with ViewConcept[T]): T = t.concept
+  @inline def <<[T <: Concept](r: => T)(implicit view: View): T = in(view) { r }
 
 }

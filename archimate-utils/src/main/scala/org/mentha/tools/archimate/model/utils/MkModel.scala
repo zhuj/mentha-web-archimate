@@ -7,9 +7,26 @@ import akka.actor.ActorSystem
 import akka.stream._
 import akka.util.ByteString
 import org.mentha.tools.archimate.model._
+import org.mentha.tools.archimate.model.view.View
+import org.mentha.utils.uuid.FastTimeBasedIdGenerator
 
 import scala.concurrent._
 import scala.concurrent.duration._
+
+object MkModel {
+
+  def generateViewId(name: String): String = {
+    val bytes = org.apache.commons.codec.digest.DigestUtils.sha1(name)
+    val stamp = bytes.take(6).foldLeft(0l) { (v, b) => (v << 8) | (b.toLong & 0xffl) } // 44 bits will only be used
+    val seqnr = name.hashCode
+    FastTimeBasedIdGenerator.generateId(
+      Identifiable.typeIdentifier(classOf[View]),
+      java.lang.Math.abs { stamp },
+      java.lang.Math.abs { seqnr }
+    )
+  }
+
+}
 
 /**
   *

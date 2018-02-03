@@ -10,10 +10,10 @@ abstract class ForceBasedLayout(view: View) {
   private[layout] val NORMAL_SIZE = View.defaultSize.mean
   private[layout] val SIZE_NORMALIZER = 1.0d / NORMAL_SIZE
 
-  private[layout] val MIN_DISTANCE = 1e-1d
+  private[layout] val MIN_DISTANCE = 0.10d
   private[layout] val MIN_DISTANCE_2 = sqr(MIN_DISTANCE)
 
-  private[layout] val MAX_DISTANCE = 1e+1d
+  private[layout] val MAX_DISTANCE = 10.0d
   private[layout] val MAX_DISTANCE_2 = sqr(MAX_DISTANCE)
 
   @inline private[layout] final def sqr(d: Double): Double = d*d
@@ -69,7 +69,7 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
     // TODO: do smth with associations to relationships
-    edge withPoints(Nil) // clear all intermediate points
+    edge withPoints { Nil } // clear all intermediate points
     override val source: NodeWrapper = nodesMap(edge.source.id)
     override val target: NodeWrapper = nodesMap(edge.target.id)
   }
@@ -136,13 +136,13 @@ abstract class ForceBasedLayout(view: View) {
   def barnesHutCore: BarnesHut
   def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit
 
-  private[layout] def computeRepulsion(quadTree: QuadTree.Quad, temperature: Double) = {
+  private[layout] def computeRepulsion(quadTree: QuadTree.Quad, temperature: Double): Unit = {
     nodesSeqPar.foreach { node =>
       node.force += barnesHutCore.calculateForce(node, quadTree) * (1.0d + temperature)
     }
   }
 
-  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, temperature: Double) = {
+  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, temperature: Double): Unit = {
     nodesSeqPar.foreach { node =>
       val d2 = l2(node.mass.center /* - quadTree.mass.center */ ) / nodesSize
       val normalized = node.mass.center * (d2 * CENTER_GRAVITY) * (1e-3d + temperature)
@@ -150,7 +150,7 @@ abstract class ForceBasedLayout(view: View) {
     }
   }
 
-  private[layout] def step(temperature: Double) = {
+  private[layout] def step(temperature: Double): Unit = {
 
     val quadTree = QuadTree(nodesSeq)
     val center = quadTree.mass.center
@@ -160,7 +160,7 @@ abstract class ForceBasedLayout(view: View) {
     nodesSeqPar.foreach { node =>
 
       if (temperature > 1.0e-4) {
-        node.force += Vector.random(rnd) * rnd.nextGaussian() * temperature
+        node.force += Vector.random(rnd, rnd.nextGaussian() * temperature)
       }
 
       val acceleration = node.force * (1.0d / node.mass.value)
@@ -171,7 +171,7 @@ abstract class ForceBasedLayout(view: View) {
       if (v2 > MAX_VELOCITY_2) {
         node.velocity = node.velocity * (MAX_VELOCITY / Math.sqrt(v2))
       }
-      node.move(node.velocity * TIMESTEP - center * 0.5)
+      node.move(node.velocity * TIMESTEP - center * 0.5d)
     }
   }
 
