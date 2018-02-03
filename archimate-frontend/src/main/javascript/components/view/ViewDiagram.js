@@ -314,7 +314,7 @@ class ViewDiagram extends DiagramWidget {
       // Delete all selected
       if (keyCode === 46) {
         const diagramModel = this.getDiagramModel();
-        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelected());
+        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelectedForEdit());
         if (typeof(editItem) === 'undefined') {
           const selectedItems = diagramModel.getSelectedItems();
           if (selectedItems.length > 0) {
@@ -354,7 +354,7 @@ class ViewDiagram extends DiagramWidget {
       // movement
       if (keyCode >= 37 && keyCode <= 40) {
         const diagramModel = this.getDiagramModel();
-        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelected());
+        const editItem = _.find(diagramModel.getNodes(), (node) => node.isSelectedForEdit());
         if (typeof(editItem) === 'undefined') {
           const selectedItems = diagramModel.getSelectedItems();
           if (selectedItems.length > 0) {

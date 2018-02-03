@@ -83,27 +83,33 @@ object MkSoftwareDevelopment extends MkModel {
     // Developers, responsible for technologies (who knows how to implement)
     val team = << { businessCollaboration withName "Team" }
 
+    // scrum itself
+    val scrum = << { businessProcess withName "Scrum" }
+    << { productOwner `assigned to` scrum }
+    << { scrumMaster `assigned to` scrum }
+    << { team `assigned to` scrum }
+
     // scrum master roles:
 
     // build *shared understanding* (make people communicate each other effectively)
     val facilitator = << { businessRole withName "Facilitator" }
-    << { scrumMaster `aggregates` facilitator }
+    << { scrumMaster `composes` facilitator }
 
     // teaches, answers the questions, share the knowledge/techniques
     val mentor = << { businessRole withName "Mentor" }
-    << { scrumMaster `aggregates` mentor }
+    << { scrumMaster `composes` mentor }
 
     // trains, asks questions, helps explore, help people/team to find a solution by themselves (don't answer questions, force them think)
     val coach = << { businessRole withName "Coach" }
-    << { scrumMaster `aggregates` coach }
+    << { scrumMaster `composes` coach }
 
     // protects the team, challenges environment
     val changeAgent = << { businessRole withName "Change agent" }
-    << { scrumMaster `aggregates` changeAgent }
+    << { scrumMaster `composes` changeAgent }
 
     // actively does nothing: inspect/collect the whole process for the following adaption
     val observer = << { businessRole withName "Observer" }
-    << { scrumMaster `aggregates` observer }
+    << { scrumMaster `composes` observer }
 
     // team roles
     // https://flowchainsensei.wordpress.com/2011/02/25/the-many-roles-in-software-projects/
@@ -116,7 +122,7 @@ object MkSoftwareDevelopment extends MkModel {
     << { team `aggregates` analyst }
 
     val architect = << { businessRole withName "Architect" }
-    << { team `aggregates` analyst }
+    << { team `aggregates` architect }
 
     val developer = << { businessRole withName "Developer" }
     << { team `aggregates` developer }
@@ -362,7 +368,6 @@ object MkSoftwareDevelopment extends MkModel {
     val process = << { businessProcess withName "Feature analysis" }
 
     << { process `reads` artifacts.feature }
-    << { process `reads` artifacts.definitionOfDone }
     << { process `reads` artifacts.teamCommitments }
 
     << { process `writes` artifacts.task }
