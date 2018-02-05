@@ -120,17 +120,21 @@ class ModelPage extends React.Component {
     return (
       <List>
         {
-          _.map( model.views, (view, id) => (
-            <ListItem key={id} className={classes.navItem}>
-              <Button
-                onClick={()=>{ this.setState({'current-view': id}) }}
-                className={classes.button}
-                disableRipple
-              >
-                {view.name}
-              </Button>
-            </ListItem>
-          ) )
+          _.chain(model.views)
+            .map( (view, id) => ({ id, name: view.name }) )
+            .sortBy( model.views, [ (w) => w.name ] )
+            .map( (w) => (
+              <ListItem key={w.id} className={classes.navItem}>
+                <Button
+                  onClick={()=>{ this.setState({'current-view': w.id}) }}
+                  className={classes.button}
+                  disableRipple
+                >
+                  {w.name}
+                </Button>
+              </ListItem>
+            ) )
+            .value()
         }
       </List>
     );

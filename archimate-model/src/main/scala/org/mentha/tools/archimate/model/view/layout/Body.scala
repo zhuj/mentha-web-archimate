@@ -80,12 +80,7 @@ case class Bounds(
 
   @inline def width: Double = max_X - min_X
   @inline def height: Double = max_Y - min_Y
-  @inline def mean: Double = 0.5d * (width + height)
-
-  @inline def nw: Bounds = Bounds(min_X, min_Y, mid.x, mid.y)
-  @inline def ne: Bounds = Bounds(mid.x, min_Y, max_X, mid.y)
-  @inline def sw: Bounds = Bounds(min_X, mid.y, mid.x, max_Y)
-  @inline def se: Bounds = Bounds(mid.x, mid.y, max_X, max_Y)
+  @inline def mean: Double = math.max(width, height)
 }
 
 /**

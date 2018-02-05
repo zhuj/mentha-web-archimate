@@ -1,5 +1,7 @@
 package org.mentha.tools.archimate.model.view
 
+import java.util
+
 import scala.util._
 
 package object dsl {
@@ -243,15 +245,11 @@ package object dsl {
     }
   }
 
+  private val LAYOUT_ITERATIONS: Int = 1000
 
   def in(view: View) = new {
 
-    // TODO: def apply[T <: NodeConcept: ClassTag](r: => NodeConcept with T): ViewNodeConcept[NodeConcept with T] = r.attach(view)
-    // TODO: def apply[T <: Relationship: ClassTag](r: => Relationship with T): ViewRelationship[Relationship with T] = r.attach(view)
-    // TODO: def apply(text: String): ViewNotes = view.add { new ViewNotes withText(text) }
-    // TODO: def apply(left: ViewObject, right: ViewObject): ViewConnection = view.add { new ViewConnection(left, right) }
-
-    //
+    // direct calls
 
     @inline def apply[T <: Concept](r: => T): T = r match {
       case n: NodeConcept => node(n).concept.asInstanceOf[T]
@@ -325,12 +323,21 @@ package object dsl {
       this
     }
 
-    def borrowEdges(v: View): this.type = {
-      v.edges.foreach {
-        case e: ViewRelationship[_] if view.locate(e.concept.source).isDefined && view.locate(e.concept.target).isDefined => add(e.concept)
-        case _ =>
-      }
+    def borrowEdges(edgesSource: Iterable[EdgeConcept]): this.type = {
+      edgesSource.foreach { add(_) }
       this
+    }
+
+    def borrowEdges()(implicit model: Model): this.type = {
+      borrowEdges(model.edges)
+    }
+
+    def borrowEdges(v: View): this.type = {
+      borrowEdges {
+        v.edges.collect {
+          case e: ViewRelationship[_] if view.locate(e.concept.source).isDefined && view.locate(e.concept.target).isDefined => e.concept
+        }
+      }
     }
 
     /** Experimental API */
@@ -360,6 +367,15 @@ package object dsl {
         node withPosition { l.position } withSize { l.size }
       }
 
+      this
+    }
+
+    /** Experimental API */
+    def placeRandomly(): this.type = {
+      val rnd = new util.Random(0)
+      for { node <- view.nodes } {
+        node.withPosition( Vector(x = rnd.nextGaussian(), y = rnd.nextGaussian()) )
+      }
       this
     }
 
@@ -400,12 +416,12 @@ package object dsl {
 
     def layout(): this.type = this.layoutLayered()
 
-    def layoutLayered(maxIterations: Int = 1000): this.type = {
+    def layoutLayered(maxIterations: Int = LAYOUT_ITERATIONS): this.type = {
       new org.mentha.tools.archimate.model.view.layout.LayeredSpringLayoutF(view).layout(maxIterations)
       this
     }
 
-    def layoutSimple(maxIterations: Int = 1000): this.type = {
+    def layoutSimple(maxIterations: Int = LAYOUT_ITERATIONS): this.type = {
       new org.mentha.tools.archimate.model.view.layout.SimpleSpringLayoutF(view).layout(maxIterations)
       this
     }
@@ -413,6 +429,8 @@ package object dsl {
   }
 
   @inline def $[T <: Concept](t: ViewObject with ViewConcept[T]): T = t.concept
-  @inline def <<[T <: Concept](r: => T)(implicit view: View): T = in(view) { r }
+
+  @inline def <<(implicit view: View) = in(view)
+  @inline def <<[T <: Concept](r: => T)(implicit view: View): T = <<.apply { r }
 
 }

@@ -4,11 +4,14 @@ import java.util.Objects
 
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.edges._
+import org.mentha.tools.archimate.model.edges.impl._
 import org.mentha.tools.archimate.model.view._
 
 import scala.annotation.tailrec
 
 class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
+
+  override private[layout] val SIZE_BOUND = 0.25d
 
   private val layers = {
     @inline def element(n: NodeWrapper): Option[Element] = Option(n.node)
@@ -40,25 +43,19 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
     .flatMap { case (e, idx) => e.map { x => (x, Integer.valueOf(idx)) } }
     .toMap
 
-  private val LAYER_COEFFICIENT = 0.325d
-  private val DIRECTION_COEFFICIENT = 0.900d
-
-  override private[layout] val SIZE_BOUND = 0.25d
-
-  override val barnesHutCore = new BarnesHut(
-    d => {
-      val x = 0.50d * d
-      -REPULSION_COEFFICIENT / (sqr(x) * x)
-    },
-    reducerLength = 0.00,
-    reducerBounds = SIZE_BOUND
-  )
+  private val LAYER_COEFFICIENT = 1.2d * SPRING_COEFFICIENT
+  private val DIRECTION_COEFFICIENT = 0.8d * SPRING_COEFFICIENT
 
 
-  private def withLayers(action: (NodeWrapper, Double) => Unit): Unit = {
-    def compute(list: List[Seq[NodeWrapper]]): Unit = {
-      val border_Y = list.head.map { _.bounds.max_Y }.max + 2.0 * SPRING_LENGTH
-      for { t <- list.tail; n <- t } {
+  override def repulsion(d: Double): Double = {
+    val x = sqr(d)
+    -REPULSION_COEFFICIENT / (sqr(x) * d)
+  }
+
+  private def withMisalignedLayers(action: (NodeWrapper, Double) => Unit): Unit = {
+    def compute(tail: List[Seq[NodeWrapper]]): Unit = {
+      val border_Y = tail.head.map { _.bounds.max_Y }.max + 1.2 * SPRING_LENGTH
+      for { t <- tail.tail; n <- t } {
         val displacement = n.bounds.min_Y - border_Y
         if (displacement < 0) { action(n, displacement) }
       }
@@ -72,13 +69,13 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
     core(layeredNodesList)
   }
 
-  private def computeLayers(quadTree: QuadTree.Quad): Unit = {
-    withLayers { (n, displacement) =>
+  private def computeLayers(center: Vector): Unit = {
+    withMisalignedLayers { (n, displacement) =>
       n.force += Vector(x = 0, y = -LAYER_COEFFICIENT * springCoeff(displacement))
     }
   }
 
-  private def computeDirections(quadTree: QuadTree.Quad, temperature: Double): Unit = {
+  private def computeDirections(center: Vector, temperature: Double): Unit = {
 
     val border = MIN_DISTANCE * (1.0d + temperature)
     for {edge <- edgesSeq } {
@@ -86,12 +83,25 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
         case vr: ViewRelationship[_] => vr.concept match {
           case _: DynamicRelationship => {
             val d = edge.target.mass.center - edge.source.mass.center
-            if (d.x < border) {
-              val displacement = d.x - border
+            val displacement = d.x - border
+            if (displacement < 0) {
               val coeff = DIRECTION_COEFFICIENT * springCoeff(displacement) * temperature
               val force = Vector(coeff, 0)
               edge.source.force += force
               edge.target.force -= force
+            }
+          }
+          case a: AccessRelationship => {
+            val c = { if (a.access.write) 1 else 0 } - { if (a.access.read) 1 else 0 }
+            if (c != 0) {
+              val d = (edge.target.mass.center - edge.source.mass.center) * c
+              val displacement = d.x - border
+              if (displacement < 0) {
+                val coeff = DIRECTION_COEFFICIENT * springCoeff(displacement) * temperature * c
+                val force = Vector(coeff, 0)
+                edge.source.force += force
+                edge.target.force -= force
+              }
             }
           }
           case _ =>
@@ -102,7 +112,13 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
 
   }
 
-  override def computeSprings(quadTree: QuadTree.Quad, temperature: Double): Unit = for { edge <- edgesSeq } {
+  override def computeSprings(center: Vector, temperature: Double): Unit = for { edge <- edgesSeq } {
+
+    val sameLayer = {
+      val lt = layerObject.get(edge.target)
+      val ls = layerObject.get(edge.source)
+      Objects.equals(lt, ls)
+    }
 
     val d = reduce(
       vector = edge.target.mass.center - edge.source.mass.center,
@@ -112,12 +128,10 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
 
     val l = math.sqrt(l2(d))
     val displacement = {
-      val lt = layerObject.get(edge.target)
-      val ls = layerObject.get(edge.source)
-      if (Objects.equals(lt, ls)) {
+      if (sameLayer) {
         l - SPRING_LENGTH
       } else {
-        0.45d * math.abs(d.x) + 0.55d * math.abs(d.y) - SPRING_LENGTH
+        (0.45d * math.abs(d.x) + 0.55d * math.abs(d.y)) - SPRING_LENGTH
       }
     }
 
@@ -131,17 +145,17 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
   }
 
   override private[layout] def step(temperature: Double): Unit = {
-    val coeff = math.min(1.0d, 1e-4d + temperature)
-    withLayers { (n, displacement) => n.move(Vector(0, -coeff*displacement)) }
+    // val coeff = math.min(0.25d, temperature)
+    // withMisalignedLayers { (n, displacement) => n.move(Vector(0, -coeff*displacement)) }
     super.step(temperature)
   }
 
-  override def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit = {
-    computeLayers(quadTree)
-    computeSprings(quadTree, temperature)
-    computeRepulsion(quadTree, temperature)
-    computeDirections(quadTree, temperature)
-    computeGravityToCenter(quadTree, temperature)
+  override def computeForces(center: Vector, temperature: Double): Unit = {
+    computeLayers(center)
+    computeSprings(center, temperature)
+    computeRepulsion(center, temperature)
+    computeDirections(center, temperature)
+    computeGravityToCenter(center, temperature)
   }
 
 }

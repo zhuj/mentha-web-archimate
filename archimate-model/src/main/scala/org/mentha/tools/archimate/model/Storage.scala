@@ -120,23 +120,3 @@ class StorageImpl[T <: Identifiable](val entityName: String)(implicit et: ClassT
     .collect { case x: X => x.asInstanceOf[X] }
 
 }
-
-
-class Cache {
-
-  @transient
-  private[model] val _cache = mutable.HashMap[Identifiable.ID, Any]()
-
-  private[model] def cached[T <: Identifiable](id: Identifiable.ID)(lookup: => Option[T]): Option[T] = {
-    _cache.get(id) match {
-      case Some(v) => Some(v.asInstanceOf[T])
-      case None => lookup match {
-        case s @ Some(v) => {
-          _cache.put(id, v)
-          s
-        }
-        case None => None
-      }
-    }
-  }
-}
