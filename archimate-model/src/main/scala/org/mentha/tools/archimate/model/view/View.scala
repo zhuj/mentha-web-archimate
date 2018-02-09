@@ -160,12 +160,11 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint)
   def nodes: Iterable[ViewNode] = objects[ViewNode]
   def edges: Iterable[ViewEdge] = objects[ViewEdge]
 
-  @transient private[model] val _locate_cache = new Cache()
-  @inline private[model] def locate[X <: Concept, T <: ViewObject with ViewConcept[X]](concept: X): Option[T] =
-    _locate_cache.cached(concept.id) {
-      this._objects.values
-        .collectFirst { case v: ViewConcept[_] if (v.concept == concept) => v.asInstanceOf[T] }
-    }
+  @inline private[model] def locate[X <: Concept, T <: ViewObject with ViewConcept[X]](concept: X): Option[T] = {
+    // TODO: cache it somehow
+    this._objects.values
+      .collectFirst { case v: ViewConcept[_] if v.concept == concept => v.asInstanceOf[T] }
+  }
 
   private[model] def attach[X <: Concept](concept: X): ViewObject with ViewConcept[X] = concept match {
     case n: NodeConcept => this.attach_node[NodeConcept](n).asInstanceOf[ViewObject with ViewConcept[X]]

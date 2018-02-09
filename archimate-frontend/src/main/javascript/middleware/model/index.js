@@ -8,7 +8,7 @@ export const modelConnect = (endpointUrl) => ({
     type: "WS_MODEL_CONNECT",
     [CALL_API]: {
         type: "CONNECT",
-        endpointUrl: "ws://"+ window.location.hostname +":8088/" + endpointUrl // TODO: obtain & use real address
+        endpointUrl: (window.location.protocol === 'https:' ? "wss" : "ws") +"://"+ window.location.hostname +":"+ window.location.port +"/"+ endpointUrl
     }
 });
 
@@ -27,7 +27,7 @@ export const modelSendMessage = (payload) => ({
     }
 });
 
-const messageHandler = (name, handler) => ({ name, handler })
+const messageHandler = (name, handler) => ({ name, handler });
 const messageHandlers = {
     "noop": messageHandler("noop", actions.modelNoopReceived),
     "object": messageHandler("object", actions.modelObjectReceived),
@@ -47,7 +47,7 @@ const messageReceived = (store, messageBody) => {
     }
 };
 
-export const createModelMiddleware = function(){
+export const createModelMiddleware = function() {
   let socket = null;
 
   const onOpen = (ws,store,token) => (evt) => {

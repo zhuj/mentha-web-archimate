@@ -16,6 +16,8 @@ abstract class ForceBasedLayout(view: View) {
   private[layout] val MAX_DISTANCE = 10.0d
   private[layout] val MAX_DISTANCE_2 = sqr(MAX_DISTANCE)
 
+  private[layout] val SIZE_BOUND = 0.0d
+
   @inline private[layout] final def sqr(d: Double): Double = d*d
   @inline private[layout] final def l2(v: Vector): Double = sqr(v.x) + sqr(v.y)
   @inline private[layout] final def reduce(vector: Vector, x: Double, y: Double, threshold: Double=MIN_DISTANCE): Vector = {
@@ -61,11 +63,19 @@ abstract class ForceBasedLayout(view: View) {
 
   }
 
-
   private[layout] val nodesMap = view.nodes.map { n => n.id -> new NodeWrapper(n) }.toMap
   private[layout] val nodesSeq = nodesMap.values.toVector
   private[layout] val nodesSize = 1.0d * nodesSeq.size
-  private[layout] val nodesSeqPar = if (nodesSize > 100.0d) { nodesSeq.par } else { nodesSeq }
+
+  private[layout] val nodesPairs = {
+    val z = nodesSeq.zipWithIndex
+    z.flatMap {
+      case (n1, i1) => z.collect {
+        case (n2, i2) if i1 < i2 => (n1, n2)
+      }
+    }
+  }.toVector
+
 
   private[layout] class EdgeWrapper(val edge: ViewEdge) extends Edge[NodeWrapper] {
     // TODO: do smth with associations to relationships
@@ -76,102 +86,90 @@ abstract class ForceBasedLayout(view: View) {
 
   private[layout] val edgesMap = view.edges.map { e => e.id -> new EdgeWrapper(e)}.toMap
   private[layout] val edgesSeq = edgesMap.values.toVector
-  private[layout] val edgesSeqPar = if (nodesSize > 100.0d) { edgesSeq.par } else { edgesSeq }
 
-  class BarnesHut(
-    val force: Double => Double,
-    val theta: Double = 0.75d,
-    val reducerBounds: Double = 0.0d,
-    val reducerLength: Double = 0.0d
-  ) {
-    require(theta > 0.0d)
-    require(reducerBounds >= 0.0d)
-    require(reducerLength >= 0.0d)
-
-    def calculateForce(body: Body, quad: QuadTree.Quad): Vector = {
-      val displacement = reduce(
-        vector = quad.mass.center - body.mass.center,
-        x = reducerBounds * body.bounds.width,
-        y = reducerBounds * body.bounds.height
-      )
-
-      val distance2 = Math.max(0d, l2(displacement) - reducerLength)
-      quad match {
-        case single: QuadTree.Single if body eq single.body => {
-          // ignore the same object
-          Vector.ZERO
-        }
-        case fork: QuadTree.Fork if (distance2 < MAX_DISTANCE_2) && (distance2 < sqr(quad.bounds.mean / theta)) => {
-          // go into the quad if it is so close to the object that it's impossible to replace it as a single body
-          fork.children.map { c => calculateForce(body, c) }.fold(Vector.ZERO) { _+_ }
-        }
-        case _ => {
-          if (distance2 < MIN_DISTANCE_2) {
-            // just repulse it with random force
-            Vector.random(rnd) * (body.mass.value * quad.mass.value * force(MIN_DISTANCE) / 1.0)
-          } else if (distance2 < MAX_DISTANCE_2) {
-            // calculate the real force
-            val distance = Math.sqrt(distance2)
-            displacement * (body.mass.value * quad.mass.value * force(distance) / distance)
-          } else {
-            // object are too far, ignore
-            Vector.ZERO
-          }
-        }
-      }
-    }
-
-  }
-
-
-  private[layout] val CENTER_GRAVITY = 1.0e-5d
-  private[layout] val DRAG = 0.1d
-  private[layout] val TIMESTEP = 1.0d
+  private[layout] val CENTER_GRAVITY = 1.0e-4d
+  private[layout] val DRAG = 0.10d
+  private[layout] val TIMESTEP = 1.00d
 
   private[layout] val ENERGY_CUTOFF = 1.0e-3d
 
   private[layout] val MAX_VELOCITY = 1.0d
   private[layout] val MAX_VELOCITY_2 = sqr(MAX_VELOCITY)
 
-  def barnesHutCore: BarnesHut
-  def computeForces(quadTree: QuadTree.Quad, temperature: Double): Unit
+  def repulsion(d: Double): Double
+  def computeForces(center: Vector, temperature: Double): Unit
 
-  private[layout] def computeRepulsion(quadTree: QuadTree.Quad, temperature: Double): Unit = {
-    nodesSeqPar.foreach { node =>
-      node.force += barnesHutCore.calculateForce(node, quadTree) * (1.0d + temperature)
+  private[layout] def computeRepulsion(center: Vector, temperature: Double): Unit = {
+    for { (n1, n2) <- nodesPairs } {
+
+      val displacement = reduce(
+        vector = n1.mass.center - n2.mass.center,
+        x = SIZE_BOUND * (n1.bounds.width + n2.bounds.width),
+        y = SIZE_BOUND * (n1.bounds.height + n2.bounds.height)
+      )
+
+      val distance2 = l2(displacement)
+
+      val f = if (distance2 < MIN_DISTANCE_2) {
+        // just repulse it with random force
+        Vector.random(rnd) * (n1.mass.value * n2.mass.value * repulsion(MIN_DISTANCE) /* / 1.0d */)
+      } else if (distance2 < MAX_DISTANCE_2) {
+        // calculate the real force
+        val distance = Math.sqrt(distance2)
+        displacement * (n1.mass.value * n2.mass.value * repulsion(distance) / distance)
+      } else {
+        // object are too far, there is no repulsion, ignore
+        Vector.ZERO
+      }
+
+      n2.force += f
+      n1.force -= f
+
     }
   }
 
-  private[layout] def computeGravityToCenter(quadTree: QuadTree.Quad, temperature: Double): Unit = {
-    nodesSeqPar.foreach { node =>
-      val d2 = l2(node.mass.center /* - quadTree.mass.center */ ) / nodesSize
-      val normalized = node.mass.center * (d2 * CENTER_GRAVITY) * (1e-3d + temperature)
+  private[layout] def computeGravityToCenter(center: Vector, temperature: Double): Unit = {
+    nodesSeq.foreach { node =>
+      val d2 = l2(node.mass.center - center) / nodesSize
+      val normalized = node.mass.center * (d2 * CENTER_GRAVITY) * (1.0e-3d + temperature)
       node.force -= normalized
     }
   }
 
   private[layout] def step(temperature: Double): Unit = {
 
-    val quadTree = QuadTree(nodesSeq)
-    val center = quadTree.mass.center
+    val center = {
+      var x = 0d
+      var y = 0d
+      if (nodesSize > 0d) {
+        for {n <- nodesSeq} {
+          x += n.mass.center.x
+          y += n.mass.center.y
+        }
+        x /= nodesSize
+        y /= nodesSize
+      }
+      Vector(x, y)
+    }
 
-    computeForces(quadTree, temperature)
+    computeForces(center, temperature)
 
-    nodesSeqPar.foreach { node =>
+    nodesSeq.foreach { node =>
 
       if (temperature > 1.0e-4) {
         node.force += Vector.random(rnd, rnd.nextGaussian() * temperature)
       }
 
       val acceleration = node.force * (1.0d / node.mass.value)
-      node.force = Vector.ZERO
+      node.force = Vector.ZERO // clean force for next iteration
 
       node.velocity = node.velocity * (1.0d - DRAG) + acceleration * TIMESTEP
       val v2 = l2(node.velocity) / temperature
       if (v2 > MAX_VELOCITY_2) {
         node.velocity = node.velocity * (MAX_VELOCITY / Math.sqrt(v2))
       }
-      node.move(node.velocity * TIMESTEP - center * 0.5d)
+
+      node.move(node.velocity * TIMESTEP - center * 0.75d)
     }
   }
 
@@ -179,7 +177,7 @@ abstract class ForceBasedLayout(view: View) {
     0.5 * node.mass.value * l2(node.velocity)
   }).sum
 
-  def layout(maxIterations: Int = 1000): Unit = {
+  def layout(maxIterations: Int): Unit = {
     var it = 0
     do {
       // DEBUG: println(it)

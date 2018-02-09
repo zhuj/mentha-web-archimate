@@ -7,8 +7,9 @@ import akka.actor.ActorSystem
 import akka.stream._
 import akka.util.ByteString
 import org.mentha.tools.archimate.model._
-import org.mentha.tools.archimate.model.view.View
+import org.mentha.tools.archimate.model.view._
 import org.mentha.utils.uuid.FastTimeBasedIdGenerator
+import org.slf4j.LoggerFactory
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -32,6 +33,7 @@ object MkModel {
   *
   */
 abstract class MkModel {
+  val log = LoggerFactory.getLogger(this.getClass)
 
   // set sequential time source
   def initTimeSource(base: Long): Unit = {
@@ -82,7 +84,7 @@ abstract class MkModel {
     log.debug("DBG: setup complete")
 
     Thread.sleep(2000)
-    promise.success(None)
+    try { promise.success(None) }
 
     log.debug("DBG: promise complete")
 
