@@ -26,7 +26,7 @@ object MkSoftwareDevelopment extends MkModel {
   implicit val space: Size = Size(40, 50)
 
   val layoutIterations = 500
-  def layout(view: View) = {
+  def layout(view: View): Unit = {
     log.info(s"Layout view ${view.name} has been started")
     in(view)
       .placeRandomly()
@@ -59,37 +59,118 @@ object MkSoftwareDevelopment extends MkModel {
 
   }
 
-  // https://www.scrum.org/resources/scrum-guide
+  //
 
+  val agile = new {
+
+    implicit val view: View = model.add(MkModel.generateViewId("v-agile")) { new View() withName "Agile" }
+
+    // http://agilemanifesto.org/
+    // We are uncovering better ways of developing software by doing it and helping others do it.
+    // Through this work we have come to value:
+
+    val agile = << { assessment withName "Agile" }
+
+    val personality = << { principle withName "Individuals and interactions -over- processes and tools" }
+    << { personality `influences` "+" `in` agile }
+
+    val result = << { principle withName "Working software -over- comprehensive documentation" }
+    << { result `influences` "+" `in` agile }
+
+    val collaboration = << { principle withName "Customer collaboration -over- contract negotiation" }
+    << { collaboration `influences` "+" `in` agile }
+
+    val flexibility = << { principle withName "Responding to change -over- following a plan" }
+    << { flexibility `influences` "+" `in` agile }
+
+
+    // That is, while there is value in the items on the right, we value the items on the left more.
+
+    // ----
+    // https://www.smartsheet.com/comprehensive-guide-values-principles-agile-manifesto
+    val extended = new {
+
+      val agile12 = << { assessment withName "Agile (12)" }
+
+      val continuousDelivery = << { principle withName "Customer satisfaction through early and continuous software delivery" }
+      << .notes(continuousDelivery) { "Customers are happier when they receive working software at regular intervals, rather than waiting extended periods of time between releases." }
+      << { continuousDelivery `influences` "+" `in` agile12 }
+
+      val changesAccommodation = << { principle withName "Accommodate changing requirements throughout the development process" }
+      << .notes(changesAccommodation) { "The ability to avoid delays when a requirement or feature request changes." }
+      << { changesAccommodation `influences` "+" `in` agile12 }
+
+      val frequentDelivery = << { principle withName "Frequent delivery of working software" }
+      << .notes(frequentDelivery) { "Scrum accommodates this principle since the team operates in software sprints or iterations that ensure regular delivery of working software." }
+      << { frequentDelivery `influences` "+" `in` agile12 }
+
+      val collaboration = << { principle withName "Collaboration between the business stakeholders and developers throughout the project" }
+      << .notes(collaboration) { "Better decisions are made when the business and technical team are aligned." }
+      << { collaboration `influences` "+" `in` agile12 }
+
+      val motivatedTeam = << { principle withName "Support, trust, and motivate the people involved" }
+      << .notes(motivatedTeam) { "Motivated teams are more likely to deliver their best work than unhappy teams." }
+      << { motivatedTeam `influences` "+" `in` agile12 }
+
+      val interactions = << { principle withName "Enable face-to-face interactions" }
+      << .notes(interactions) { "Communication is more successful when development teams are co-located." }
+      << { interactions `influences` "+" `in` agile12 }
+
+      val measureOfProgress = << { principle withName "Working software is the primary measure of progress" }
+      << .notes(measureOfProgress) { "Delivering functional software to the customer is the ultimate factor that measures progress." }
+      << { measureOfProgress `influences` "+" `in` agile12 }
+
+      val consistentDevelopment = << { principle withName "Agile processes to support a consistent development pace" }
+      << .notes(consistentDevelopment) { "Teams establish a repeatable and maintainable speed at which they can deliver working software, and they repeat it with each release." }
+      << { consistentDevelopment `influences` "+" `in` agile12 }
+
+      val designAndTechnologies = << { principle withName "Attention to technical detail and design enhances agility" }
+      << .notes(designAndTechnologies) { "The right skills and good design ensures the team can maintain the pace, constantly improve the product, and sustain change." }
+      << { designAndTechnologies `influences` "+" `in` agile12 }
+
+      val simplicity = << { principle withName "Simplicity" }
+      << .notes(simplicity) { "Develop just enough to get the job done for right now." }
+      << { simplicity `influences` "+" `in` agile12 }
+
+      val selfOrganizedTeam = << { principle withName "Self-organizing teams encourage great architectures, requirements, and designs" }
+      << .notes(selfOrganizedTeam) { "Skilled and motivated team members who have decision-making power, take ownership, communicate regularly with other team members, and share ideas that deliver quality products." }
+      << { selfOrganizedTeam `influences` "+" `in` agile12 }
+
+      val becomeMoreEffective = << { principle withName "Regular reflections on how to become more effective" }
+      << .notes(becomeMoreEffective) { "Self-improvement, process improvement, advancing skills, and techniques help team members work more efficiently." }
+      << { becomeMoreEffective `influences` "+" `in` agile12 }
+
+      // layout
+      layout(view)
+
+    }
+
+  }
+
+  // https://www.scrum.org/resources/scrum-guide
   // scrum values:
   val values = new {
-
-    // * respect - respect themselves, all team members, PO & SM and final users
-    // * courage - personal (each and every) courage to always tell the truth
-    // * commitment - whole the team is responsible for the whole sprint (personal responsibility for the own tasks is not enough)
-    // * focus - focus on the spring goals, on the project result, proactive (preemptive) thinking
-    // * openness - to be ready to help, to be ready to share knowledge ...
 
     implicit val view: View = model.add(MkModel.generateViewId("v-scrum-values")) { new View() withName "Scrum: Values" }
 
     val respect = << { value withName "Respect" }
-    << .notes(respect) { "Respect themselves, all team members, PO & SM and final users" }
+    << .notes(respect) { "As we work together, sharing successes and failures, we come to respect each other and to help each other become worthy of respect." }
     << { scrum `associated with` respect }
 
     val courage = << { value withName "Courage" }
-    << .notes(courage) { "Personal (each and every) courage to always tell the truth" }
+    << .notes(courage) { "Because we work as a team, we feel supported and have more resources at our disposal. This gives us the courage to undertake greater challenges." }
     << { scrum `associated with` courage }
 
     val commitment = << { value withName "Commitment" }
-    << .notes(commitment) { "Whole the team is responsible for the whole sprint (personal responsibility for the own tasks is not enough)" }
+    << .notes(commitment) { "Because we have great control over our own destiny (personal responsibility for the own tasks is not enough), we are more committed to success." }
     << { scrum `associated with` commitment }
 
     val focus = << { value withName "Focus" }
-    << .notes(focus) { "Focus on the spring goals, on the project result, proactive (preemptive) thinking" }
+    << .notes(focus) { "Because we focus on only a few things at a time (the spring goals, on the project result), we work well together and produce excellent work." }
     << { scrum `associated with` focus }
 
     val openness = << { value withName "Openness" }
-    << .notes(openness) { "To be open to help/for help, to be open to share your knowledge, ..." }
+    << .notes(openness) { "As we work together, we express how we're doing, what's in our way, and our concerns so they can be addressed." }
     << { scrum `associated with` openness }
 
     // layout
@@ -99,10 +180,6 @@ object MkSoftwareDevelopment extends MkModel {
 
   // scrum principles:
   val principles = new {
-
-    // * transparent - don't hide the problems (even from PO & SM), don't hide the problems from themselves
-    // * inspection - review results of work (previous iterations)
-    // * adaption - change the behavior according to the inspection
 
     implicit val view: View = model.add(MkModel.generateViewId("v-scrum-principles")) { new View() withName "Scrum: Principles" }
 

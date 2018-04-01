@@ -3,5 +3,5 @@ dependencies {
 
     compile "org.scala-lang.modules:scala-xml_${scalaLibVersion}:1.0.6"
     compile "org.scala-lang.modules:scala-parser-combinators_${scalaLibVersion}:1.0.6"
-    compile "org.scalaz:scalaz-core_${scalaLibVersion}:7.2.14"
+    compile "org.scalaz:scalaz-core_${scalaLibVersion}:7.2.20"
 }

@@ -716,10 +716,19 @@ object ModelState {
 
 }
 
+/**
+  * wrapper object over Archimate Model
+  * @param model to be wrapped
+  */
 class ModelState(private[state] var model: Model = new Model) {
 
   import ModelState._
 
+  /**
+    * it converts incoming command to a changeset to be executed later
+    * @param command to be converted
+    * @return changeset to be executed later
+    */
   def prepare(command: Command): ChangeSet = command match {
     case Commands.AddElement(_, _) => model.prepare(command)
     case Commands.AddConnector(_, _, _) => model.prepare(command)
@@ -739,6 +748,11 @@ class ModelState(private[state] var model: Model = new Model) {
     case c: Commands.CompositeCommand => ChangeSets.CompositeChangeSet(c, changes = c.commands.map { cmd => prepare(cmd) })
   }
 
+  /**
+    * it executes incoming query
+    * @param query to be executed
+    * @return json (query result)
+    */
   def query(query: ModelState.Query): JsonObject = query match {
     case Queries.GetModel(_) => json.toJsonPair(model)
     case Queries.GetConcept(id) => json.toJsonPair(concept(id))

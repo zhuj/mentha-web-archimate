@@ -14,12 +14,10 @@ subprojects {
 
     ext {
         scalaLibVersion = "2.12"
-        scalaVersion = "${scalaLibVersion}.4"
+        scalaVersion = "${scalaLibVersion}.5"
         zincScalaVersion = "2.10.7" // zinc is build with scala 2.10
         slf4j = "1.7.25"
-        akkaVersion = "2.5.9"
-        akkaHttpVersion = "10.0.11"
-        playVersion = "2.6.8"
+        playVersion = "2.6.9"
     }
 
     repositories {
@@ -45,7 +43,7 @@ subprojects {
         compile "org.slf4j:slf4j-log4j12:${slf4j}"
 
         testCompile "junit:junit:4.12"
-        testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.4"
+        testCompile "org.scalatest:scalatest_${scalaLibVersion}:3.0.5"
     }
 
 }

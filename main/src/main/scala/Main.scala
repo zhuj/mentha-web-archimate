@@ -1,3 +1,4 @@
+import scala.language.postfixOps
 import com.typesafe.config.Config
 import org.mentha.tools.archimate.state._
 
@@ -54,7 +55,7 @@ object Main {
   private val dataTransferTimeout: FiniteDuration = (idleTimeout * 1.00d).asInstanceOf[FiniteDuration] // TODO: make a separate config
 
   // state the actor storage
-  private val storageActor = system.actorOf(Props(new StorageActor()), name="storage")
+  private val storageActor = system.actorOf(props=Props(new StorageActor()), name="storage")
   private def obtainStateActor(modelId: String) = {
     Await.result(
       storageActor
@@ -70,7 +71,7 @@ object Main {
   private def modelWebSocket(modelId: String): Route = {
     extractUpgradeToWebSocket {
       upgrade => /* withRequestTimeout(keepAliveInterval * 1.5) */ {
-        val flow = UserActor.newWebSocketUser(
+        val flow = UserActor.newWebSocketUserFlow(
           modelId = modelId,
           stateActor = obtainStateActor(modelId),
           dataTransferTimeout = dataTransferTimeout,

@@ -107,7 +107,7 @@ class StateActor(val modelId: String) extends PersistentActor with ActorLogging 
   }
 
   private[state] def execute(user: ActorRef, changeSet: ModelState.ChangeSet): Unit = {
-    persist(changeSet) {
+    persistAsync(changeSet) {
       changeSet => {
         commit(changeSet) match {
           case Success(response) => {

@@ -20,13 +20,13 @@ object UserActor {
   case class OutgoingMessage(text: String)
 
   //#websocket-flow
-  def newWebSocketUser(
+  def newWebSocketUserFlow(
     modelId: String,
     stateActor: ActorRef,
     dataTransferTimeout: FiniteDuration,
     keepAliveInterval: FiniteDuration
   )(implicit system: ActorSystem, materializer: Materializer): Flow[ws.Message, ws.Message, NotUsed] = {
-    implicit val executionContext = system.dispatcher
+    implicit val executionContext: ExecutionContext = system.dispatcher
     def collect(stream: Source[String, _]) = stream
         .limit(1000)
         .completionTimeout(dataTransferTimeout)
@@ -91,7 +91,6 @@ object UserActor {
 
 /**
   * It parses the incoming message (text) to a request, then sends it to the StateActor
-  * @param stateActor
   */
 class UserActor(modelId: String, stateActor: ActorRef) extends Actor with ActorLogging {
 
