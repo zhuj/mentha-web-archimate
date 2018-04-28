@@ -1,6 +1,6 @@
 ext {
-    akkaVersion = "2.5.11"
-    akkaHttpVersion = "10.1.0"
+    akkaVersion = "2.5.12"
+    akkaHttpVersion = "10.1.1"
     jgitVersion = "4.11.0.201803080745-r"
 }
 
