@@ -22,5 +22,5 @@ task npmDevServer(dependsOn: 'npmInstall', type: Exec) {
     commandLine = ["npm", "run-script", "dev"]
 }
 
-
-processResources.dependsOn 'npmBuildProd'
+// temporary disalbe npm autobuild
+// processResources.dependsOn 'npmBuildProd'
