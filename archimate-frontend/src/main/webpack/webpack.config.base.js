@@ -8,6 +8,13 @@ const BASE_DIR = '../javascript';
 const OUTPUR_DIR = '../resources/public';
 
 module.exports = {
+    optimization: {
+        minimize: false,
+        splitChunks: {
+            filename: 'js/vendor.js',
+            minChunks: Infinity
+        }
+    },
     entry: {
         vendor: [
             'react',
@@ -32,16 +39,8 @@ module.exports = {
 
         extensions: ['.js', '.jsx', '.json', '.scss']
     },
-    plugins: [
-        // Shared code
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['vendor'],
-            filename: 'js/[name].js',
-            minChunks: Infinity
-        })
-    ],
     module: {
-        loaders: [
+        rules: [
             // JavaScript / ES6
             {
                 test: /\.(jsx|js)$/,

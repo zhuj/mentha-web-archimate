@@ -47,10 +47,10 @@ class LayeredSpringLayoutF(view: View) extends SpringLayoutF(view) {
   private val DIRECTION_COEFFICIENT = 0.8d * SPRING_COEFFICIENT
 
 
-  override def repulsion(d: Double): Double = {
-    val x = sqr(d)
-    -REPULSION_COEFFICIENT / (sqr(x) * d)
-  }
+//  override def repulsion(d: Double): Double = {
+//    val x = sqr(d)
+//    -REPULSION_COEFFICIENT / (sqr(x) * d)
+//  }
 
   private def withMisalignedLayers(action: (NodeWrapper, Double) => Unit): Unit = {
     def compute(tail: List[Seq[NodeWrapper]]): Unit = {

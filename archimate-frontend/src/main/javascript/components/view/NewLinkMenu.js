@@ -1,15 +1,16 @@
 import React from 'react'
 
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
-import List, { ListItem } from 'material-ui/List';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import { relationships } from './edges/view/viewRelationship'
 import { constraints } from './edges/constraints'
 
 import _ from 'lodash'
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 const styleSheet =theme => ({
   root: {
     background: theme.palette.background.paper,

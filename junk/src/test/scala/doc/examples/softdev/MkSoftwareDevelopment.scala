@@ -659,7 +659,7 @@ object MkSoftwareDevelopment extends MkModel {
     val process = << { businessProcess withName "Documentation maintenance" }
 
     // Inspection
-    << { process `reads` artifacts.definitionOfDone }
+    << {  process `reads` artifacts.definitionOfDone }
     << { process `reads` artifacts.teamCommitments }
     << { process `reads` artifacts.feature }
     << { process `reads` artifacts.task }
@@ -725,7 +725,7 @@ object MkSoftwareDevelopment extends MkModel {
       << { story `aggregates` task }
       << { task `composes` acceptance }
 
-      val component = << { applicationComponent withName "Jira (atlassian.net)" }
+      val component = << { applicationComponent withName "Tracker" }
       << { component `accesses` ReadWriteAccess `of` story  }
       << { component `accesses` ReadWriteAccess `of` task  }
 

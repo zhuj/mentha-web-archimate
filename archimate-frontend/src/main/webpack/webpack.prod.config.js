@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const config = require('./webpack.config.base');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const env = {
     NODE_ENV: JSON.stringify('production')
@@ -12,6 +11,9 @@ const GLOBALS = {
 };
 
 module.exports = merge(config, {
+    optimization: {
+        minimize: true
+    },
     devtool: 'source-map',
     entry: {
         app: [
@@ -22,34 +24,25 @@ module.exports = merge(config, {
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin(GLOBALS),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false,
-                screw_ie8: true
-            },
-            output: {
-                comments: false
-            }
-        }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false
         }),
-        new ExtractTextPlugin({
-            filename: 'css/[name].css',
-            allChunks: true
-        })
+        // new webpack.ExtractTextPlugin({
+        //     filename: 'css/[name].css',
+        //     allChunks: true
+        // })
     ],
-    module: {
-        loaders: [
-            {
-                test: /\.css$|\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'sass-loader']
-                })
-            }
-        ]
-    }
+    // module: {
+    //     rules: [
+    //         {
+    //             test: /\.css$|\.scss$/,
+    //             use: ExtractTextPlugin.extract({
+    //                 fallback: 'style-loader',
+    //                 use: ['css-loader', 'sass-loader']
+    //             })
+    //         }
+    //     ]
+    // }
 });
 

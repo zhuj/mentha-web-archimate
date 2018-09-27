@@ -82,10 +82,10 @@ class PortWrapper extends React.Component {
     const { node } = this.props;
     const width = node.width || 0;
     const height = node.height || 0;
-    const x = node.x - 0.5*width;
-    const y = node.y - 0.5*height;
+    const left = node.x - 0.5*width;
+    const top = node.y - 0.5*height;
     return (
-      <rect x={x} y={y} width={width} height={height}
+      <rect x={left} y={top} width={width} height={height}
         className="x-port"
         data-id={node.id}
         data-nodeid={node.id}
@@ -196,6 +196,10 @@ export class DiagramWidget extends React.Component {
 
   enableRepaintEntities(entities) {
     this.paintableWidgets = this.getDiagramModel().getRepaintEntities(entities);
+  }
+
+  hasRepaintEntities() {
+    return (this.paintableWidgets !== null);
   }
 
   canEntityRepaint(model) {
@@ -633,23 +637,29 @@ export class DiagramWidget extends React.Component {
   }
 
   generateNodes(mode) {
-    return _.map(this.getDiagramModel().getNodes(), node => (
-      <NodeWrapper
-        key={node.id}
-        node={node}
-        diagram={this}
-      />
-    ));
+    return _.chain(this.getDiagramModel().getNodes())
+      .filter(node => (mode === null) || (mode === this.canEntityRepaint(node)))
+      .map(node => (
+        <NodeWrapper
+         key={node.id}
+         node={node}
+         diagram={this}
+        />
+      ))
+      .value();
   }
 
   generateLinks(mode) {
-    return _.map(this.getDiagramModel().getLinks(), link => (
-      <LinkWrapper
-        key={link.id}
-        link={link}
-        diagram={this}
-      />
-    ));
+    return _.chain(this.getDiagramModel().getLinks())
+      .filter(link => (mode === null) || (mode === this.canEntityRepaint(link)))
+      .map(link => (
+        <LinkWrapper
+         key={link.id}
+         link={link}
+         diagram={this}
+        />
+      ))
+      .value();
   }
 
   generatePorts(mode) {
@@ -671,7 +681,9 @@ export class DiagramWidget extends React.Component {
     // TODO: https://developer.mozilla.org/ru/docs/Web/SVG/Element/foreignObject
     return (
       <div className="node-view">
-        { this.generateNodes('html') }
+        <div key={"node-view-frozen"} id={"node-view-frozen"}> { this.generateNodes(false) } </div>
+        <div key={"node-view-normal"} id={"node-view-normal"}> { this.generateNodes(true) } </div>
+        {/*{ this.generateNodes(null) }*/}
       </div>
     );
   }
@@ -684,8 +696,10 @@ export class DiagramWidget extends React.Component {
     return (
       <svg className="link-view">
         { this.renderLinkLayerDefs() }
-        { this.generateLinks('svg') }
-        { this.generatePorts('svg') }
+        <g key={"link-view-frozen"} id={"link-view-frozen"}> { this.generateLinks(false) } </g>
+        <g key={"link-view-normal"} id={"link-view-normal"}> { this.generateLinks(true) } </g>
+        {/*{ this.generateLinks(null) }*/}
+        { this.generatePorts(null) }
       </svg>
     );
   }
@@ -698,7 +712,6 @@ export class DiagramWidget extends React.Component {
 
     const {x:x1, y:y1} = action.internalMouse1;
     const {x:x2, y:y2} = action.internalMouse2;
-
 
     const style = {
       border: '1px solid black',

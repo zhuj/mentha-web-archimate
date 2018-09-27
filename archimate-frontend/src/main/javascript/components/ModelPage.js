@@ -8,16 +8,17 @@ import reactLS from 'react-localstorage'
 
 import _ from 'lodash'
 
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
-import Drawer from 'material-ui/Drawer';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import DownloadIcon from 'material-ui-icons/ScreenShare';
-import AddViewIcon from 'material-ui-icons/PlaylistAdd';
-import List, { ListItem } from 'material-ui/List';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import DownloadIcon from '@material-ui/icons/ScreenShare';
+import AddViewIcon from '@material-ui/icons/PlaylistAdd';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import View from './view/View'
 
@@ -27,7 +28,7 @@ import * as api from '../actions/model.api'
 import dom2image from 'dom-to-image'
 import filesaver from 'file-saver'
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 const styleSheet = theme => ({
   modelPage: {
     width: '100%',

@@ -5,10 +5,10 @@ import { Provider } from "react-redux";
 import { store } from "./store.js";
 import { router } from "./router.js";
 
-import blue from 'material-ui/colors/blue';
-import pink from 'material-ui/colors/pink';
-import { createMuiTheme } from 'material-ui/styles';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import blue from '@material-ui/core/colors/blue';
+import pink from '@material-ui/core/colors/pink';
+import { createMuiTheme } from '@material-ui/core/styles';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 
 const theme = createMuiTheme({
   palette: {

@@ -14,10 +14,10 @@ subprojects {
 
     ext {
         scalaLibVersion = "2.12"
-        scalaVersion = "${scalaLibVersion}.5"
+        scalaVersion = "${scalaLibVersion}.6"
         zincScalaVersion = "2.10.7" // zinc is build with scala 2.10
         slf4j = "1.7.25"
-        playVersion = "2.6.9"
+        playVersion = "2.6.10"
     }
 
     repositories {

@@ -10,7 +10,7 @@ abstract class ForceBasedLayout(view: View) {
   private[layout] val NORMAL_SIZE = View.defaultSize.mean
   private[layout] val SIZE_NORMALIZER = 1.0d / NORMAL_SIZE
 
-  private[layout] val MIN_DISTANCE = 0.10d
+  private[layout] val MIN_DISTANCE = 0.1d
   private[layout] val MIN_DISTANCE_2 = sqr(MIN_DISTANCE)
 
   private[layout] val MAX_DISTANCE = 10.0d
@@ -112,7 +112,7 @@ abstract class ForceBasedLayout(view: View) {
 
       val f = if (distance2 < MIN_DISTANCE_2) {
         // just repulse it with random force
-        Vector.random(rnd) * (n1.mass.value * n2.mass.value * repulsion(MIN_DISTANCE) /* / 1.0d */)
+        Vector.random(rnd) * (n1.mass.value * n2.mass.value * repulsion(MIN_DISTANCE))
       } else if (distance2 < MAX_DISTANCE_2) {
         // calculate the real force
         val distance = Math.sqrt(distance2)
@@ -181,7 +181,7 @@ abstract class ForceBasedLayout(view: View) {
     var it = 0
     do {
       // DEBUG: println(it)
-      val temperature = Math.exp(3.0 - 10.0 * it / maxIterations)
+      val temperature = Math.exp(0.0 - 10.0 * it / maxIterations)
       (0 until 20) foreach { _ => step(temperature) }
       it += 1
     } while (/*totalEnergy > ENERGY_CUTOFF &&*/ it < maxIterations)
