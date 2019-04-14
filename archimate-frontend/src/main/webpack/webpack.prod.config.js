@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const config = require('./webpack.config.base');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const env = {
     NODE_ENV: JSON.stringify('production')
@@ -11,10 +13,21 @@ const GLOBALS = {
 };
 
 module.exports = merge(config, {
-    optimization: {
-        minimize: true
-    },
+    mode: 'production',
     devtool: 'source-map',
+    optimization: {
+        minimizer: [new UglifyJsPlugin()],
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    chunks: 'initial',
+                    name: 'vendor',
+                    test: 'vendor',
+                    enforce: true
+                },
+            }
+        },
+    },
     entry: {
         app: [
             'babel-polyfill',
@@ -28,21 +41,21 @@ module.exports = merge(config, {
             minimize: true,
             debug: false
         }),
-        // new webpack.ExtractTextPlugin({
-        //     filename: 'css/[name].css',
-        //     allChunks: true
-        // })
+        new ExtractTextPlugin({
+            filename: 'css/[name].css',
+            allChunks: true
+        })
     ],
-    // module: {
-    //     rules: [
-    //         {
-    //             test: /\.css$|\.scss$/,
-    //             use: ExtractTextPlugin.extract({
-    //                 fallback: 'style-loader',
-    //                 use: ['css-loader', 'sass-loader']
-    //             })
-    //         }
-    //     ]
-    // }
+    module: {
+        rules: [
+            {
+                test: /\.css$|\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'sass-loader']
+                })
+            }
+        ]
+    }
 });
 

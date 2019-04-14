@@ -82,10 +82,10 @@ class PortWrapper extends React.Component {
     const { node } = this.props;
     const width = node.width || 0;
     const height = node.height || 0;
-    const left = node.x - 0.5*width;
-    const top = node.y - 0.5*height;
+    const x = node.x - 0.5*width;
+    const y = node.y - 0.5*height;
     return (
-      <rect x={left} y={top} width={width} height={height}
+      <rect x={x} y={y} width={width} height={height}
         className="x-port"
         data-id={node.id}
         data-nodeid={node.id}

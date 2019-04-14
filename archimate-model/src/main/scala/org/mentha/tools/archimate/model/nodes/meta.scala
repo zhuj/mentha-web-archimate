@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 /** */
 abstract class ElementMeta[+T <: Element: ClassTag] extends ConceptMeta[T] {
 
-  def newInstance(): T = runtimeClass.newInstance().asInstanceOf[T]
+  def newInstance(): T = runtimeClass.getConstructor().newInstance()
   def layerObject: LayerObject = ???
   def key: String = ???
 
@@ -19,7 +19,7 @@ abstract class ElementMeta[+T <: Element: ClassTag] extends ConceptMeta[T] {
 /** */
 class RelationshipConnectorMeta[+T <: RelationshipConnector: ClassTag] extends ConceptMeta[T] {
 
-  def newInstance(relationship: RelationshipMeta[Relationship]): T = runtimeClass.newInstance()
+  def newInstance(relationship: RelationshipMeta[Relationship]): T = runtimeClass.getConstructor().newInstance()
 
   override def toString: String = s"RelationshipConnectorMeta(${name})"
 

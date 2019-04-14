@@ -8,10 +8,10 @@ import { createModelMiddleware } from './middleware/model/index'
 import { reducers } from "./reducers/index";
 import { sagas } from "./sagas/index";
 
-import createHistory from 'history/createBrowserHistory';
-import qhistory from 'qhistory';
+import { createBrowserHistory } from 'history';
+import queryHistory from 'qhistory';
 import { parse, stringify } from 'qs';
-const history = qhistory(createHistory(), stringify, parse);
+const history = queryHistory(createBrowserHistory(), stringify, parse);
 
 // add the middlewares
 let middlewares = [];
