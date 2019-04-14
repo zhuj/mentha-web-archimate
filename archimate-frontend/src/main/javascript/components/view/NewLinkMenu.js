@@ -42,10 +42,10 @@ const styleSheet =theme => ({
 
 class NewLinkMenu extends React.Component {
 
-  renderRelationItem(rel, className, params, title) {
+  renderRelationItem(key, rel, className, params, title) {
     const { classes, select } = this.props;
     return (
-      <ListItem key={rel} className={classes.item}>
+      <ListItem key={key} className={classes.item}>
         <Button
           onClick={() => { select({ ...params, _tp: rel }) }}
           className={classes.button}
@@ -88,13 +88,13 @@ class NewLinkMenu extends React.Component {
 
       if (typeof(_.find(rels, (r) => r === 'accessRelationship')) !== 'undefined') {
         special.push(<Divider key="divider"/>);
-        special.push(this.renderRelationItem("accessRelationship", "r", { access:'r' }, "reads"));
-        special.push(this.renderRelationItem("accessRelationship","w", { access:'w' }, "writes"));
-        special.push(this.renderRelationItem("accessRelationship", "r w", { access:'rw' }, "reads/writes"));
+        special.push(this.renderRelationItem("accessRelationship-r", "accessRelationship", "r", { access:'r' }, "reads"));
+        special.push(this.renderRelationItem("accessRelationship-w", "accessRelationship","w", { access:'w' }, "writes"));
+        special.push(this.renderRelationItem("accessRelationship-rw", "accessRelationship", "r w", { access:'rw' }, "reads/writes"));
       }
 
       return [
-        ... _.map(rels, (rel) => this.renderRelationItem(rel, '', {}, rel.replace('Relationship', ''))),
+        ... _.map(rels, (rel) => this.renderRelationItem(rel, rel, '', {}, rel.replace('Relationship', ''))),
         ... special,
       ];
     } catch (e) {
@@ -110,7 +110,7 @@ class NewLinkMenu extends React.Component {
         <List className={classes.list}>
           { this.renderRelationships() }
           <Divider key="divider"/>
-          { this.renderRelationItem("viewConnection", '', {}, "connection")}
+          { this.renderRelationItem("viewConnection", "viewConnection", '', {}, "connection")}
         </List>
       </div>
     );

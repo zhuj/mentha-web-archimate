@@ -20,6 +20,8 @@ import AddViewIcon from '@material-ui/icons/PlaylistAdd';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
+import { withStyles } from '@material-ui/core/styles';
+
 import View from './view/View'
 
 import * as actions from '../actions'
@@ -28,7 +30,6 @@ import * as api from '../actions/model.api'
 import dom2image from 'dom-to-image'
 import filesaver from 'file-saver'
 
-import { withStyles } from '@material-ui/core/styles';
 const styleSheet = theme => ({
   modelPage: {
     width: '100%',

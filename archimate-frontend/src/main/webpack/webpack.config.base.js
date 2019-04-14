@@ -1,6 +1,5 @@
 // Common Webpack configuration: used by others webpack configurations
 const path = require('path');
-const webpack = require('webpack');
 
 const BINARY_FILE_MAX_SIZE = 8192;
 
@@ -17,11 +16,13 @@ module.exports = {
     },
     entry: {
         vendor: [
+            'lodash',
             'react',
             'react-dom',
             'react-redux',
-            'redux'
-        ],
+            'react-router',
+            'redux',
+        ]
     },
     output: {
         filename: 'js/[name].js',

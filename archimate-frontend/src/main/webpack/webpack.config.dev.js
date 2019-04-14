@@ -12,6 +12,7 @@ const GLOBALS = {
 };
 
 module.exports = merge(config, {
+  mode: 'development',
   cache: true,
   devtool: 'source-map',
   entry: {

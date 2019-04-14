@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import "../stylesheets/main.scss";
 
 import { withStyles } from '@material-ui/core/styles';
+
 const styleSheet = theme => ({
   '@global': {
     html: {
