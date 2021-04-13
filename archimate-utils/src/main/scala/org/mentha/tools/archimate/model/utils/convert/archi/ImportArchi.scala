@@ -1,7 +1,6 @@
 package org.mentha.tools.archimate.model.utils.convert.archi
 
 import java.io.{File, StringReader}
-
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 import org.mentha.tools.archimate.model._
@@ -12,6 +11,7 @@ import org.mentha.tools.archimate.model.nodes.impl._
 import org.mentha.tools.archimate.model.utils.MkModel
 import org.mentha.tools.archimate.model.view._
 
+import scala.language.postfixOps
 import scala.util.Try
 import scala.xml.{Node, NodeSeq, XML}
 

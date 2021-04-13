@@ -22,6 +22,7 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util._
 
+//noinspection DuplicatedCode
 class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
 
   protected sealed trait NodeType {}
@@ -60,8 +61,8 @@ class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with Actor
   private val branchPrefix = new File(config.getString("branch-prefix"))
   private val executionContext = context.system.dispatchers.lookup(config.getString("stream-dispatcher"))
 
-  private val commiterName = config.getString("commiter.name")
-  private val commiterMail = config.getString("commiter.mail")
+  private val committerName = config.getString("committer.name")
+  private val committerMail = config.getString("committer.mail")
 
   protected val OBJECT_JSON = ".object.json"
 
@@ -97,9 +98,9 @@ class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with Actor
   }
 
   @scala.annotation.tailrec
-  private def loadFirstSuccess(metadata: Stream[(String, SnapshotMetadata)]): Try[Option[SelectedSnapshot]] = metadata match {
-    case Stream.Empty => Success(None) // no snapshots stored
-    case (rev, md) #:: remaining ⇒ {
+  private def loadFirstSuccess(metadata: LazyList[(String, SnapshotMetadata)]): Try[Option[SelectedSnapshot]] = metadata match {
+    case LazyList() => Success(None) // no snapshots stored
+    case (rev, md) #:: remaining => {
       tryToLoad(md.persistenceId, rev) match {
         case Success(s) => Success(Some(SelectedSnapshot(md, s)))
         case Failure(e) => {
@@ -117,11 +118,11 @@ class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with Actor
   }
 
   protected def save(metadata: SnapshotMetadata, snapshot: JsObject): Try[RefUpdate.Result] = withRepository { repo =>
-    val commiter = new PersonIdent(commiterName, commiterMail, metadata.timestamp, SystemReader.getInstance.getTimezone(metadata.timestamp))
-    val time = commiter.getWhen.getTime
+    val committer = new PersonIdent(committerName, committerMail, metadata.timestamp, SystemReader.getInstance.getTimezone(metadata.timestamp))
+    val time = committer.getWhen.toInstant
     repo.commitBranchTree(
       branchName = branch(metadata.persistenceId),
-      commiter = commiter,
+      committer = committer,
       message = s"[${metadata.sequenceNr}]: Snapshot stored ${new Date(metadata.timestamp).toString}"
     ) {
       (obi) => Try {
@@ -180,7 +181,7 @@ class JgitJsonPathSnapshotStore(config: Config) extends SnapshotStore with Actor
     )
   }
 
-  private def selectMetadata(persistenceId: String, criteria: SnapshotSelectionCriteria, maxLoad: Int): Try[Stream[(String, SnapshotMetadata)]] = withRepository { repo =>
+  private def selectMetadata(persistenceId: String, criteria: SnapshotSelectionCriteria, maxLoad: Int): Try[LazyList[(String, SnapshotMetadata)]] = withRepository { repo =>
     repo.withBranchHistory(branchName = branch(persistenceId)) { commits => Try {
       commits
         // .take(maxLoad)

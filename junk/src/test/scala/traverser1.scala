@@ -1,4 +1,3 @@
-
 object traverser1 {
 
   import org.mentha.tools.archimate.model._
@@ -48,7 +47,7 @@ object traverser1 {
   in(view) edge { $(pl) `associated with` $(ga) }
 
 
-  import org.mentha.tools.archimate.model.traverse._
+  import org.mentha.archimate.model.traverse._
   val traverser = new ModelTraversing(ModelTraversing.ChangesInfluence)(model)
 
   traverser($(de))( new ModelVisitor {

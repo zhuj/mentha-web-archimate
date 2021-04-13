@@ -14,7 +14,7 @@ object traverser2 {
     )
   )
 
-  import org.mentha.tools.archimate.model.traverse._
+  import org.mentha.archimate.model.traverse._
   val traverser = new ModelTraversing(ModelTraversing.ChangesInfluence)(model)
   traverser(model.nodes.toSeq.take(10):_*)( new ModelVisitor {
     override def visitVertex(vertex: Concept): Boolean = {

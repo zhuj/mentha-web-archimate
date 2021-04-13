@@ -6,10 +6,8 @@ import org.mentha.tools.archimate.model.utils.Utils
 import scala.reflect.ClassTag
 
 object View {
-
   private[model] val defaultPosition = Vector(0, 0)
   private[model] val defaultSize = Size(120, 40)
-
 }
 
 sealed trait PlanarObject {
@@ -120,7 +118,7 @@ final class ViewConnection(val source: ViewObject, val target: ViewObject)
 /** Archimate Concept in the View */
 sealed trait ViewConcept[+T <: Concept] {
   self: ViewObject =>
-  def concept: Concept with T
+  def concept: T
 }
 
 /** NodeConcept representation in the View */
@@ -166,7 +164,7 @@ final class View(val viewpoint: ViewPoint = LayeredViewPoint)
       .collectFirst { case v: ViewConcept[_] if v.concept == concept => v.asInstanceOf[T] }
   }
 
-  private[model] def attach[X <: Concept](concept: X): ViewObject with ViewConcept[X] = concept match {
+  def attach[X <: Concept](concept: X): ViewObject with ViewConcept[X] = concept match {
     case n: NodeConcept => this.attach_node[NodeConcept](n).asInstanceOf[ViewObject with ViewConcept[X]]
     case r: Relationship => this.attach_edge[Relationship](r).asInstanceOf[ViewObject with ViewConcept[X]]
     case _ => throw new IllegalStateException(concept.getClass.getName)

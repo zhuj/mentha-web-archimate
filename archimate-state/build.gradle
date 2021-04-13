@@ -1,4 +1,4 @@
 dependencies {
-    compile project(":archimate-model")
-    compile project(":akka")
+    api project(":archimate-model")
+    api project(":akka")
 }

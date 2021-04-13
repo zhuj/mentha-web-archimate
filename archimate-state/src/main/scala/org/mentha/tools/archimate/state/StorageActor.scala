@@ -4,6 +4,8 @@ import akka.actor._
 import akka.util._
 import akka.pattern.ask
 
+import scala.language.postfixOps
+
 object StorageActor {
 
   case class Request(modelId: String)

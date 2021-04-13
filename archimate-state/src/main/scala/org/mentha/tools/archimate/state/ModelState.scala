@@ -684,7 +684,7 @@ object ModelState {
       )
 
       case "composite" => Commands.CompositeCommand(
-        commands = js.fields.map {
+        commands = js.fields.toSeq.map {
           case (_, v) => parseMessage(value = v).asInstanceOf[Command]
         }
       )
