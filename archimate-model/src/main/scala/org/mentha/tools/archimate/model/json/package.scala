@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils
 import org.mentha.tools.archimate.model.nodes._
 import org.mentha.tools.archimate.model.edges._
 import org.mentha.tools.archimate.model.edges.impl.{AccessRelationship, AssociationRelationship, FlowRelationship, InfluenceRelationship}
-import org.mentha.tools.archimate.model.hash.Hash
 import org.mentha.tools.archimate.model.view._
 
 import scala.util.control.NonFatal
@@ -42,8 +41,8 @@ package object json {
     @inline def _str(s: JsonString): Int = _str(s.value)
     @inline def _num(n: JsonNumber): Int = _num(n.value)
 
-    def _obj(o: JsonObject): Int = _obj(o.fields:_*)
-    def _arr(a: JsonArray): Int = _arr(a.value)
+    def _obj(o: JsonObject): Int = _obj(o.fields.toSeq)
+    def _arr(a: JsonArray): Int = _arr(a.value.toSeq)
 
     override def hash(v: Any): Int = v match {
       case o: JsonObject => _obj(o)
@@ -113,6 +112,7 @@ package object json {
 
   def readSize(json: JsonObject): Size = json.as[Size]
 
+  //noinspection TypeAnnotation
   implicit val accessTypeRW = new Reads[AccessType] with Writes[AccessType] {
     override def writes(o: AccessType): JsValue = o match {
       case ReadAccess => JsString("r")
@@ -211,12 +211,12 @@ package object json {
   }
 
   @inline
-  private[json] def fields(js: JsLookupResult): Seq[(String, JsValue)] = {
+  private[json] def fields(js: JsLookupResult): collection.Seq[(String, JsValue)] = {
     fields(js.getOrElse(JsonObject.empty))
   }
 
   @inline
-  private[json] def fields(js: JsValue): Seq[(String, JsValue)] = js match {
+  private[json] def fields(js: JsValue): collection.Seq[(String, JsValue)] = js match {
     case o: JsonObject => o.fields
     case _ => Seq.empty
   }
@@ -229,6 +229,7 @@ package object json {
     .map { meta => fillElement(meta.newInstance(), json) }
     .getOrElse( throw new IllegalStateException(s"Unexpected element type: ${tp}") )
 
+  //noinspection TypeAnnotation
   implicit val elementRW = new Reads[Element] with Writes[Element] {
 
     override def reads(json: JsValue): JsResult[Element] = try {
@@ -251,6 +252,7 @@ package object json {
     .map { meta => fillRelationshipConnector(meta.newInstance( edges.mapRelations(rel) ), json ) }
     .getOrElse( throw new IllegalStateException(s"Unexpected relationship connector type: ${tp}") )
 
+  //noinspection TypeAnnotation
   implicit val relationshipConnectorRW = new Reads[RelationshipConnector] with Writes[RelationshipConnector] {
 
     override def reads(json: JsValue): JsResult[RelationshipConnector] = try {
@@ -266,6 +268,7 @@ package object json {
 
   }
 
+  //noinspection TypeAnnotation
   implicit val nodeConceptRW = new Reads[NodeConcept] with Writes[NodeConcept] {
 
     override def reads(json: JsValue): JsResult[NodeConcept] =
@@ -283,6 +286,7 @@ package object json {
 
   }
 
+  //noinspection TypeAnnotation
   implicit val edgeConceptW = new Writes[EdgeConcept] {
 
     val jsTrueWrapper: JsValueWrapper = true
@@ -330,6 +334,7 @@ package object json {
 
   }
 
+  //noinspection TypeAnnotation
   implicit val viewObjectWrites = new Writes[ViewObject] {
     override def writes(o: ViewObject): JsValue = {
       o match {
@@ -365,6 +370,16 @@ package object json {
         )
       }
     }
+  }
+
+  //noinspection TypeAnnotation
+  implicit val viewNodeWrites = new Writes[ViewNode] {
+    override def writes(o: ViewNode): JsValue = viewObjectWrites.writes(o)
+  }
+
+  //noinspection TypeAnnotation
+  implicit val viewEdgeWrites = new Writes[ViewEdge] {
+    override def writes(o: ViewEdge): JsValue = viewObjectWrites.writes(o)
   }
 
   private[json] def fillPosAndSize[T <: ViewNode](res: T, json: JsonValue): T = {
@@ -502,7 +517,7 @@ package object json {
   def toJsonPair(obj: ArchimateObject, id: Identifiable.ID => String = id => id): JsonObject = obj match {
     case m: Model => Json.obj(id(m.id) -> m)
     case n: NodeConcept => Json.obj(id(n.id) -> n)
-    case r: Relationship => Json.obj(id(r.id) -> r)
+    case e: EdgeConcept => Json.obj(id(e.id) -> e)
     case v: View => Json.obj(id(v.id) -> v)
     case o: ViewObject => Json.obj(id(o.id) -> o)
   }

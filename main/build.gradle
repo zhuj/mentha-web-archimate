@@ -1,9 +1,9 @@
 dependencies {
-    compile project(":akka")
-    compile project(":archimate-model")
-    compile project(":archimate-state")
-    compile project(":archimate-wiki")
-    compile project(":archimate-frontend")
+    api project(":akka")
+    api project(":archimate-model")
+    api project(":archimate-state")
+    api project(":archimate-wiki")
+    api project(":archimate-frontend")
 }
 
 apply plugin: 'distribution'

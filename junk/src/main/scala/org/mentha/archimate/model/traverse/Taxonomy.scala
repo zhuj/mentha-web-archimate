@@ -1,4 +1,4 @@
-package org.mentha.tools.archimate.model.traverse
+package org.mentha.archimate.model.traverse
 
 import org.mentha.tools.archimate.model._
 import org.mentha.tools.archimate.model.edges._

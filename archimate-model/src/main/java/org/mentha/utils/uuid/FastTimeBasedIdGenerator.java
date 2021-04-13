@@ -1,5 +1,6 @@
 package org.mentha.utils.uuid;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class FastTimeBasedIdGenerator {
@@ -26,7 +27,7 @@ public class FastTimeBasedIdGenerator {
   }
 
   // 64 digits = 6 bits
-  private final static char[] digits = {
+  private final static byte[] digits = {
           '0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' ,
           '8' , '9' , 'a' , 'b' , 'c' , 'd' , 'e' , 'f' ,
           'g' , 'h' , 'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
@@ -51,8 +52,8 @@ public class FastTimeBasedIdGenerator {
     }
   }
 
-
-  private static int formatUnsignedLong(long val, int shift, char[] buf, int offset, int len) {
+  @SuppressWarnings("UnusedReturnValue")
+  private static int formatUnsignedLong(long val, int shift, byte[] buf, int offset, int len) {
     int charPos = len;
     int radix = 1 << shift;
     int mask = radix - 1;
@@ -75,7 +76,7 @@ public class FastTimeBasedIdGenerator {
     // we have to preserve the last 44 bits of timestamp (it will work up to Mon Jun 23 2527 06:20:44)
     timestamp &= 0xfffffffffffL; // now there is 44 buts of data
 
-    int id11 = (typeIdentifier & 0x7ff); // 11 bits of data
+    long id11 = (typeIdentifier & 0x7ff); // 11 bits of data
 
     long tl08 = (timestamp & 0xff); // 8 bits of data
     long th36 = (timestamp >>> 8); // 36 bits of data
@@ -87,11 +88,11 @@ public class FastTimeBasedIdGenerator {
     long a24 = (((tl08 << 4) | sl04) << 11) | id11; // 1 + 8 + 4 + 11 = 24 bits (the first bit is always zero)
     long b48 = ((th36 << 8) | sh12); // 36 + 12 = 48 bits
 
-    char[] buff = new char[12];
+    byte[] buff = new byte[12];
     formatUnsignedLong(a24, 6, buff, 0, 4); // (24/6) = 4 digits
     formatUnsignedLong(b48, 6, buff, 4, 8); // (48/6) = 8 digits
 
-    return new String(buff);
+    return new String(buff, StandardCharsets.US_ASCII);
   }
 
   private String generateIdFromTimestamp(short typeIdentifier, long currentTimeMillis) {

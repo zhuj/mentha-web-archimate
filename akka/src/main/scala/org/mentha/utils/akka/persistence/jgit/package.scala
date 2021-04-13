@@ -14,6 +14,7 @@ import org.eclipse.jgit.treewalk.filter._
 
 import scala.util._
 import scala.util.control.NonFatal
+import scala.jdk.CollectionConverters._
 
 package object jgit {
 
@@ -36,15 +37,15 @@ package object jgit {
     */
   implicit class ImplicitRepository(repo: Repository) {
 
-    def withBranchHistory[T](branchName: String)(body: Stream[RevCommit] => Try[T]): Try[T] = {
+    def withBranchHistory[T](branchName: String)(body: LazyList[RevCommit] => Try[T]): Try[T] = {
       val headId: ObjectId = repo.resolve(Constants.R_HEADS + branchName + "^{commit}")
       if (null == headId) {
-        body { Stream.Empty }
+        body { LazyList.empty }
       } else {
         withResource(new RevWalk(repo)) { revWalk =>
           revWalk.markStart(revWalk.parseCommit(headId))
           revWalk.sort(RevSort.COMMIT_TIME_DESC)
-          body { collection.JavaConverters.asScalaIterator(revWalk.iterator()).toStream }
+          body { revWalk.iterator().asScala.to(LazyList) }
         }
       }
     }
@@ -89,19 +90,16 @@ package object jgit {
       }
     }
 
-
-
-
-    def withFileHistory[T](branchName: String, entryName: String)(body: Stream[RevCommit] => Try[T]): Try[T] = {
+    def withFileHistory[T](branchName: String, entryName: String)(body: LazyList[RevCommit] => Try[T]): Try[T] = {
       val headId: ObjectId = repo.resolve(Constants.R_HEADS + branchName + "^{commit}")
       if (null == headId) {
-        body { Stream.Empty }
+        body { LazyList.empty }
       } else {
         withResource(new RevWalk(repo)) { revWalk =>
           revWalk.markStart(revWalk.parseCommit(headId))
           revWalk.setTreeFilter(PathFilterGroup.createFromStrings(entryName))
           revWalk.sort(RevSort.COMMIT_TIME_DESC)
-          body { collection.JavaConverters.asScalaIterator(revWalk.iterator()).toStream }
+          body { revWalk.iterator().asScala.to(LazyList) }
         }
       }
     }
@@ -134,7 +132,7 @@ package object jgit {
 
     def commitBranchTree(
       branchName: String,
-      commiter: PersonIdent,
+      committer: PersonIdent,
       message: String
     )(treeBuilder: ObjectInserter => Try[ObjectId]): Try[RefUpdate.Result] = {
 
@@ -149,8 +147,8 @@ package object jgit {
             val commitId = {
               val parentIds = if (null == headId) Collections.emptyList() else Collections.singletonList(headId)
               val cb = new CommitBuilder
-              cb.setCommitter(commiter)
-              cb.setAuthor(commiter)
+              cb.setCommitter(committer)
+              cb.setAuthor(committer)
               cb.setMessage(message)
               cb.setParentIds(parentIds)
               cb.setTreeId(indexTreeId)
@@ -180,14 +178,14 @@ package object jgit {
 
     def commitBranchEntry(
       branchName: String,
-      commiter: PersonIdent,
+      committer: PersonIdent,
       message: String
     )(
       entryName: String,
       bytes: Array[Byte]
     ): Try[RefUpdate.Result] = commitBranchTree(
       branchName = branchName,
-      commiter = commiter,
+      committer = committer,
       message = message,
     ) {
       (obi) => Try {
@@ -201,7 +199,7 @@ package object jgit {
         entry.setLength(bytes.length)
         entry.setFileMode(FileMode.REGULAR_FILE)
         entry.setObjectId(fileContentBlobId)
-        entry.setLastModified(commiter.getWhen.getTime)
+        entry.setLastModified(committer.getWhen.toInstant)
 
         // create tree builder and store currently available files
         val builder = dc.builder()

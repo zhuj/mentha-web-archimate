@@ -1,4 +1,4 @@
-package org.mentha.tools.archimate.model.traverse
+package org.mentha.archimate.model.traverse
 
 import org.mentha.tools.archimate.model.Identifiable.ID
 import org.mentha.tools.archimate.model._

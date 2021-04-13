@@ -2,7 +2,6 @@ package org.mentha.tools.archimate.model.utils
 
 import java.util.Random
 import java.util.concurrent.atomic.AtomicLong
-
 import akka.actor.ActorSystem
 import akka.stream._
 import akka.util.ByteString
@@ -13,12 +12,13 @@ import org.slf4j.LoggerFactory
 
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object MkModel {
 
   def generateViewId(name: String): String = {
     val bytes = org.apache.commons.codec.digest.DigestUtils.sha1(name)
-    val stamp = bytes.take(6).foldLeft(0l) { (v, b) => (v << 8) | (b.toLong & 0xffl) } // 44 bits will only be used
+    val stamp = bytes.take(6).foldLeft(0L) { (v, b) => (v << 8) | (b.toLong & 0xffL) } // 44 bits will only be used
     val seqnr = name.hashCode
     FastTimeBasedIdGenerator.generateId(
       Identifiable.typeIdentifier(classOf[View]),
@@ -43,7 +43,7 @@ abstract class MkModel {
   }
 
   // set sequential time source (default - 0)
-  initTimeSource(0l)
+  initTimeSource(0L)
 
   private def sendWebSocketMessage(id: String, message: String): Unit = {
 
@@ -84,7 +84,7 @@ abstract class MkModel {
     log.debug("DBG: setup complete")
 
     Thread.sleep(2000)
-    try { promise.success(None) }
+    promise.trySuccess(None)
 
     log.debug("DBG: promise complete")
 

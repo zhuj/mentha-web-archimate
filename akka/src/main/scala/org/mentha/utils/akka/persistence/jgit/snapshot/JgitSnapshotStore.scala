@@ -18,6 +18,7 @@ import org.mentha.utils.akka.persistence.jgit._
 import scala.concurrent.Future
 import scala.util._
 
+//noinspection DuplicatedCode
 class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
 
   // debug
@@ -48,8 +49,8 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
   private val executionContext = context.system.dispatchers.lookup(config.getString("stream-dispatcher"))
   private val serializationExtension = SerializationExtension(context.system)
 
-  private val commiterName = config.getString("commiter.name")
-  private val commiterMail = config.getString("commiter.mail")
+  private val committerName = config.getString("committer.name")
+  private val committerMail = config.getString("committer.mail")
 
   private val ENTRY_NAME = "SNAPSHOT"
 
@@ -76,9 +77,9 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
   }
 
   @scala.annotation.tailrec
-  private def loadFirstSuccess(metadata: Stream[(String, SnapshotMetadata)]): Try[Option[SelectedSnapshot]] = metadata match {
-    case Stream.Empty => Success(None) // no snapshots stored
-    case (rev, md) #:: remaining ⇒ {
+  private def loadFirstSuccess(metadata: LazyList[(String, SnapshotMetadata)]): Try[Option[SelectedSnapshot]] = metadata match {
+    case LazyList() => Success(None) // no snapshots stored
+    case (rev, md) #:: remaining => {
       tryToLoad(md.persistenceId, rev)(deserialize) match {
         case Success(s) => Success(Some(SelectedSnapshot(md, s.data)))
         case Failure(e) => {
@@ -93,7 +94,7 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
   protected def save(metadata: SnapshotMetadata, snapshot: Any): Try[RefUpdate.Result] = withRepository { repo =>
     repo.commitBranchEntry(
       branchName = branch(metadata.persistenceId),
-      commiter = new PersonIdent(commiterName, commiterMail, metadata.timestamp, SystemReader.getInstance.getTimezone(metadata.timestamp)),
+      committer = new PersonIdent(committerName, committerMail, metadata.timestamp, SystemReader.getInstance.getTimezone(metadata.timestamp)),
       message = s"[${metadata.sequenceNr}]: Snapshot stored ${new Date(metadata.timestamp).toString}"
     )(
       entryName = ENTRY_NAME,
@@ -120,7 +121,8 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
     )
   }
 
-  private def selectMetadata(persistenceId: String, criteria: SnapshotSelectionCriteria, maxLoad: Int): Try[Stream[(String, SnapshotMetadata)]] = withRepository { repo =>
+  //noinspection DuplicatedCode
+  private def selectMetadata(persistenceId: String, criteria: SnapshotSelectionCriteria, maxLoad: Int): Try[LazyList[(String, SnapshotMetadata)]] = withRepository { repo =>
     repo.withFileHistory(branchName = branch(persistenceId), entryName = ENTRY_NAME) { commits => Try {
       commits
         // .take(maxLoad)
@@ -131,7 +133,7 @@ class JgitSnapshotStore(config: Config) extends SnapshotStore with ActorLogging 
     } }
   }
 
-  private def tryToLoad[T](persistenceId: String, rev: String)(p: (InputStream) ⇒ T): Try[T] = withRepository { repo =>
+  private def tryToLoad[T](persistenceId: String, rev: String)(p: (InputStream) => T): Try[T] = withRepository { repo =>
     repo.withFileContent(branchName = branch(persistenceId), entryName = ENTRY_NAME)(rev = rev) { stream => Try { p(stream) } }
   }
 
