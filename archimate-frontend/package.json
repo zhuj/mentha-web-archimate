@@ -58,7 +58,7 @@
     "typeface-roboto": "^0.0.54",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.1",
-    "qs": "^6.7.0",
+    "qs": "^6.7.3",
     "qhistory": "^1.0.3",
     "history": "^4.9.0"
   },
