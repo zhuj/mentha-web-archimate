@@ -104,6 +104,6 @@
     "whatwg-fetch": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.12.4",
-    "express": "^4.16.4"
+    "express": "^4.17.3"
   }
 }
